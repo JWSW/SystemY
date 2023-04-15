@@ -2,6 +2,7 @@ package com.example.systemy;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -46,15 +47,32 @@ public class NamingServer {
         private static final int HASH_RANGE = 100000;
         private static final String FILE_TO_NODE_MAP_KEY = "fileToNodeMap";
 
-        @GetMapping("/getSuccessorNode/{nodeName}")
-        public int getSuccessorNode(@PathVariable String nodeName) {
-            int nodeHash = getHash(nodeName);
-            int successorNodeHash = nodeMap.keySet().stream()
-                    .filter(node -> node > nodeHash)
-                    .findFirst()
-                    .orElse(nodeMap.keySet().stream().findFirst().orElse(0));
-            return successorNodeHash;
+        @GetMapping("/getSuccessorNode/{filename}")
+        public String getSuccessorNode(@PathVariable String filename) throws IOException {
+            int fileHash = Math.abs(filename.hashCode());
+            int minDiff = Integer.MAX_VALUE;
+            int selectedNodeId = -1;
+
+            for (Map.Entry<Integer, String> entry : nodeMap.entrySet()) {
+                int nodeId = entry.getKey();
+                String nodeIp = entry.getValue();
+                int nodeHash = Math.abs(getHash(nodeIp));
+                if (nodeHash <= fileHash) {
+                    int diff = fileHash - nodeHash;
+                    if (diff < minDiff) {
+                        minDiff = diff;
+                        selectedNodeId = nodeId;
+                    }
+                }
+            }
+
+            if (selectedNodeId == -1) {
+                selectedNodeId = Collections.max(nodeMap.keySet());
+            }
+
+            return nodeMap.get(selectedNodeId);
         }
+
 
         @GetMapping("/getNodeIp/{nodeId}")
         public ResponseEntity<String> getNodeIp(@PathVariable int nodeId) {
@@ -90,10 +108,12 @@ public class NamingServer {
         }
 
         private int getHash(String value) {
-            int hash = value.hashCode() % HASH_RANGE;
-            if (hash < 0) {
-                hash += HASH_RANGE;
-            }
+            int max = Integer.MAX_VALUE;
+            int min = Integer.MIN_VALUE + 1; // add 1 to avoid overflow when calculating the absolute value
+
+            int hash = (value.hashCode() + max) * (32768 / Math.abs(max) + Math.abs(min));
+            hash = Math.abs(hash) % 32768; // map the result to the range (0, 32768)
+
             return hash;
         }
     }
