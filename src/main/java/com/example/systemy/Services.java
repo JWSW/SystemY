@@ -59,18 +59,41 @@ public class Services {
         int fileHash = getHash(filename);
         Integer kleinste = 32769;
         Integer grootste = 0;
+        Integer groterDanFile = 0;
+        Integer kleinerDanFile = 32769;
         boolean Hoogste = false;
         Map<Integer, String> nodeData = new HashMap<>();
         Set<Integer> hashSet = nodeMap.keySet();
+
         for(Integer nodeHash : hashSet){
             if(nodeHash<kleinste){
                 kleinste = nodeHash;
-            }
-            if (nodeHash>fileHash){
-                if (nodeHash<kleinste){
-
+            }else if(nodeHash> grootste){
+                grootste = nodeHash;
+            }else if(fileHash>kleinste){
+                if(fileHash<grootste) {
+                    Hoogste = false;
+                    if (fileHash > nodeHash) {
+                        if (nodeHash > kleinerDanFile) {
+                            nodeHash = kleinerDanFile;
+                        }
+                    }else if(fileHash<nodeHash){
+                        if(nodeHash<groterDanFile){
+                            groterDanFile = nodeHash;
+                        }
+                    }
                 }
+            }else if(fileHash<kleinste){
+                Hoogste = true;
+            }else if(fileHash>grootste){
+                Hoogste = true;
             }
         }
+        if(Hoogste){
+            nodeData.put(grootste,nodeMap.get(grootste));
+        }else{
+            nodeData.put(kleinerDanFile,nodeMap.get(kleinerDanFile));
+        }
+        return nodeData;
     }
 }
