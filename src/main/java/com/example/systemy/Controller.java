@@ -10,13 +10,13 @@ public class Controller {
     private Services services;
 
     @PostMapping("/{nodeName}/{ipAddr}/addNode")
-    public void addMoney(@PathVariable String name, @PathVariable double amount) {
-        services.addNode(name, amount);
+    public void addMoney(@PathVariable String name, @PathVariable String ipAddr) {
+        services.addNode(name, ipAddr);
     }
 
     @PostMapping("/{nodeName}/{ipAddr}/removeNode")
-    public void removeMoney(@PathVariable String name, @PathVariable double amount) {
-        services.removeNode(name, amount);
+    public void removeMoney(@PathVariable String name, @PathVariable String ipAddr) {
+        services.removeNode(name, ipAddr);
     }
 }
 
