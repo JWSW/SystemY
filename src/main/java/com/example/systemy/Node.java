@@ -83,4 +83,11 @@ public class Node {
 //        files.remove(fileName);
 //    }
 
+    @Override
+    public String toString() {
+        return "Node{" +
+                "nodeName='" + nodeName + '\'' +
+                ", ipAddress='" + ipAddress + '\'' +
+                '}';
+    }
 }

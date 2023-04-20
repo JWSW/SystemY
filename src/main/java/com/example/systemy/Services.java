@@ -18,6 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Services {
     private Map<Integer, String> nodeMap = new ConcurrentHashMap<>();
     private static final String NODE_MAP_FILE_PATH = "node_map.json";
+
     @PostConstruct
     public void init() throws IOException {
         File file = new File(NODE_MAP_FILE_PATH);
@@ -25,16 +26,20 @@ public class Services {
             ObjectMapper objectMapper = new ObjectMapper();
             nodeMap = objectMapper.readValue(file, new TypeReference<Map<Integer, String>>() {});
         }
+        removeNodeByHash(5);
     }
+
     @PreDestroy
     public void destroy() throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.writeValue(new File(NODE_MAP_FILE_PATH), nodeMap);
     }
+
     public void addNode(Node node){
         int hash = getHash(node.getNodeName());
         if(!nodeMap.containsKey(hash)) {
             nodeMap.put(hash, node.getIpAddress());
+            System.out.println(node);
         }else{
             throw new IllegalStateException("Node exists");
         }
@@ -43,6 +48,9 @@ public class Services {
     public void removeNode(String name){
         int hash = getHash(name);
         nodeMap.remove(hash);
+    }
+    public void removeNodeByHash(Integer id){
+        nodeMap.remove(id);
     }
 
     public int getHash(String name){
@@ -59,26 +67,33 @@ public class Services {
         int fileHash = getHash(filename);
         Integer kleinste = 32769;
         Integer grootste = 0;
-        Integer groterDanFile = 0;
-        Integer kleinerDanFile = 32769;
+        Integer groterDanFile = 32769;
+        Integer kleinerDanFile = 0;
         boolean Hoogste = false;
         Map<Integer, String> nodeData = new HashMap<>();
         Set<Integer> hashSet = nodeMap.keySet();
-
+        System.out.println("De map: " + nodeMap);
+        System.out.println("De fileHash: " + fileHash);
         for(Integer nodeHash : hashSet){
+            System.out.println("De lijst wordt doorlopen: " + nodeHash);
             if(nodeHash<kleinste){
                 kleinste = nodeHash;
-            }else if(nodeHash> grootste){
+                System.out.println("Nieuwe kleinste: " + kleinste);
+            }
+            if(nodeHash> grootste){
                 grootste = nodeHash;
+                System.out.println("Nieuwe grootste: " + grootste);
             }else if(fileHash>kleinste){
                 if(fileHash<grootste) {
                     Hoogste = false;
                     if (fileHash > nodeHash) {
                         if (nodeHash > kleinerDanFile) {
-                            nodeHash = kleinerDanFile;
+                            System.out.println("Ja groter dan kleinere: " + nodeHash);
+                            kleinerDanFile = nodeHash;
                         }
                     }else if(fileHash<nodeHash){
                         if(nodeHash<groterDanFile){
+                            System.out.println("Ja kleiner dan grotere: " + nodeHash);
                             groterDanFile = nodeHash;
                         }
                     }

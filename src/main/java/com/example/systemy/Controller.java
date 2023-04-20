@@ -12,14 +12,20 @@ public class Controller {
     private Services services;
 
     @PostMapping("/addNode")
-    public void addMoney(@RequestBody Node node) {
+    public void addNode(@RequestBody Node node) {
         services.addNode(node);
     }
 
     @PostMapping("/{nodeName}/removeNode")
-    public void removeMoney(@PathVariable String nodeName) {
+    public void removeNode(@PathVariable String nodeName) {
         services.removeNode(nodeName);
     }
+
+    @PostMapping("/{nodeHashId}/removeNodeByHashId")
+    public void removeNodeByHash(@PathVariable Integer nodeHashId) {
+        services.removeNodeByHash(nodeHashId);
+    }
+
     @GetMapping("/{filename}/getFileLocation")
     public Map<Integer,String> getFileLocation(@PathVariable String filename ) {
         return services.getFile(filename);
