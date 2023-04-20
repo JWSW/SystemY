@@ -3,6 +3,8 @@ package com.example.systemy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/requestName")
 public class Controller {
@@ -19,8 +21,8 @@ public class Controller {
         services.removeNode(nodeName);
     }
     @GetMapping("/{filename}/getFileLocation")
-    public int getFileLocation(@PathVariable String filename ) {
-        return services.getHash(filename);
+    public Map<Integer,String> getFileLocation(@PathVariable String filename ) {
+        return services.getFile(filename);
     }
 }
 

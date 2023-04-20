@@ -8,7 +8,10 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -50,5 +53,24 @@ public class Services {
         hash = Math.abs(hash) % 32768; // map the result to the range (0, 32768)
 
         return hash;
+    }
+
+    public Map<Integer, String> getFile(String filename) {
+        int fileHash = getHash(filename);
+        Integer kleinste = 32769;
+        Integer grootste = 0;
+        boolean Hoogste = false;
+        Map<Integer, String> nodeData = new HashMap<>();
+        Set<Integer> hashSet = nodeMap.keySet();
+        for(Integer nodeHash : hashSet){
+            if(nodeHash<kleinste){
+                kleinste = nodeHash;
+            }
+            if (nodeHash>fileHash){
+                if (nodeHash<kleinste){
+
+                }
+            }
+        }
     }
 }
