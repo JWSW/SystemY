@@ -21,7 +21,8 @@ public class Node {
     private String fileTwo = "file2.txt";
 //    private Map<String, String> files;
 
-    public Node() {}
+    public Node() {
+    }
 
     public Node(String nodeName, String ipAddress) throws IOException {
         this.nodeName = nodeName;
@@ -32,7 +33,7 @@ public class Node {
             if (!file.exists()) {
                 file.createNewFile();
             }
-        }catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         try {
@@ -41,7 +42,7 @@ public class Node {
             if (!file2.exists()) {
                 file2.createNewFile();
             }
-        }catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -89,5 +90,11 @@ public class Node {
                 "nodeName='" + nodeName + '\'' +
                 ", ipAddress='" + ipAddress + '\'' +
                 '}';
+    }
+
+    public static void main(String[] args) throws IOException {
+        String baseUrl = "http://localhost:8080/requestName";
+        Node node = new Node(InetAddress.getLocalHost().getHostName(),InetAddress.getLocalHost().getHostAddress());
+        System.out.println(node);
     }
 }
