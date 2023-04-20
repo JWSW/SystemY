@@ -3,6 +3,7 @@ package com.example.systemy;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -22,10 +23,28 @@ public class Services {
             nodeMap = objectMapper.readValue(file, new TypeReference<Map<Integer, String>>() {});
         }
     }
-    public void addNode(String name, String ipAddr){
-
+    @PreDestroy
+    public void destroy() throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.writeValue(new File(NODE_MAP_FILE_PATH), nodeMap);
     }
-    public void removeNode(String name, String ipAddr){
+    public void addNode(String name, String ipAddr){
+        int hash = getHash(name);
+        nodeMap.put(hash, ipAddr);
+    }
 
+    public void removeNode(String name, String ipAddr){
+        int hash = getHash(name);
+        nodeMap.remove(hash);
+    }
+
+    public int getHash(String name){
+        int max = Integer.MAX_VALUE;
+        int min = Integer.MIN_VALUE + 1; // add 1 to avoid overflow when calculating the absolute value
+
+        int hash = (name.hashCode() + max) * (32768 / Math.abs(max) + Math.abs(min));
+        hash = Math.abs(hash) % 32768; // map the result to the range (0, 32768)
+
+        return hash;
     }
 }
