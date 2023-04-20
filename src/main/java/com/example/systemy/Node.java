@@ -3,22 +3,29 @@ package com.example.systemy;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
+@Data
+@AllArgsConstructor
+@Entity
 public class Node {
+    @Id
     private String nodeName;
     private String ipAddress;
     private int successorId;
     private int predecessorId;
     private String file1 = "file1.txt";
     private String fileTwo = "file2.txt";
-    private Map<String, String> files;
+//    private Map<String, String> files;
+
+    public Node() {}
 
     public Node(String nodeName, String ipAddress) throws IOException {
         this.nodeName = nodeName;
         this.ipAddress = ipAddress;
-        this.successorId = 5;
-        this.predecessorId = 5;
-        this.files = new HashMap<>();
         try {
             File file = new File(file1);
             // if file doesnt exists, then create it
@@ -48,10 +55,6 @@ public class Node {
         return ipAddress;
     }
 
-    public int getPort() {
-        return port;
-    }
-
     public int getSuccessorId() {
         return successorId;
     }
@@ -68,16 +71,16 @@ public class Node {
         this.predecessorId = predecessorId;
     }
 
-    public void addFile(String fileName, String owner) {
-        files.put(fileName, owner);
-    }
+//    public void addFile(String fileName, String owner) {
+//        files.put(fileName, owner);
+//    }
 
     public String getFileOwner(String fileName) {
-        return files.get(fileName);
+        return fileName;
     }
 
-    public void removeFile(String fileName) {
-        files.remove(fileName);
-    }
+//    public void removeFile(String fileName) {
+//        files.remove(fileName);
+//    }
 
 }

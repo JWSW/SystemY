@@ -30,7 +30,11 @@ public class Services {
     }
     public void addNode(Node node){
         int hash = getHash(node.getNodeName());
-        nodeMap.put(hash, node.getIpAddress());
+        if(!nodeMap.containsKey(hash)) {
+            nodeMap.put(hash, node.getIpAddress());
+        }else{
+            throw new IllegalStateException("Node exists");
+        }
     }
 
     public void removeNode(String name){
