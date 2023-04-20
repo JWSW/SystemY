@@ -14,9 +14,9 @@ public class Controller {
         services.addNode(nodeName, ipAddr);
     }
 
-    @PostMapping("/{nodeName}/{ipAddr}/removeNode")
-    public void removeMoney(@PathVariable String nodeName, @PathVariable String ipAddr) {
-        services.removeNode(nodeName, ipAddr);
+    @PostMapping("/{nodeName}/removeNode")
+    public void removeMoney(@PathVariable String nodeName) {
+        services.removeNode(nodeName);
     }
     @GetMapping("/{filename}/getFileLocation")
     public int getFileLocation(@PathVariable String filename ) {

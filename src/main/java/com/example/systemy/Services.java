@@ -33,7 +33,7 @@ public class Services {
         nodeMap.put(hash, ipAddr);
     }
 
-    public void removeNode(String name, String ipAddr){
+    public void removeNode(String name){
         int hash = getHash(name);
         nodeMap.remove(hash);
     }

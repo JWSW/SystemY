@@ -10,15 +10,36 @@ public class Node {
     private int port;
     private int successorId;
     private int predecessorId;
+    private String file1 = "file1.txt";
+    private String fileTwo = "file2.txt";
     private Map<String, String> files;
 
-    public Node(int nodeId, String ipAddress, int port) {
+    public Node(int nodeId, String ipAddress, int port) throws IOException {
         this.nodeId = nodeId;
         this.ipAddress = ipAddress;
         this.port = port;
         this.successorId = nodeId;
         this.predecessorId = nodeId;
         this.files = new HashMap<>();
+        try {
+            File file = new File(file1);
+            // if file doesnt exists, then create it
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            File file2 = new File(fileTwo);
+            // if file doesnt exists, then create it
+            if (!file2.exists()) {
+                file2.createNewFile();
+            }
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public int getNodeId() {
