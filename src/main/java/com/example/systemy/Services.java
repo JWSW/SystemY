@@ -28,9 +28,9 @@ public class Services {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.writeValue(new File(NODE_MAP_FILE_PATH), nodeMap);
     }
-    public void addNode(String name, String ipAddr){
-        int hash = getHash(name);
-        nodeMap.put(hash, ipAddr);
+    public void addNode(Node node){
+        int hash = getHash(node.getNodeName());
+        nodeMap.put(hash, node.getIpAddress());
     }
 
     public void removeNode(String name){

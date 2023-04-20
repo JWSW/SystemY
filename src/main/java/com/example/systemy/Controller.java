@@ -9,9 +9,9 @@ public class Controller {
     @Autowired
     private Services services;
 
-    @PostMapping("/{nodeName}/{ipAddr}/addNode")
-    public void addMoney(@PathVariable String nodeName, @PathVariable String ipAddr) {
-        services.addNode(nodeName, ipAddr);
+    @PostMapping("/addNode")
+    public void addMoney(@RequestBody Node node) {
+        services.addNode(node);
     }
 
     @PostMapping("/{nodeName}/removeNode")

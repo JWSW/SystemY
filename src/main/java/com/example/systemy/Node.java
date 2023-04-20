@@ -5,21 +5,19 @@ import java.net.*;
 import java.util.*;
 
 public class Node {
-    private int nodeId;
+    private String nodeName;
     private String ipAddress;
-    private int port;
     private int successorId;
     private int predecessorId;
     private String file1 = "file1.txt";
     private String fileTwo = "file2.txt";
     private Map<String, String> files;
 
-    public Node(int nodeId, String ipAddress, int port) throws IOException {
-        this.nodeId = nodeId;
+    public Node(String nodeName, String ipAddress) throws IOException {
+        this.nodeName = nodeName;
         this.ipAddress = ipAddress;
-        this.port = port;
-        this.successorId = nodeId;
-        this.predecessorId = nodeId;
+        this.successorId = 5;
+        this.predecessorId = 5;
         this.files = new HashMap<>();
         try {
             File file = new File(file1);
@@ -42,8 +40,8 @@ public class Node {
 
     }
 
-    public int getNodeId() {
-        return nodeId;
+    public String getNodeName() {
+        return nodeName;
     }
 
     public String getIpAddress() {
