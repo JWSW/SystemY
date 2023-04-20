@@ -38,9 +38,9 @@ public class NamingServer {
         objectMapper.writeValue(new File(NODE_MAP_FILE_PATH), nodeMap);
     }
 
-    public static void main(String[] args) {
-        SpringApplication.run(NamingServer.class, args);
-    }
+//    public static void main(String[] args) {
+//        SpringApplication.run(NamingServer.class, args);
+//    }
 
     @RestController
     public class NamingServerController {

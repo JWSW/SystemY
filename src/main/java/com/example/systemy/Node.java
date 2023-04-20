@@ -92,9 +92,9 @@ public class Node {
                 '}';
     }
 
-    public static void main(String[] args) throws IOException {
-        String baseUrl = "http://localhost:8080/requestName";
-        Node node = new Node(InetAddress.getLocalHost().getHostName(),InetAddress.getLocalHost().getHostAddress());
-        System.out.println(node);
-    }
+//    public static void main(String[] args) throws IOException {
+//        String baseUrl = "http://localhost:8080/requestName";
+//        Node node = new Node(InetAddress.getLocalHost().getHostName(),InetAddress.getLocalHost().getHostAddress());
+//        System.out.println(node);
+//    }
 }
