@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-@SpringBootApplication
+
 public class NamingServer {
     private Map<Integer, String> nodeMap = new ConcurrentHashMap<>();
     private static final String NODE_MAP_FILE_PATH = "node_map.json";
@@ -48,6 +48,8 @@ public class NamingServer {
         private static final String FILE_TO_NODE_MAP_KEY = "fileToNodeMap";
 
         @GetMapping("/getSuccessorNode/{filename}")
+
+
         public String getSuccessorNode(@PathVariable String filename) throws IOException {
             int fileHash = Math.abs(filename.hashCode());
             int minDiff = Integer.MAX_VALUE;
