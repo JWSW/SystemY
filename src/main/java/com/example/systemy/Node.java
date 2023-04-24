@@ -7,10 +7,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @Data
 @AllArgsConstructor
 @Entity
+@SpringBootApplication
 public class Node {
     @Id
     private String nodeName;

@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-@SpringBootApplication
+
 public class NamingServer {
     private Map<Integer, String> nodeMap = new ConcurrentHashMap<>();
     private static final String NODE_MAP_FILE_PATH = "node_map.json";
