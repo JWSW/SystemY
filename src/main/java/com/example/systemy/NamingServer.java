@@ -48,6 +48,8 @@ public class NamingServer {
         private static final String FILE_TO_NODE_MAP_KEY = "fileToNodeMap";
 
         @GetMapping("/getSuccessorNode/{filename}")
+
+
         public String getSuccessorNode(@PathVariable String filename) throws IOException {
             int fileHash = Math.abs(filename.hashCode());
             int minDiff = Integer.MAX_VALUE;

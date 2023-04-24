@@ -72,17 +72,11 @@ public class Node {
         this.predecessorId = predecessorId;
     }
 
-//    public void addFile(String fileName, String owner) {
-//        files.put(fileName, owner);
-//    }
 
     public String getFileOwner(String fileName) {
         return fileName;
     }
 
-//    public void removeFile(String fileName) {
-//        files.remove(fileName);
-//    }
 
     @Override
     public String toString() {
@@ -92,9 +86,5 @@ public class Node {
                 '}';
     }
 
-//    public static void main(String[] args) throws IOException {
-//        String baseUrl = "http://localhost:8080/requestName";
-//        Node node = new Node(InetAddress.getLocalHost().getHostName(),InetAddress.getLocalHost().getHostAddress());
-//        System.out.println(node);
-//    }
+
 }
