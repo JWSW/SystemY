@@ -83,7 +83,8 @@ public class Services {
             if(nodeHash> grootste){
                 grootste = nodeHash;
                 System.out.println("Nieuwe grootste: " + grootste);
-            }else if(fileHash>kleinste){
+            }
+            if(fileHash>kleinste){
                 if(fileHash<grootste) {
                     Hoogste = false;
                     if (fileHash > nodeHash) {
@@ -104,7 +105,9 @@ public class Services {
                 Hoogste = true;
             }
         }
+        System.out.println(Hoogste);
         if(Hoogste){
+            System.out.println(grootste);
             nodeData.put(grootste,nodeMap.get(grootste));
         }else{
             nodeData.put(kleinerDanFile,nodeMap.get(kleinerDanFile));
