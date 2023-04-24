@@ -48,7 +48,8 @@ public class Node {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        String message = InetAddress.getLocalHost().getHostName() + " " + InetAddress.getLocalHost().getHostAddress();
+        multicast(message);
     }
 
     public String getNodeName() {
@@ -85,13 +86,12 @@ public class Node {
             NetworkInterface iface = NetworkInterface.getByName("eth0");
 
             MultiSocket.bind(new InetSocketAddress(4446));
-            MultiSocket.joinGroup(new InetSocketAddress(group, 4446), iface);
+            MultiSocket.joinGroup(groupAddress, iface);
 
             while (true) {
                 DatagramPacket packet = new DatagramPacket(buf, buf.length);
                 MultiSocket.receive(packet);
-                String received = new String(
-                        packet.getData(), 0, packet.getLength());
+                String received = new String(packet.getData(), 0, packet.getLength());
                 if ("end".equals(received)) {
                     break;
                 }
@@ -101,6 +101,18 @@ public class Node {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void multicast(String multicastMessage) throws IOException {
+        DatagramSocket socket;
+        InetAddress group;
+        socket = new DatagramSocket();
+        group = InetAddress.getByName("230.0.0.0");
+        buf = multicastMessage.getBytes();
+
+        DatagramPacket packet = new DatagramPacket(buf, buf.length, group, 4446);
+        socket.send(packet);
+        socket.close();
     }
 
 //    public void addFile(String fileName, String owner) {
