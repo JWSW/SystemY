@@ -1,10 +1,9 @@
 package com.example.systemy;
 
 import java.io.*;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
+import java.net.*;
 
+import jakarta.persistence.Basic;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import jakarta.persistence.Entity;
@@ -22,6 +21,7 @@ public class Node {
     private static DatagramSocket socket = null;
     private String file1 = "file1.txt";
     private String fileTwo = "file2.txt";
+    protected byte[] buf = new byte[256];
 //    private Map<String, String> files;
 
     public Node() {
@@ -75,17 +75,32 @@ public class Node {
         this.PreviousID = predecessorId;
     }
 
-    public static void broadcast(
-            String broadcastMessage, InetAddress address) throws IOException {
-        socket = new DatagramSocket();
-        socket.setBroadcast(true);
+    public void run() throws IOException {
+        try {
+            MulticastSocket MultiSocket = null;
+            InetAddress group = InetAddress.getByName("230.0.0.0");
+            InetSocketAddress groupAddress = new InetSocketAddress(group, 4446);
+            MultiSocket.setReuseAddress(true);
 
-        byte[] buffer = broadcastMessage.getBytes();
+            NetworkInterface iface = NetworkInterface.getByName("eth0");
 
-        DatagramPacket packet
-                = new DatagramPacket(buffer, buffer.length, address, 4445);
-        socket.send(packet);
-        socket.close();
+            MultiSocket.bind(new InetSocketAddress(4446));
+            MultiSocket.joinGroup(new InetSocketAddress(group, 4446), iface);
+
+            while (true) {
+                DatagramPacket packet = new DatagramPacket(buf, buf.length);
+                MultiSocket.receive(packet);
+                String received = new String(
+                        packet.getData(), 0, packet.getLength());
+                if ("end".equals(received)) {
+                    break;
+                }
+            }
+            MultiSocket.leaveGroup(groupAddress, iface);
+            MultiSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 //    public void addFile(String fileName, String owner) {
