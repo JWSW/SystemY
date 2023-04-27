@@ -113,22 +113,40 @@ public class Node {
                 '}';
     }
 
-    public void handlePacket(String packet) {
+    public void handlePacket(String packet) throws IOException {
         String[] parts = packet.split(","); // split the string at the space character
         String hostname = parts[0];
         String ipAddress = parts[1];
+        String response;
+        int port = 4555;
         int hash = getHash(hostname);
         if (currentID < hash && hash < nextID) {
             nextID = hash;
+            response = currentID + "," + nextID;
+            unicast(response, ipAddress, port);
         } else if (previousID < hash && hash < currentID) {
-            previousID  = hash;
-
+            previousID = hash;
+            response = currentID + "," + previousID;
+            unicast(response, ipAddress, port);
         }
 
 
     }
 
-    public int getHash(String name){
+    public void unicast(String unicastMessage, String ipAddress, int port) throws IOException {
+        DatagramSocket socket;
+        InetAddress address;
+        socket = new DatagramSocket();
+        address = InetAddress.getByName(ipAddress);
+        buf = unicastMessage.getBytes();
+
+        DatagramPacket packet = new DatagramPacket(buf, buf.length, address, port);
+        socket.send(packet);
+        socket.close();
+    }
+
+
+    public int getHash(String name) {
         int max = Integer.MAX_VALUE;
         int min = Integer.MIN_VALUE + 1; // add 1 to avoid overflow when calculating the absolute value
 
@@ -137,10 +155,5 @@ public class Node {
 
         return hash;
     }
-
-//    public static void main(String[] args) throws IOException {
-//        String baseUrl = "http://localhost:8080/requestName";
-//        Node node = new Node(InetAddress.getLocalHost().getHostName(),InetAddress.getLocalHost().getHostAddress());
-//        System.out.println(node);
-//    }
 }
+

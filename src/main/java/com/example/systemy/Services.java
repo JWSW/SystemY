@@ -126,7 +126,7 @@ public class Services implements MulticastObserver{
     }
 
     @Override
-    public void onMessageReceived(String message) {
+    public void onMessageReceived(String message) throws IOException {
         packet = message;
         node.handlePacket(packet);
     }
