@@ -5,7 +5,14 @@ import java.net.*;
 
 @Component
 public class MulticastReceive extends Thread {
+    private String message = "";
+    private boolean hasReceived = false;
     private MulticastObserver observer;
+
+    public String getMessage(){
+        return message;
+    }
+
 
     public void setObserver(MulticastObserver observer) {
         this.observer = observer;
@@ -18,7 +25,7 @@ public class MulticastReceive extends Thread {
             InetAddress group = InetAddress.getByName("230.0.0.0");
             NetworkInterface iface = NetworkInterface.getByName("eth0");
 
-            MultiSocket.bind(new InetSocketAddress(4446));
+            //MultiSocket.bind(new InetSocketAddress(4446));
             InetSocketAddress groupAddress = new InetSocketAddress(group, 4446);
             MultiSocket.setReuseAddress(true);
             MultiSocket.joinGroup(groupAddress,iface);
