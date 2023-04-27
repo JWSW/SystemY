@@ -30,7 +30,7 @@ public class Services implements MulticastObserver{
     @PostConstruct
     public void init() throws IOException {
         multicastReceive.setObserver(this);
-        multicastReceive.start();
+        multicastReceive.start(); //Hier zit een fout, geen idee wat. Bij clientApp werkt dit prima
         File file = new File(NODE_MAP_FILE_PATH);
         if (file.exists()) {
             ObjectMapper objectMapper = new ObjectMapper();
