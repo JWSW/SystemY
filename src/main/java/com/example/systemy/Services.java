@@ -16,7 +16,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
-public class Services {
+public class Services implements MulticastObserver{
     private Map<Integer, String> nodeMap = new ConcurrentHashMap<>();
     private static final String NODE_MAP_FILE_PATH = "node_map.json";
     @Autowired
@@ -24,6 +24,7 @@ public class Services {
 
     @PostConstruct
     public void init() throws IOException {
+        multicastReceive.setObserver(this);
         multicastReceive.start();
         File file = new File(NODE_MAP_FILE_PATH);
         if (file.exists()) {
@@ -117,5 +118,9 @@ public class Services {
             nodeData.put(kleinerDanFile,nodeMap.get(kleinerDanFile));
         }
         return nodeData;
+    }
+    @Override
+    public void onMessageReceived(String message) {
+        String packet = message;
     }
 }
