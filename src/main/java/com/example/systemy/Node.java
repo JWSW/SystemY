@@ -15,6 +15,7 @@ public class Node {
 
     private String nodeName;
     private String ipAddress;
+    private int uniPort = 4555;
     private int currentID;
     private int nextID = 39999;
     private int previousID = 0;
@@ -22,6 +23,7 @@ public class Node {
     private String file1 = "file1.txt";
     private String fileTwo = "file2.txt";
     protected byte[] buf = new byte[256];
+    private UnicastReceiver unicastReceiver = new UnicastReceiver(uniPort);
 
 //    private Map<String, String> files;
 
@@ -32,6 +34,8 @@ public class Node {
         this.nodeName = nodeName;
         this.ipAddress = ipAddress;
         currentID = getHash(nodeName);
+        Thread receiverThread = new Thread(unicastReceiver);
+        receiverThread.start();
         try {
             File file = new File(file1);
             // if file doesnt exists, then create it
@@ -154,6 +158,44 @@ public class Node {
         hash = Math.abs(hash) % 32768; // map the result to the range (0, 32768)
 
         return hash;
+    }
+
+    private class UnicastReceiver implements Runnable {
+        private DatagramSocket socket;
+        private int port;
+
+        public UnicastReceiver(int port) {
+            this.port = port;
+        }
+
+        @Override
+        public void run() {
+            try {
+                // Create a new DatagramSocket bound to the specified port
+                socket = new DatagramSocket(port);
+
+                // Create a buffer to store the incoming message
+                byte[] buffer = new byte[1024];
+                DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+
+                // Receive a unicast message
+                socket.receive(packet);
+
+                // Print the received message
+                String receivedMessage = new String(packet.getData(), 0, packet.getLength());
+                System.out.println("Received message: " + receivedMessage);
+
+                // Do something with the received message here
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                // Close the socket when done
+                if (socket != null) {
+                    socket.close();
+                }
+            }
+        }
     }
 }
 
