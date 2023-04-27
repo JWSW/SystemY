@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 @SpringBootApplication
 public class ClientApplication {
@@ -22,6 +21,5 @@ public class ClientApplication {
     @PostConstruct
     public void startMulticastReceiver() throws IOException {
         Node node = new Node(InetAddress.getLocalHost().getHostName(), InetAddress.getLocalHost().getHostAddress());
-        multicastReceive.start();
     }
 }

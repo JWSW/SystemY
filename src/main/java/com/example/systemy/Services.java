@@ -4,10 +4,12 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,12 +17,20 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
-public class Services {
+public class Services implements MulticastObserver{
     private Map<Integer, String> nodeMap = new ConcurrentHashMap<>();
     private static final String NODE_MAP_FILE_PATH = "node_map.json";
+    private Node node;
+    private String packet;
+    @Autowired
+    MulticastReceive multicastReceive;
 
     @PostConstruct
     public void init() throws IOException {
+        node = new Node(InetAddress.getLocalHost().getHostName(), InetAddress.getLocalHost().getHostAddress());
+        multicastReceive.setObserver(this);
+        multicastReceive.start();
+
         File file = new File(NODE_MAP_FILE_PATH);
         if (file.exists()) {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -114,4 +124,12 @@ public class Services {
         }
         return nodeData;
     }
+
+    @Override
+    public void onMessageReceived(String message) {
+        packet = message;
+        node.handlePacket(packet);
+    }
+
+
 }
