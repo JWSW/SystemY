@@ -5,6 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 @SpringBootApplication
 public class ClientApplication {
 
@@ -16,7 +20,8 @@ public class ClientApplication {
     }
 
     @PostConstruct
-    public void startMulticastReceiver() {
+    public void startMulticastReceiver() throws IOException {
+        Node node = new Node(InetAddress.getLocalHost().getHostName(), InetAddress.getLocalHost().getHostAddress());
         multicastReceive.start();
     }
 }

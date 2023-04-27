@@ -5,6 +5,11 @@ import java.net.*;
 
 @Component
 public class MulticastReceive extends Thread {
+    private String message = "";
+
+    public String getMessage(){
+        return message;
+    }
 
     @Override
     public void run() {
@@ -25,6 +30,7 @@ public class MulticastReceive extends Thread {
 
                 String received = new String(packet.getData(), 0, packet.getLength());
                 System.out.println("Received message: " + received);
+                message = received;
 
                 if ("end".equals(received)) {
                     break;
