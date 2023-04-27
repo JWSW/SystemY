@@ -81,6 +81,7 @@ public class Node {
         this.PreviousID = predecessorId;
     }
 
+<<<<<<< HEAD
 //    public void run() throws IOException {
 //        try {
 //            MulticastSocket MultiSocket = null;
@@ -107,6 +108,9 @@ public class Node {
 //            e.printStackTrace();
 //        }
 //    }
+=======
+
+>>>>>>> fad631870f1bd769a0fc70a79b6c212c0e6bd547
 
     public void multicast(String multicastMessage) throws IOException {
         DatagramSocket socket;
