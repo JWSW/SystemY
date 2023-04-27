@@ -13,6 +13,7 @@ import java.net.InetAddress;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +26,7 @@ public class Services implements MulticastObserver{
     private static final String NODE_MAP_FILE_PATH = "node_map.json";
     private Node node;
     private String packet;
-    private String baseURL = "http://localhost:8080/requestName";
+    private String baseURL = "http://172.27.0.4:8080/requestName";
     ObjectMapper objectMapper = new ObjectMapper(); // or any other JSON serializer
 
     @Autowired
@@ -43,6 +44,12 @@ public class Services implements MulticastObserver{
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .build();
+        try{
+            HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println("Response: " + response.body());
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
         multicastReceive.setObserver(this);
         multicastReceive.start();
 
