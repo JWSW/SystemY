@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,12 +25,18 @@ public class Services implements MulticastObserver{
     private static final String NODE_MAP_FILE_PATH = "node_map.json";
     private Node node;
     private String packet;
+    private String baseURL = "http://localhost:8080/requestMapping";
     @Autowired
     MulticastReceive multicastReceive;
     //UnicastReceiver unicastReceiver;
 
     @PostConstruct
     public void init() throws IOException {
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(baseURL))
+                .POST(HttpRequest.BodyPublishers.noBody())
+                .build();
         node = new Node(InetAddress.getLocalHost().getHostName(), InetAddress.getLocalHost().getHostAddress());
         multicastReceive.setObserver(this);
         multicastReceive.start();
