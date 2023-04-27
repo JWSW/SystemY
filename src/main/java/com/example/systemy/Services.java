@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Services implements MulticastObserver{
     private Map<Integer, String> nodeMap = new ConcurrentHashMap<>();
     private static final String NODE_MAP_FILE_PATH = "node_map.json";
+    protected byte[] buf = new byte[256];
     @Autowired
     MulticastReceive multicastReceive;
 
@@ -119,6 +123,19 @@ public class Services implements MulticastObserver{
         }
         return nodeData;
     }
+
+    public void unicast(String unicastMessage, String ipAddress, int port) throws IOException {
+        DatagramSocket socket;
+        InetAddress address;
+        socket = new DatagramSocket();
+        address = InetAddress.getByName(ipAddress);
+        buf = unicastMessage.getBytes();
+
+        DatagramPacket packet = new DatagramPacket(buf, buf.length, address, port);
+        socket.send(packet);
+        socket.close();
+    }
+
     @Override
     public void onMessageReceived(String message) {
         String packet = message;
