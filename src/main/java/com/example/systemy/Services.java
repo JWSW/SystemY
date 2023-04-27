@@ -23,6 +23,7 @@ public class Services implements MulticastObserver{
     private Map<Integer, String> nodeMap = new ConcurrentHashMap<>();
     private static final String NODE_MAP_FILE_PATH = "node_map.json";
     protected byte[] buf = new byte[256];
+
     @Autowired
     MulticastReceive multicastReceive;
 
