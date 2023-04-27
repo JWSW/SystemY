@@ -24,7 +24,7 @@ public class Services implements MulticastObserver{
     private String packet;
     @Autowired
     MulticastReceive multicastReceive;
-    UnicastReceiver unicastReceiver;
+    //UnicastReceiver unicastReceiver;
 
     @PostConstruct
     public void init() throws IOException {

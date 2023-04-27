@@ -10,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Data
 @AllArgsConstructor
 public class Node {
-    @Autowired
-    private MulticastReceive multicastReceive;
 
     private String nodeName;
     private String ipAddress;
@@ -31,6 +29,8 @@ public class Node {
     }
 
     public Node(String nodeName, String ipAddress) throws IOException {
+        uniPort = 55525;
+        System.out.println(uniPort);
         this.nodeName = nodeName;
         this.ipAddress = ipAddress;
         currentID = getHash(nodeName);
@@ -160,6 +160,20 @@ public class Node {
         return hash;
     }
 
+    private static int findFreePort() {
+        int port = 0;
+        // For ServerSocket port number 0 means that the port number is automatically allocated.
+        try (ServerSocket socket = new ServerSocket(0)) {
+            // Disable timeout and reuse address after closing the socket.
+            socket.setReuseAddress(true);
+            port = socket.getLocalPort();
+        } catch (IOException ignored) {}
+        if (port > 0) {
+            return port;
+        }
+        throw new RuntimeException("Could not find a free port");
+    }
+
     private class UnicastReceiver implements Runnable {
         private DatagramSocket socket;
         private int port;
@@ -168,11 +182,17 @@ public class Node {
             this.port = port;
         }
 
+
         @Override
         public void run() {
             try {
                 // Create a new DatagramSocket bound to the specified port
-                socket = new DatagramSocket(port);
+                try {
+                    socket = new DatagramSocket(uniPort);
+                } catch (BindException e) {
+                    System.err.println("Port " + uniPort + " is already in use");
+                    // Handle the exception gracefully here
+                }
 
                 // Create a buffer to store the incoming message
                 byte[] buffer = new byte[1024];

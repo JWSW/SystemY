@@ -17,9 +17,4 @@ public class ClientApplication {
     public static void main(String[] args) {
         SpringApplication.run(ClientApplication.class, args);
     }
-
-    @PostConstruct
-    public void startMulticastReceiver() throws IOException {
-        Node node = new Node(InetAddress.getLocalHost().getHostName(), InetAddress.getLocalHost().getHostAddress());
-    }
 }
