@@ -12,12 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @Data
 @AllArgsConstructor
-@Entity
 public class Node {
     @Autowired
     private MulticastReceive multicastReceive;
 
-    @Id
     private String nodeName;
     private String ipAddress;
     private int NextID;
