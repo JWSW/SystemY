@@ -6,13 +6,13 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ClientApplication {
+public class NamingServerApplication {
 
     @Autowired
     private MulticastReceive multicastReceive;
 
     public static void main(String[] args) {
-        SpringApplication.run(ClientApplication.class, args);
+        SpringApplication.run(NamingServerApplication.class, args);
     }
 
     @PostConstruct
