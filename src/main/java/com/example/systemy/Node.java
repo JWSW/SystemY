@@ -11,9 +11,7 @@ import jakarta.persistence.Id;
 
 @Data
 @AllArgsConstructor
-@Entity
 public class Node {
-    @Id
     private String nodeName;
     private String ipAddress;
     private int NextID;
