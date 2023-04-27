@@ -137,7 +137,12 @@ public class Services implements MulticastObserver{
     }
 
     @Override
-    public void onMessageReceived(String message) {
-        String packet = message;
+    public void onMessageReceived(String message) throws IOException {
+        String[] parts = message.split(","); // split the string at the space character
+        String hostname = parts[0];
+        String ipAddress = parts[1];
+        Node node = new Node(hostname,ipAddress);
+        addNode(node);
+        unicast(String.valueOf(nodeMap.size()), ipAddress, 4555);
     }
 }
