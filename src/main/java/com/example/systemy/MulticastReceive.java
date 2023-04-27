@@ -21,12 +21,12 @@ public class MulticastReceive extends Thread {
     @Override
     public void run() {
         try {
-            MulticastSocket MultiSocket = new MulticastSocket(4446);
+            MulticastSocket MultiSocket = new MulticastSocket(44445);
             InetAddress group = InetAddress.getByName("230.0.0.0");
             NetworkInterface iface = NetworkInterface.getByName("eth0");
 
             //MultiSocket.bind(new InetSocketAddress(4446));
-            InetSocketAddress groupAddress = new InetSocketAddress(group, 4446);
+            InetSocketAddress groupAddress = new InetSocketAddress(group, 44445);
             MultiSocket.setReuseAddress(true);
             MultiSocket.joinGroup(groupAddress,iface);
 
