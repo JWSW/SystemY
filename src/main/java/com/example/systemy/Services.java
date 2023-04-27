@@ -25,19 +25,24 @@ public class Services implements MulticastObserver{
     private static final String NODE_MAP_FILE_PATH = "node_map.json";
     private Node node;
     private String packet;
-    private String baseURL = "http://localhost:8080/requestMapping";
+    private String baseURL = "http://localhost:8080/requestName";
+    ObjectMapper objectMapper = new ObjectMapper(); // or any other JSON serializer
+
     @Autowired
     MulticastReceive multicastReceive;
     //UnicastReceiver unicastReceiver;
 
     @PostConstruct
     public void init() throws IOException {
+        node = new Node(InetAddress.getLocalHost().getHostName(), InetAddress.getLocalHost().getHostAddress());
+        String json = objectMapper.writeValueAsString(node);
+        System.out.println(json);
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(baseURL))
-                .POST(HttpRequest.BodyPublishers.noBody())
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(json))
                 .build();
-        node = new Node(InetAddress.getLocalHost().getHostName(), InetAddress.getLocalHost().getHostAddress());
         multicastReceive.setObserver(this);
         multicastReceive.start();
 
@@ -51,6 +56,7 @@ public class Services implements MulticastObserver{
 
     @PreDestroy
     public void destroy() throws IOException {
+        node.killProcess();
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.writeValue(new File(NODE_MAP_FILE_PATH), nodeMap);
     }

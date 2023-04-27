@@ -13,7 +13,7 @@ public class Node {
 
     private String nodeName;
     private String ipAddress;
-    private int uniPort = 4555;
+    private int uniPort = 55525;
     private int currentID;
     private int nextID = 39999;
     private int previousID = 0;
@@ -29,8 +29,6 @@ public class Node {
     }
 
     public Node(String nodeName, String ipAddress) throws IOException {
-        uniPort = 55525;
-        System.out.println(uniPort);
         this.nodeName = nodeName;
         this.ipAddress = ipAddress;
         currentID = getHash(nodeName);
@@ -174,25 +172,35 @@ public class Node {
         throw new RuntimeException("Could not find a free port");
     }
 
+    public void killProcess(){
+        try {
+            // Try to create a server socket on the specified port
+            ServerSocket serverSocket = new ServerSocket(uniPort, 0, InetAddress.getByName("localhost"));
+            serverSocket.close(); // Close the socket to free the port
+            System.out.println("Process on port " + uniPort + " has been killed.");
+        } catch (IOException e) {
+            // An exception is thrown if the port is already in use
+            System.err.println("Unable to kill process on port " + uniPort + ": " + e.getMessage());
+        }
+    }
+
     private class UnicastReceiver implements Runnable {
         private DatagramSocket socket;
         private int port;
 
         public UnicastReceiver(int port) {
             this.port = port;
+            try {
+                socket = new DatagramSocket(uniPort);
+            } catch (SocketException e) {
+                System.err.println("Port " + uniPort + " is already in use");
+            }
         }
 
 
         @Override
         public void run() {
             try {
-                // Create a new DatagramSocket bound to the specified port
-                try {
-                    socket = new DatagramSocket(uniPort);
-                } catch (BindException e) {
-                    System.err.println("Port " + uniPort + " is already in use");
-                    // Handle the exception gracefully here
-                }
 
                 // Create a buffer to store the incoming message
                 byte[] buffer = new byte[1024];
@@ -200,6 +208,7 @@ public class Node {
 
                 // Receive a unicast message
                 socket.receive(packet);
+                System.out.println("Hij komt hier");
 
                 // Print the received message
                 String receivedMessage = new String(packet.getData(), 0, packet.getLength());
