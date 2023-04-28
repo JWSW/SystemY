@@ -36,19 +36,19 @@ public class Services implements MulticastObserver{
     public void init() throws IOException {
         node = new Node(InetAddress.getLocalHost().getHostName(), InetAddress.getLocalHost().getHostAddress());
         String json = objectMapper.writeValueAsString(node);
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(baseURL + "/addNode"))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(json))//"{nodeName:" + node.getNodeName() + "ipAddress:" + node.getIpAddress() + "}"))
-                .build();
-        try{
-            System.out.println("Sending request to add node.");
-            HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.println("Response: " + response.body());
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
+//        HttpClient client = HttpClient.newHttpClient();
+//        HttpRequest request = HttpRequest.newBuilder()
+//                .uri(URI.create(baseURL + "/addNode"))
+//                .header("Content-Type", "application/json")
+//                .POST(HttpRequest.BodyPublishers.ofString(json))//"{nodeName:" + node.getNodeName() + "ipAddress:" + node.getIpAddress() + "}"))
+//                .build();
+//        try{
+//            System.out.println("Sending request to add node.");
+//            HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+//            System.out.println("Response: " + response.body());
+//        } catch (IOException | InterruptedException e) {
+//            e.printStackTrace();
+//        }
         multicastReceive.setObserver(this);
         multicastReceive.start();
 
