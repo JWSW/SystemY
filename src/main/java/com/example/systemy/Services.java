@@ -49,18 +49,26 @@ public class Services implements MulticastObserver{
         int hash = getHash(node.getNodeName());
         if(!nodeMap.containsKey(hash)) {
             nodeMap.put(hash, node.getIpAddress());
-            System.out.println(node);
+            System.out.println("Node added: " + node);
         }else{
             throw new IllegalStateException("Node exists");
         }
     }
 
     public void removeNode(String name){
-        int hash = getHash(name);
-        nodeMap.remove(hash);
+        try {
+            int hash = getHash(name);
+            nodeMap.remove(hash);
+        }catch (IllegalStateException e){
+            System.out.println("This node doesn't exist");
+        }
     }
     public void removeNodeByHash(Integer id){
-        nodeMap.remove(id);
+        try {
+            nodeMap.remove(id);
+        }catch (IllegalStateException e){
+            System.out.println("This node doesn't exist");
+        }
     }
 
     public int getHash(String name){
