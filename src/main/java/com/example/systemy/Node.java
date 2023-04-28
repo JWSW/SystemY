@@ -34,25 +34,8 @@ public class Node {
         currentID = getHash(nodeName);
         Thread receiverThread = new Thread(unicastReceiver);
         receiverThread.start();
-        try {
-            File file = new File(file1);
-            // if file doesnt exists, then create it
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            File file2 = new File(fileTwo);
-            // if file doesnt exists, then create it
-            if (!file2.exists()) {
-                file2.createNewFile();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         String message = nodeName + "," + ipAddress;
+        System.out.println("Send multicast message.");
         multicast(message);
     }
 
