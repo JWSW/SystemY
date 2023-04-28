@@ -8,15 +8,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class NamingServerApplication {
 
-    @Autowired
-    private MulticastReceive multicastReceive;
-
     public static void main(String[] args) {
         SpringApplication.run(NamingServerApplication.class, args);
     }
 
-    @PostConstruct
-    public void startMulticastReceiver() {
-        multicastReceive.start();
-    }
 }

@@ -29,7 +29,7 @@ public class MulticastReceive extends Thread {
             InetSocketAddress groupAddress = new InetSocketAddress(group, 44445);
             MultiSocket.setReuseAddress(true);
             MultiSocket.joinGroup(groupAddress,iface);
-
+            System.out.println("Run multicast thread");
             while (true) {
                 byte[] buf = new byte[256];
                 DatagramPacket packet = new DatagramPacket(buf, buf.length);

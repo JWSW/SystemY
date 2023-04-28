@@ -23,14 +23,15 @@ public class Services implements MulticastObserver{
     private Map<Integer, String> nodeMap = new ConcurrentHashMap<>();
     private static final String NODE_MAP_FILE_PATH = "node_map.json";
     protected byte[] buf = new byte[256];
+    private MulticastReceive multicastReceive = new MulticastReceive();
 
-    @Autowired
-    MulticastReceive multicastReceive;
+//    @Autowired
+//    private MulticastReceive multicastReceive;
 
     @PostConstruct
     public void init() throws IOException {
         multicastReceive.setObserver(this);
-        //multicastReceive.start(); //Hier zit een fout, geen idee wat. Bij clientApp werkt dit prima
+        multicastReceive.start(); //Hier zit een fout, geen idee wat. Bij clientApp werkt dit prima
         File file = new File(NODE_MAP_FILE_PATH);
         if (file.exists()) {
             ObjectMapper objectMapper = new ObjectMapper();
