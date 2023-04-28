@@ -198,7 +198,6 @@ public class Node implements UnicastObserver{
         private DatagramSocket socket;
 
         public UnicastReceiver(int port) {
-            this.port = port;
             try {
                 socket = new DatagramSocket(uniPort);
             } catch (SocketException e) {
