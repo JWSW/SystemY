@@ -71,7 +71,7 @@ public class Node {
         group = InetAddress.getByName("230.0.0.0");
         buf = multicastMessage.getBytes();
 
-        DatagramPacket packet = new DatagramPacket(buf, buf.length, group, 4446);
+        DatagramPacket packet = new DatagramPacket(buf, buf.length, group, 44445);
         socket.send(packet);
         socket.close();
     }
@@ -103,7 +103,7 @@ public class Node {
         String hostname = parts[0];
         String ipAddress = parts[1];
         String response;
-        int port = 4555;
+        int port = uniPort;
         int hash = getHash(hostname);
         if (currentID < hash && hash < nextID) {
             nextID = hash;
