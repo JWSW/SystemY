@@ -11,8 +11,6 @@ import java.net.InetAddress;
 @SpringBootApplication
 public class ClientApplication {
 
-    @Autowired
-    private MulticastReceive multicastReceive;
 
     public static void main(String[] args) {
         SpringApplication.run(ClientApplication.class, args);

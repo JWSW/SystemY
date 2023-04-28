@@ -11,9 +11,9 @@ public class Controller {
     private MulticastReceive multicastReceive;
     private Services services;
 
-    @PostMapping("/addNode")
-    public void addNode(@RequestBody Node node) {
-        services.addNode(node);
-        System.out.println("node "+node.getNodeName()+ " has been added");
-    }
+//    @PostMapping("/addNode")
+//    public void addNode(@RequestBody Node node) {
+//        services.addNode(node);
+//        System.out.println("node "+node.getNodeName()+ " has been added");
+//    }
 }

@@ -42,7 +42,7 @@ public class Services implements MulticastObserver{
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(baseURL + "/addNode"))
                 .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString("{nodeName:" + node.getNodeName() + "ipAddress:" + node.getIpAddress() + "}"))
+                .POST(HttpRequest.BodyPublishers.ofString(json))//"{nodeName:" + node.getNodeName() + "ipAddress:" + node.getIpAddress() + "}"))
                 .build();
         try{
             HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
