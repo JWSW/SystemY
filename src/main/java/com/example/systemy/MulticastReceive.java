@@ -36,7 +36,7 @@ public class MulticastReceive extends Thread {
                 MultiSocket.receive(packet);
 
                 String received = new String(packet.getData(), 0, packet.getLength());
-                System.out.println("Received message: " + received);
+                System.out.println("Received multicast message: " + received);
 
                 if (observer != null) {
                     observer.onMessageReceived(received);
