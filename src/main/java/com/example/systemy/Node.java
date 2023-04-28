@@ -106,12 +106,14 @@ public class Node {
         int port = uniPort;
         int hash = getHash(hostname);
         if (currentID < hash && hash < nextID) {
+            System.out.println("Registered as nextID");
             nextID = hash;
-            response = currentID + "," + nextID;
+            response = "Next" + currentID + "," + nextID;
             unicast(response, ipAddress, port);
         } else if (previousID < hash && hash < currentID) {
+            System.out.println("Registered as prevID");
             previousID = hash;
-            response = currentID + "," + previousID;
+            response = "Previous" + currentID + "," + previousID;
             unicast(response, ipAddress, port);
         }
 
