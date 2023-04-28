@@ -26,7 +26,7 @@ public class Services implements MulticastObserver{
     private static final String NODE_MAP_FILE_PATH = "node_map.json";
     private Node node;
     private String packet;
-    private String baseURL = "http://172.27.0.4:8080/requestName";
+    private String baseURL = "http://172.27.0.5:8080/requestName";
     ObjectMapper objectMapper = new ObjectMapper(); // or any other JSON serializer
 
     @Autowired
@@ -40,9 +40,9 @@ public class Services implements MulticastObserver{
         System.out.println(json);
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(baseURL))
+                .uri(URI.create(baseURL + "/addNode"))
                 .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(json))
+                .POST(HttpRequest.BodyPublishers.ofString("{nodeName:" + node.getNodeName() + "ipAddress:" + node.getIpAddress() + "}"))
                 .build();
         try{
             HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
