@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class Node {
+public class Node implements UnicastObserver{
 
     private String nodeName;
     private String ipAddress;
@@ -31,6 +31,7 @@ public class Node {
         this.nodeName = nodeName;
         this.ipAddress = ipAddress;
         currentID = getHash(nodeName);
+        unicastReceiver.setObserver(this);
         Thread receiverThread = new Thread(unicastReceiver);
         receiverThread.start();
         String message = nodeName + "," + ipAddress;
@@ -188,9 +189,13 @@ public class Node {
         }
     }
 
+    @Override
+    public void onMessageReceived(String message) throws IOException {
+        unicastHandlePacket(message);
+    }
+
     private class UnicastReceiver implements Runnable {
         private DatagramSocket socket;
-        private int port;
 
         public UnicastReceiver(int port) {
             this.port = port;
@@ -199,6 +204,12 @@ public class Node {
             } catch (SocketException e) {
                 System.err.println("Port " + uniPort + " is already in use");
             }
+        }
+
+        private UnicastObserver observer;
+
+        public void setObserver(UnicastObserver observer) {
+            this.observer = observer;
         }
 
 
@@ -216,9 +227,12 @@ public class Node {
 
                 // Print the received message
                 String receivedMessage = new String(packet.getData(), 0, packet.getLength());
-                System.out.println("Received message: " + receivedMessage);
+                System.out.println("Received unicast message: " + receivedMessage);
 
-                // Do something with the received message here
+                //Notify the observer
+                if (observer != null) {
+                    observer.onMessageReceived(receivedMessage);
+                }
 
             } catch (IOException e) {
                 e.printStackTrace();

@@ -12,8 +12,6 @@ public class MulticastReceive extends Thread {
         return message;
     }
 
-
-
         private MulticastObserver observer;
 
         public void setObserver(MulticastObserver observer) {
