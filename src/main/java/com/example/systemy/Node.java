@@ -2,10 +2,10 @@ package com.example.systemy;
 
 import java.io.*;
 import java.net.*;
+import java.util.Objects;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Data
 @AllArgsConstructor
@@ -23,7 +23,6 @@ public class Node {
     protected byte[] buf = new byte[256];
     private UnicastReceiver unicastReceiver = new UnicastReceiver(uniPort);
 
-//    private Map<String, String> files;
 
     public Node() {
     }
@@ -98,7 +97,7 @@ public class Node {
                 '}';
     }
 
-    public void handlePacket(String packet) throws IOException {
+    public void multicastHandlePacket(String packet) throws IOException {
         String[] parts = packet.split(","); // split the string at the space character
         String hostname = parts[0];
         String ipAddress = parts[1];
@@ -108,16 +107,36 @@ public class Node {
         if (currentID < hash && hash < nextID) {
             System.out.println("Registered as nextID");
             nextID = hash;
-            response = "Next" + currentID + "," + nextID;
+            response = "Next," + currentID + "," + nextID;
             unicast(response, ipAddress, port);
         } else if (previousID < hash && hash < currentID) {
             System.out.println("Registered as prevID");
             previousID = hash;
-            response = "Previous" + currentID + "," + previousID;
+            response = "Previous," + currentID + "," + previousID;
             unicast(response, ipAddress, port);
         }
 
 
+    }
+
+    public void unicastHandlePacket(String packet) throws IOException {
+        String[] parts = packet.split(","); // split the string at the space character
+        String position = parts[0];
+        String otherNodeID = parts[1];
+        String myID = parts[2];
+        String response;
+        if(Objects.equals(position, "Next")){
+            previousID = Integer.parseInt(otherNodeID);
+            System.out.println("Set as previousID.");
+        }else if(Objects.equals(position,"Previous")){
+            nextID = Integer.parseInt(otherNodeID);
+            System.out.println("Set as nextID.");
+        }else{
+            if(Integer.parseInt(position)<2){
+                nextID = currentID;
+                previousID = currentID;
+            }
+        }
     }
 
     public void unicast(String unicastMessage, String ipAddress, int port) throws IOException {

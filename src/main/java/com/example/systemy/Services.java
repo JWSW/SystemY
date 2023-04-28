@@ -15,7 +15,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -151,7 +150,7 @@ public class Services implements MulticastObserver{
     @Override
     public void onMessageReceived(String message) throws IOException {
         packet = message;
-        node.handlePacket(packet);
+        node.multicastHandlePacket(packet);
     }
 
 
