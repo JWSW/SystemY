@@ -152,7 +152,11 @@ public class Services implements MulticastObserver{
         String hostname = parts[0];
         String ipAddress = parts[1];
         Node node = new Node(hostname,ipAddress);
-        addNode(node);
-        unicast(String.valueOf(nodeMap.size()), ipAddress, 4555);
+        if(!nodeMap.containsKey(getHash(node.getNodeName()))) {
+            addNode(node);
+        }else{
+            System.out.println("Node is already added");
+        }
+        unicast(String.valueOf(nodeMap.size()), ipAddress, 55525);
     }
 }
