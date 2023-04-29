@@ -159,13 +159,13 @@ public class Node implements UnicastObserver{
         int port = uniPort;
         int hash = getHash(hostname);
         System.out.println("Processing multicast packet: " + hash + ", " + ipAddress);
-        if (currentID < hash && hash < nextID) {
+        if (currentID < hash && hash <= nextID) {
             System.out.println("Registered as nextID");
             nextID = hash;
             response = "Next," + currentID + "," + ipAddress + "," + nextID;
             unicast(response, ipAddress, port);
-        } else if (previousID < hash && hash < currentID) {
-            System.out.println("Registered as prevID");
+        } else if (previousID <= hash && hash < currentID) {
+            System.out.println("Registered as previousID");
             previousID = hash;
             response = "Previous," + currentID + "," + ipAddress + "," + previousID;
             unicast(response, ipAddress, port);
