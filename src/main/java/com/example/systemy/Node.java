@@ -62,6 +62,7 @@ public class Node implements UnicastObserver{
         currentID = getHash(nodeName);
         unicastReceiver.setObserver(this);
         countdownTimerPrevious.start();
+        countdownTimerNext.start();
         Thread receiverThread = new Thread(unicastReceiver);
         receiverThread.start();
         String message = nodeName + "," + ipAddress;
