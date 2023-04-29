@@ -225,22 +225,28 @@ public class Node implements UnicastObserver{
         @Override
         public void run() {
             try {
+                while (true) {
+                    // Create a buffer to store the incoming message
+                    byte[] buffer = new byte[1024];
+                    DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 
-                // Create a buffer to store the incoming message
-                byte[] buffer = new byte[1024];
-                DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 
-                // Receive a unicast message
-                socket.receive(packet);
-                System.out.println("Hij komt hier");
+                    // Receive a unicast message
+                    socket.receive(packet);
+                    System.out.println("Hij komt hier");
 
-                // Print the received message
-                String receivedMessage = new String(packet.getData(), 0, packet.getLength());
-                System.out.println("Received unicast message: " + receivedMessage);
+                    // Print the received message
+                    String receivedMessage = new String(packet.getData(), 0, packet.getLength());
+                    System.out.println("Received unicast message: " + receivedMessage);
 
-                //Notify the observer
-                if (observer != null) {
-                    observer.onMessageReceived(receivedMessage);
+                    //Notify the observer
+                    if (observer != null) {
+                        observer.onMessageReceived(receivedMessage);
+                    }
+
+                    if ("end".equals(receivedMessage)) {
+                        break;
+                    }
                 }
 
             } catch (IOException e) {
