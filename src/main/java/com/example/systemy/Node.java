@@ -123,11 +123,16 @@ public class Node implements UnicastObserver{
     }
 
     public void unicastHandlePacket(String packet) throws IOException {
+        String otherNodeID = "";
+        String otherNodeIP = "";
+        String myID = "";
         String[] parts = packet.split(","); // split the string at the space character
         String position = parts[0];
-        String otherNodeID = parts[1];
-        String otherNodeIP = parts[2];
-        String myID = parts[3];
+        if(parts.length>1) {
+            otherNodeID = parts[1];
+            otherNodeIP = parts[2];
+            myID = parts[3];
+        }
         String response;
         if(Objects.equals(position, "Next")){
             previousID = Integer.parseInt(otherNodeID);
