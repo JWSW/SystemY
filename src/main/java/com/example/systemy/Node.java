@@ -95,7 +95,12 @@ public class Node implements UnicastObserver{
 
     private void Nodefailure(String position) throws JsonProcessingException {
         HttpClient client = HttpClient.newHttpClient();
-        String json = objectMapper.writeValueAsString(this);
+        String json;
+        if(position.equals("Next")){
+            json = objectMapper.writeValueAsString(nextID);
+        }else{
+            json = objectMapper.writeValueAsString(previousID);
+        }
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(baseURL + "/get" + position))
                 .header("Content-Type", "application/json")
