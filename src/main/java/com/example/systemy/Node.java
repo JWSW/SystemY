@@ -2,10 +2,18 @@ package com.example.systemy;
 
 import java.io.*;
 import java.net.*;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+
 
 @Data
 @AllArgsConstructor
@@ -14,6 +22,7 @@ public class Node implements UnicastObserver{
     private String nodeName;
     private String ipAddress;
     private int uniPort = 55525;
+    private int heartbeatPort = 55520;
     private int currentID;
     private int nextID = 39999;
     private String nextIP = "";
@@ -24,6 +33,24 @@ public class Node implements UnicastObserver{
     private String fileTwo = "file2.txt";
     protected byte[] buf = new byte[256];
     private UnicastReceiver unicastReceiver = new UnicastReceiver(uniPort);
+    private UnicastReceiver unicastHeartbeat = new UnicastReceiver(heartbeatPort);
+    private HeartbeatSender heartbeatSender = new HeartbeatSender(previousIP,nextIP, heartbeatPort, currentID);
+    private String baseURL = "http://172.27.0.5:8080/requestName";
+    ObjectMapper objectMapper = new ObjectMapper(); // or any other JSON serializer
+
+
+
+    TimerCallback callback = new TimerCallback() {
+        @Override
+        public void onTimerFinished(String position) throws JsonProcessingException {
+            System.out.println(position + " node dead.");
+            Nodefailure(position);
+        }
+    };
+
+    CountdownTimer countdownTimerPrevious = new CountdownTimer(25, callback, "Previous");
+    CountdownTimer countdownTimerNext = new CountdownTimer(25, callback, "Next");
+
 
 
     public Node() {
@@ -34,6 +61,7 @@ public class Node implements UnicastObserver{
         this.ipAddress = ipAddress;
         currentID = getHash(nodeName);
         unicastReceiver.setObserver(this);
+        countdownTimerPrevious.start();
         Thread receiverThread = new Thread(unicastReceiver);
         receiverThread.start();
         String message = nodeName + "," + ipAddress;
@@ -65,6 +93,22 @@ public class Node implements UnicastObserver{
         this.previousID = predecessorId;
     }
 
+    private void Nodefailure(String position) throws JsonProcessingException {
+        HttpClient client = HttpClient.newHttpClient();
+        String json = objectMapper.writeValueAsString(this);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(baseURL + "/get" + position))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(json))//"{nodeName:" + node.getNodeName() + "ipAddress:" + node.getIpAddress() + "}"))
+                .build();
+        try{
+            System.out.println("Sending request to add node.");
+            HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println("Response: " + response.body());
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
     public void multicast(String multicastMessage) throws IOException {
         DatagramSocket socket;
@@ -142,13 +186,19 @@ public class Node implements UnicastObserver{
             nextID = Integer.parseInt(otherNodeID);
             nextIP = otherNodeIP;
             System.out.println("Set as nextID.");
+        }else if(Integer.parseInt(position)<2){
+            nextID = currentID;
+            previousID = currentID;
         }else{
-            if(Integer.parseInt(position)<2){
-                nextID = currentID;
-                previousID = currentID;
+            if(Integer.parseInt(position)==previousID){
+                countdownTimerPrevious.reset();
+            }else if(Integer.parseInt(position)==nextID){
+                countdownTimerNext.reset();
             }
         }
     }
+
+
 
     public void unicast(String unicastMessage, String ipAddress, int port) throws IOException {
         DatagramSocket socket;
@@ -204,6 +254,54 @@ public class Node implements UnicastObserver{
         unicastHandlePacket(message);
     }
 
+
+
+    /*This function is used to see if the neighbouring nodes are still alive, with a countdown timer to take action if a
+    it takes to long for the nodes to give sign of life.
+     */
+
+
+    public class CountdownTimer {
+        private Timer timer;
+        private int seconds;
+        private TimerCallback callback;
+        private String position;
+
+        public CountdownTimer(int seconds, TimerCallback callback, String position) {
+            this.seconds = seconds;
+            this.callback = callback;
+            this.timer = new Timer();
+            this.position = position;
+        }
+
+        public void start() {
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    try {
+                        callback.onTimerFinished(position);
+                    } catch (JsonProcessingException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, seconds * 1000L);
+        }
+
+        public void reset() {
+            timer.cancel();
+            timer = new Timer();
+        }
+    }
+
+    public interface TimerCallback {
+        void onTimerFinished(String position) throws JsonProcessingException;
+    }
+
+
+
+    /*This function is used to check for incoming UDP packets. It runs continuously in search of new packets.*/
+
+
     private class UnicastReceiver implements Runnable {
         private DatagramSocket socket;
 
@@ -233,7 +331,6 @@ public class Node implements UnicastObserver{
 
                     // Receive a unicast message
                     socket.receive(packet);
-                    System.out.println("Hij komt hier");
 
                     // Print the received message
                     String receivedMessage = new String(packet.getData(), 0, packet.getLength());
