@@ -189,6 +189,7 @@ public class Services implements MulticastObserver{
         }else{
             previousParameters = kleinerDanHash + "," + nodeMap.get(kleinerDanHash);
         }
+        nodeMap.remove(hash);
         return previousParameters;
     }
 
@@ -223,6 +224,7 @@ public class Services implements MulticastObserver{
         }else{
             previousParameters = kleinerDanHash + "," + nodeMap.get(kleinerDanHash);
         }
+        nodeMap.remove(hash);
         return previousParameters;
     }
 }
