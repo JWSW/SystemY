@@ -60,6 +60,8 @@ public class Node implements UnicastObserver{
         this.nodeName = nodeName;
         this.ipAddress = ipAddress;
         currentID = getHash(nodeName);
+        nextID = currentID;
+        previousID = currentID;
         unicastReceiver.setObserver(this);
         countdownTimerPrevious.start();
         Thread receiverThread = new Thread(unicastReceiver);
