@@ -35,7 +35,7 @@ public class Services implements MulticastObserver{
     @PostConstruct
     public void init() throws IOException {
         node = new Node(InetAddress.getLocalHost().getHostName(), InetAddress.getLocalHost().getHostAddress());
-        String json = objectMapper.writeValueAsString(node);
+//        String json = objectMapper.writeValueAsString(node);
 //        HttpClient client = HttpClient.newHttpClient();
 //        HttpRequest request = HttpRequest.newBuilder()
 //                .uri(URI.create(baseURL + "/addNode"))
