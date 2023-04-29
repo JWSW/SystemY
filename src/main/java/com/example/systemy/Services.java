@@ -159,4 +159,70 @@ public class Services implements MulticastObserver{
         }
         unicast(String.valueOf(nodeMap.size()), ipAddress, 55525);
     }
+
+    public String getPrevious(int hash) {
+        Set<Integer> hashSet = nodeMap.keySet();
+        String previousParameters;
+        System.out.println("De map: " + nodeMap);
+        System.out.println("De offline node: " + hash);
+        Integer kleinste = 32769;
+        Integer grootste = 0;
+        Integer kleinerDanHash = 0;
+        for(Integer nodeHash : hashSet){
+            System.out.println("De lijst wordt doorlopen: " + nodeHash);
+            if(nodeHash<kleinste){
+                kleinste = nodeHash;
+                System.out.println("Nieuwe kleinste: " + kleinste);
+            }
+            if(nodeHash> grootste){
+                grootste = nodeHash;
+                System.out.println("Nieuwe grootste: " + grootste);
+            }
+            if(hash>nodeHash){
+                if(nodeHash>kleinerDanHash) {
+                    kleinerDanHash = nodeHash;
+                }
+            }
+        }
+        if(hash==kleinste){
+            previousParameters = grootste + "," + nodeMap.get(grootste);
+        }else{
+            previousParameters = kleinerDanHash + "," + nodeMap.get(kleinerDanHash);
+        }
+        return previousParameters;
+    }
+
+    public String getNext(int hash) {
+        Set<Integer> hashSet = nodeMap.keySet();
+        String previousParameters;
+        System.out.println("De map: " + nodeMap);
+        System.out.println("De offline node: " + hash);
+        Integer kleinste = 32769;
+        Integer grootste = 0;
+        Integer groterDanHash = 32769;
+        Integer kleinerDanHash = 0;
+        for(Integer nodeHash : hashSet){
+            System.out.println("De lijst wordt doorlopen: " + nodeHash);
+            if(nodeHash<kleinste){
+                kleinste = nodeHash;
+                System.out.println("Nieuwe kleinste: " + kleinste);
+            }
+            if(nodeHash> grootste){
+                grootste = nodeHash;
+                System.out.println("Nieuwe grootste: " + grootste);
+            }
+            if(hash<nodeHash){
+                if(nodeHash<groterDanHash) {
+                    groterDanHash = nodeHash;
+                }
+            }
+        }
+        if(hash==grootste){
+
+            previousParameters = grootste + "," + nodeMap.get(grootste);
+        }else{
+            previousParameters = kleinerDanHash + "," + nodeMap.get(kleinerDanHash);
+        }
+        return previousParameters;
+    }
 }

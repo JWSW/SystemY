@@ -40,4 +40,14 @@ public class Controller {
     public Map<Integer,String> getFileLocation(@PathVariable String filename ) {
         return services.getFile(filename);
     }
+
+    @GetMapping("/getNext")
+    public String getNext(@RequestBody Node node) {
+        return services.getNext(services.getHash(node.getNodeName()));
+    }
+
+    @GetMapping("/getPrevious")
+    public String getPrevious(@RequestBody Node node) {
+        return services.getPrevious(services.getHash(node.getNodeName()));
+    }
 }
