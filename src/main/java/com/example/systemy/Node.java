@@ -63,6 +63,7 @@ public class Node implements UnicastObserver{
         unicastReceiver.setObserver(this);
         countdownTimerPrevious.start();
         countdownTimerNext.start();
+        heartbeatSender.start();
         Thread receiverThread = new Thread(unicastReceiver);
         receiverThread.start();
         String message = nodeName + "," + ipAddress;
@@ -165,11 +166,13 @@ public class Node implements UnicastObserver{
             nextID = hash;
             response = "Next," + currentID + "," + ipAddress + "," + nextID;
             unicast(response, ipAddress, port);
+            heartbeatSender.setNextIP(nextIP);
         } else if (previousID <= hash && hash < currentID) {
             System.out.println("Registered as previousID");
             previousID = hash;
             response = "Previous," + currentID + "," + ipAddress + "," + previousID;
             unicast(response, ipAddress, port);
+            heartbeatSender.setNextIP(previousIP);
         }
 
 
