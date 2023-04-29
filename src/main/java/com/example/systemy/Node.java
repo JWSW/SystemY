@@ -109,7 +109,7 @@ public class Node implements UnicastObserver{
                 .POST(HttpRequest.BodyPublishers.ofString(json))//"{nodeName:" + node.getNodeName() + "ipAddress:" + node.getIpAddress() + "}"))
                 .build();
         try{
-            System.out.println("Sending request to add node.");
+            System.out.println("Sending request to get new neighbour.");
             HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
             System.out.println("Response: " + response.body());
         } catch (IOException | InterruptedException e) {
