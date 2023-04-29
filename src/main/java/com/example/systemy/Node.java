@@ -16,7 +16,9 @@ public class Node implements UnicastObserver{
     private int uniPort = 55525;
     private int currentID;
     private int nextID = 39999;
+    private String nextIP = "";
     private int previousID = 0;
+    private String previousIP = "";
     private static DatagramSocket socket = null;
     private String file1 = "file1.txt";
     private String fileTwo = "file2.txt";
@@ -108,12 +110,12 @@ public class Node implements UnicastObserver{
         if (currentID < hash && hash < nextID) {
             System.out.println("Registered as nextID");
             nextID = hash;
-            response = "Next," + currentID + "," + nextID;
+            response = "Next," + currentID + "," + ipAddress + "," + nextID;
             unicast(response, ipAddress, port);
         } else if (previousID < hash && hash < currentID) {
             System.out.println("Registered as prevID");
             previousID = hash;
-            response = "Previous," + currentID + "," + previousID;
+            response = "Previous," + currentID + "," + ipAddress + "," + previousID;
             unicast(response, ipAddress, port);
         }
 
@@ -124,13 +126,16 @@ public class Node implements UnicastObserver{
         String[] parts = packet.split(","); // split the string at the space character
         String position = parts[0];
         String otherNodeID = parts[1];
-        String myID = parts[2];
+        String otherNodeIP = parts[2];
+        String myID = parts[3];
         String response;
         if(Objects.equals(position, "Next")){
             previousID = Integer.parseInt(otherNodeID);
+            previousIP = otherNodeIP;
             System.out.println("Set as previousID.");
         }else if(Objects.equals(position,"Previous")){
             nextID = Integer.parseInt(otherNodeID);
+            nextIP = otherNodeIP;
             System.out.println("Set as nextID.");
         }else{
             if(Integer.parseInt(position)<2){
