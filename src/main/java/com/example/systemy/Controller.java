@@ -41,13 +41,13 @@ public class Controller {
         return services.getFile(filename);
     }
 
-    @GetMapping("/getNext")
-    public String getNext(@RequestBody Node node) {
-        return services.getNext(services.getHash(node.getNodeName()));
+    @GetMapping("/{nodeHashId}/getNext")
+    public String getNext(@PathVariable Integer nodeHashId) {
+        return services.getNext(nodeHashId);
     }
 
-    @GetMapping("/getPrevious")
-    public String getPrevious(@RequestBody Node node) {
-        return services.getPrevious(services.getHash(node.getNodeName()));
+    @GetMapping("/{nodeHashId}/getPrevious")
+    public String getPrevious(@PathVariable Integer nodeHashId) {
+        return services.getPrevious(nodeHashId);
     }
 }
