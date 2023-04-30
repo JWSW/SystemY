@@ -195,7 +195,7 @@ public class Services implements MulticastObserver{
 
     public String getNext(int hash) {
         Set<Integer> hashSet = nodeMap.keySet();
-        String previousParameters;
+        String nextParameters;
         System.out.println("De map: " + nodeMap);
         System.out.println("De offline node: " + hash);
         Integer kleinste = 32769;
@@ -219,12 +219,11 @@ public class Services implements MulticastObserver{
             }
         }
         if(hash==grootste){
-
-            previousParameters = grootste + "," + nodeMap.get(grootste);
+            nextParameters = kleinste + "," + nodeMap.get(kleinste);
         }else{
-            previousParameters = kleinerDanHash + "," + nodeMap.get(kleinerDanHash);
+            nextParameters = groterDanHash + "," + nodeMap.get(groterDanHash);
         }
         nodeMap.remove(hash);
-        return previousParameters;
+        return nextParameters;
     }
 }
