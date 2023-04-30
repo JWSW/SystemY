@@ -98,7 +98,7 @@ public class Node implements UnicastObserver{
             countdownTimerPrevious.reset();     // We reset the countdown timer that checks if the node is down
         }else{
             countdownTimerPrevious.start();
-            nextTimerStopped = false;
+            previousTimerStopped = false;
         }
     }
 
