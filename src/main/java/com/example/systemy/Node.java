@@ -98,15 +98,18 @@ public class Node implements UnicastObserver{
     private void Nodefailure(String position) throws JsonProcessingException {
         HttpClient client = HttpClient.newHttpClient();
         String json;
+        Integer id;
         if(position.equals("Next")){
-            json = objectMapper.writeValueAsString(nextID);
+            //json = objectMapper.writeValueAsString(nextID);
+            id = nextID;
         }else{
-            json = objectMapper.writeValueAsString(previousID);
+            //json = objectMapper.writeValueAsString(previousID);
+            id = previousID;
         }
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(baseURL + "/get" + position))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(json))//"{nodeName:" + node.getNodeName() + "ipAddress:" + node.getIpAddress() + "}"))
+                .uri(URI.create(baseURL + "/" + id + "/get" + position))
+                //.header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.noBody())//ofString(json))//"{nodeName:" + node.getNodeName() + "ipAddress:" + node.getIpAddress() + "}"))
                 .build();
         try{
             System.out.println("Sending request to get new neighbour.");
@@ -159,15 +162,13 @@ public class Node implements UnicastObserver{
         int port = uniPort;
         int hash = getHash(hostname);
         System.out.println("Processing multicast packet: " + hash + ", " + ipAddress);
-        System.out.println("NextID: " + nextID);
-        System.out.println("PreviousID: " + previousID);
-        if (currentID < hash && hash <= nextID) {
+        if (currentID < hash && hash < nextID) {
             System.out.println("Registered as nextID");
             nextID = hash;
             response = "Next," + currentID + "," + ipAddress + "," + nextID;
             unicast(response, ipAddress, port);
             heartbeatSender.setNextIP(nextIP);
-        } else if (previousID <= hash && hash < currentID) {
+        } else if ((previousID < hash && hash < currentID) || (previousID>currentID && hash < currentID)) {
             System.out.println("Registered as previousID");
             previousID = hash;
             response = "Previous," + currentID + "," + ipAddress + "," + previousID;

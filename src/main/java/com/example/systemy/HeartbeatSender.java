@@ -45,6 +45,7 @@ public class HeartbeatSender extends Thread{
             DatagramPacket packet2 = new DatagramPacket(buf, buf.length, address2, port);
 
             while (true) {
+                System.out.println("Sending ping to " + address1);
                 socket.send(packet1);
                 socket.send(packet2);
 
