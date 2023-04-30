@@ -180,13 +180,13 @@ public class Node implements UnicastObserver{
         int port = uniPort;
         int hash = getHash(hostname);
         System.out.println("Processing multicast packet: " + hash + ", " + ipAddress);
-        if ((currentID < hash && hash < nextID) || (nextID<currentID && hash>currentID)) {
+        if ((currentID < hash && hash < nextID) || (nextID<currentID && hash>currentID)) { // Ring topology: if we are the biggest hashID, our nextID is the smallest hashID
             System.out.println("Registered as nextID");
             nextID = hash;
             setNextIP(ipAddress); // This function changes everything that needs to be changed when changing neighbours IP
             response = "Next," + currentID + "," + this.ipAddress + "," + nextID; //The message to send as reply
             unicast(response, ipAddress, port);
-        } else if ((previousID < hash && hash < currentID) || (previousID>currentID && hash < currentID)) {
+        } else if ((previousID < hash && hash < currentID) || (previousID>currentID && hash < currentID)) { // Ring topology: if we are the smallest hashID, our previousID is the biggest hashID
             System.out.println("Registered as previousID");
             previousID = hash;
             setPreviousIP(ipAddress); // This function changes everything that needs to be changed when changing neighbours IP
