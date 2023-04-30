@@ -43,14 +43,15 @@ public class Node implements UnicastObserver{
     TimerCallback callback = new TimerCallback() {
         @Override
         public void onTimerFinished(String position) throws JsonProcessingException {
-            System.out.println(position + " node dead.");
+            System.out.println(position + " node offline.");
             Nodefailure(position);
         }
     };
 
     CountdownTimer countdownTimerPrevious = new CountdownTimer(25, callback, "Previous");
     CountdownTimer countdownTimerNext = new CountdownTimer(25, callback, "Next");
-
+    private boolean nextTimerStopped = false;
+    private boolean previousTimerStopped = false;
 
 
     public Node() {
@@ -79,20 +80,26 @@ public class Node implements UnicastObserver{
         return ipAddress;
     }
 
-    public int getNextID() {
-        return nextID;
+    public void setNextIP(String nextIP) throws UnknownHostException {
+        this.nextIP = nextIP;
+        heartbeatSender.setNextIP(nextIP);
+        if(!nextTimerStopped) {
+            countdownTimerNext.reset();     // We reset the countdown timer that checks if the node is down
+        }else{
+            countdownTimerNext.start();
+            nextTimerStopped = false;
+        }
     }
 
-    public void setNextID(int successorId) {
-        this.nextID = successorId;
-    }
-
-    public int getPreviousID() {
-        return previousID;
-    }
-
-    public void setPreviousID(int predecessorId) {
-        this.previousID = predecessorId;
+    public void setPreviousIP(String previousIP) throws UnknownHostException {
+        this.previousIP = previousIP;
+        heartbeatSender.setPreviousIP(previousIP);
+        if(!previousTimerStopped) {
+            countdownTimerPrevious.reset();     // We reset the countdown timer that checks if the node is down
+        }else{
+            countdownTimerPrevious.start();
+            nextTimerStopped = false;
+        }
     }
 
     private void Nodefailure(String position) throws JsonProcessingException {
@@ -115,6 +122,17 @@ public class Node implements UnicastObserver{
             System.out.println("Sending request to get new neighbour.");
             HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
             System.out.println("Response: " + response.body());
+
+            String packet = response.body();
+            String[] parts = packet.split(",");
+            if(position.equals("Next")){
+                nextID = Integer.parseInt(parts[0]);
+                setNextIP(parts[1]);    // There are a couple things that need to be changed when changing your neighbours
+            }else{                      // IP, so this function does it all together so we don't forget anything
+                previousID = Integer.parseInt(parts[0]);
+                setPreviousIP(parts[1]); // There are a couple things that need to be changed when changing your neighbours
+            }                            // IP, so this function does it all together so we don't forget anything
+
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -162,18 +180,18 @@ public class Node implements UnicastObserver{
         int port = uniPort;
         int hash = getHash(hostname);
         System.out.println("Processing multicast packet: " + hash + ", " + ipAddress);
-        if (currentID < hash && hash < nextID) {
+        if ((currentID < hash && hash < nextID) || (nextID<currentID && hash>currentID)) {
             System.out.println("Registered as nextID");
             nextID = hash;
-            response = "Next," + currentID + "," + ipAddress + "," + nextID;
+            setNextIP(ipAddress); // This function changes everything that needs to be changed when changing neighbours IP
+            response = "Next," + currentID + "," + this.ipAddress + "," + nextID; //The message to send as reply
             unicast(response, ipAddress, port);
-            heartbeatSender.setNextIP(nextIP);
         } else if ((previousID < hash && hash < currentID) || (previousID>currentID && hash < currentID)) {
             System.out.println("Registered as previousID");
             previousID = hash;
-            response = "Previous," + currentID + "," + ipAddress + "," + previousID;
+            setPreviousIP(ipAddress); // This function changes everything that needs to be changed when changing neighbours IP
+            response = "Previous," + currentID + "," + this.ipAddress + "," + previousID; //The message to send as reply
             unicast(response, ipAddress, port);
-            heartbeatSender.setNextIP(previousIP);
         }
 
 
@@ -192,21 +210,25 @@ public class Node implements UnicastObserver{
         }
         String response;
         if(Objects.equals(position, "Next")){
-            previousID = Integer.parseInt(otherNodeID);
-            previousIP = otherNodeIP;
+            previousID = Integer.parseInt(otherNodeID); // If we receive a reply that sais we are the other node its next,
+            setPreviousIP(otherNodeIP);                 // than that node is our previous
             System.out.println("Set as previousID.");
-        }else if(Objects.equals(position,"Previous")){
-            nextID = Integer.parseInt(otherNodeID);
-            nextIP = otherNodeIP;
+        }else if(Objects.equals(position,"Previous")){ // If we receive a reply that sais we are the other node its previous,
+            nextID = Integer.parseInt(otherNodeID);       // than that node is our next
+            setNextIP(otherNodeIP);
             System.out.println("Set as nextID.");
-        }else if(Integer.parseInt(position)<2){
+        }else if(Integer.parseInt(position)<2){ // If there is only 1 node, set own ID as neighbours.
             nextID = currentID;
             previousID = currentID;
+            nextTimerStopped = true;
+            previousTimerStopped = true;
+            countdownTimerPrevious.stop();
+            countdownTimerNext.stop();
         }else{
-            if(Integer.parseInt(position)==previousID){
-                countdownTimerPrevious.reset();
-            }else if(Integer.parseInt(position)==nextID){
-                countdownTimerNext.reset();
+            if(Integer.parseInt(position)==previousID){ // If we receive a packet containing the previousID, it is pinging
+                countdownTimerPrevious.reset();         // to say it is still alive
+            }else if(Integer.parseInt(position)==nextID){ // If we receive a packet containing the nextID, it is pinging
+                countdownTimerNext.reset();               // to say it is still alive
             }
         }
     }
@@ -298,6 +320,10 @@ public class Node implements UnicastObserver{
                     }
                 }
             }, seconds * 1000L);
+        }
+
+        public void stop(){
+            timer.cancel();
         }
 
         public void reset() {

@@ -7,6 +7,10 @@ public class HeartbeatSender extends Thread{
     private int currentID;
     private String previousIP;
     private String nextIP;
+    private InetAddress previousAddress;
+    private InetAddress nextAddress;
+    DatagramPacket previousPacket;
+    DatagramPacket nextPacket;
     protected byte[] buf = new byte[256];
 
     public HeartbeatSender(String previousIP, String nextIP, int currentID, int port) {
@@ -20,34 +24,37 @@ public class HeartbeatSender extends Thread{
         this.port = port;
     }
 
-    public void setPreviousIP(String previousIP) {
+    public void setPreviousIP(String previousIP) throws UnknownHostException {
         this.previousIP = previousIP;
+        previousAddress = InetAddress.getByName(previousIP);
+        previousPacket = new DatagramPacket(buf, buf.length, previousAddress, port);
     }
 
-    public void setNextIP(String nextIP) {
+    public void setNextIP(String nextIP) throws UnknownHostException {
         this.nextIP = nextIP;
+        nextAddress = InetAddress.getByName(nextIP);
+        nextPacket = new DatagramPacket(buf, buf.length, nextAddress, port);
     }
 
     @Override
     public void run() {
         try {
             DatagramSocket socket;
-            InetAddress address1;
-            InetAddress address2;
+            previousAddress = InetAddress.getByName(previousIP);
+            nextAddress = InetAddress.getByName(nextIP);
             socket = new DatagramSocket();
-            address1 = InetAddress.getByName(previousIP);
-            address2 = InetAddress.getByName(nextIP);
 
             String message = String.valueOf(currentID);
             buf = message.getBytes();
 
-            DatagramPacket packet1 = new DatagramPacket(buf, buf.length, address1, port);
-            DatagramPacket packet2 = new DatagramPacket(buf, buf.length, address2, port);
+            previousPacket = new DatagramPacket(buf, buf.length, previousAddress, port);
+            nextPacket = new DatagramPacket(buf, buf.length, nextAddress, port);
 
             while (true) {
-                System.out.println("Sending ping to " + address1);
-                socket.send(packet1);
-                socket.send(packet2);
+                System.out.println("Sending ping to " + previousAddress);
+                socket.send(previousPacket);
+                System.out.println("Sending ping to " + nextAddress);
+                socket.send(nextPacket);
 
                 sleep(10000);
             }
