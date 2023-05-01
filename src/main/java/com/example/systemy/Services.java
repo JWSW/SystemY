@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -186,8 +187,10 @@ public class Services implements MulticastObserver{
         }
         if(hash==kleinste){
             previousParameters = grootste + "," + nodeMap.get(grootste);
+            System.out.println("New previous parameters (grootste): " + previousParameters);
         }else{
             previousParameters = kleinerDanHash + "," + nodeMap.get(kleinerDanHash);
+            System.out.println("New previous parameters: " + previousParameters);
         }
         nodeMap.remove(hash);
         return previousParameters;
@@ -220,8 +223,10 @@ public class Services implements MulticastObserver{
         }
         if(hash==grootste){
             nextParameters = kleinste + "," + nodeMap.get(kleinste);
+            System.out.println("New next parameters (kleinste): " + nextParameters);
         }else{
             nextParameters = groterDanHash + "," + nodeMap.get(groterDanHash);
+            System.out.println("New next parameters: " + nextParameters);
         }
         nodeMap.remove(hash);
         return nextParameters;
