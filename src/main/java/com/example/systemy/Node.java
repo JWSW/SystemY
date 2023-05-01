@@ -64,6 +64,10 @@ public class Node implements UnicastObserver{
     }
 
     public Node(String nodeName, String ipAddress) throws Exception { // Constructor
+        ServerSocket serverSocket = new ServerSocket(uniPort, 0, InetAddress.getByName("localhost"));
+        if(!serverSocket.isClosed()){
+            killProcess();
+        }
         this.nodeName = nodeName;
         this.ipAddress = ipAddress;
         currentID = getHash(nodeName);
