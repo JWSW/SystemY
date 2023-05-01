@@ -5,60 +5,53 @@ import java.net.*;
 public class HeartbeatSender extends Thread{
     private int port;
     private int currentID;
-    private String previousIP;
-    private String nextIP;
-    private InetAddress previousAddress;
-    private InetAddress nextAddress;
-    DatagramPacket previousPacket;
-    DatagramPacket nextPacket;
+    private String sendIP;
+    private InetAddress sendAddress;
+    DatagramPacket sendPacket;
+    private String stopping = "";
     protected byte[] buf = new byte[256];
 
-    public HeartbeatSender(String previousIP, String nextIP, int currentID, int port) {
+    public HeartbeatSender(String sendIP, int currentID, int port) {
         this.port = port;
         this.currentID = currentID;
-        this.previousIP = previousIP;
-        this.nextIP = nextIP;
+        this.sendIP = sendIP;
     }
 
     public void setPort(int port) {
         this.port = port;
     }
 
-    public void setPreviousIP(String previousIP) throws UnknownHostException {
-        this.previousIP = previousIP;
-        previousAddress = InetAddress.getByName(previousIP);
-        previousPacket = new DatagramPacket(buf, buf.length, previousAddress, port);
-        System.out.println("Changed previous parameters: " + this.previousIP + ", " + previousAddress + ", " + previousPacket);
+    public void setSendingIP(String sendigIP) throws UnknownHostException {
+        this.sendIP = sendigIP;
+        sendAddress = InetAddress.getByName(sendigIP);
+        sendPacket = new DatagramPacket(buf, buf.length, sendAddress, port);
+        System.out.println("Changed sending parameters: " + this.sendIP + ", " + sendAddress + ", " + sendPacket);
     }
 
-    public void setNextIP(String nextIP) throws UnknownHostException {
-        this.nextIP = nextIP;
-        nextAddress = InetAddress.getByName(nextIP);
-        nextPacket = new DatagramPacket(buf, buf.length, nextAddress, port);
-        System.out.println("Changed next parameters: " + this.nextIP + ", " + nextAddress + ", " + nextPacket);
+    public void stopSending(){
+        stopping = "end";
     }
 
     @Override
     public void run() {
         try {
             DatagramSocket socket;
-            previousAddress = InetAddress.getByName(previousIP);
-            nextAddress = InetAddress.getByName(nextIP);
+            sendAddress = InetAddress.getByName(sendIP);
             socket = new DatagramSocket();
 
             String message = String.valueOf(currentID);
             buf = message.getBytes();
 
-            previousPacket = new DatagramPacket(buf, buf.length, previousAddress, port);
-            nextPacket = new DatagramPacket(buf, buf.length, nextAddress, port);
+            sendPacket = new DatagramPacket(buf, buf.length, sendAddress, port);
 
             while (true) {
-                System.out.println("Sending ping to " + previousAddress);
-                socket.send(previousPacket);
-                System.out.println("Sending ping to " + nextAddress);
-                socket.send(nextPacket);
+                System.out.println("Sending ping to " + sendAddress + " or " + sendIP);
+                socket.send(sendPacket);
 
                 sleep(10000);
+                if ("end".equals(stopping)) {
+                    break;
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
