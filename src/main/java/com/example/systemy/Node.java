@@ -32,6 +32,7 @@ public class Node implements UnicastObserver{
     private String previousIP = "";
     private static DatagramSocket socket = null;
     private Map<File,String> fileMap;
+    private WatchDirectory watchDirectory;
     private String fileTest = "fileTest.txt";
     private String fileTwo = "file2.txt";
     protected byte[] buf = new byte[256];
@@ -62,7 +63,7 @@ public class Node implements UnicastObserver{
     public Node() {
     }
 
-    public Node(String nodeName, String ipAddress) throws IOException { // Constructor
+    public Node(String nodeName, String ipAddress) throws Exception { // Constructor
         this.nodeName = nodeName;
         this.ipAddress = ipAddress;
         currentID = getHash(nodeName);
@@ -97,18 +98,20 @@ public class Node implements UnicastObserver{
         System.out.println("Send multicast message.");
         multicast(message);
 
-        File myFile = new File(fileTest);
-        if (myFile.createNewFile()) {
-            System.out.println("File created: " + myFile.getName());
-        } else {
-            System.out.println("File already exists.");
-        }
-        File myFile2 = new File(fileTwo);
-        if (myFile2.createNewFile()) {
-            System.out.println("File created: " + myFile2.getName());
-        } else {
-            System.out.println("File already exists.");
-        }
+        watchDirectory = new WatchDirectory("/home/Dist/SystemY");
+        watchDirectory.run();
+//        File myFile = new File(fileTest);
+//        if (myFile.createNewFile()) {
+//            System.out.println("File created: " + myFile.getName());
+//        } else {
+//            System.out.println("File already exists.");
+//        }
+//        File myFile2 = new File(fileTwo);
+//        if (myFile2.createNewFile()) {
+//            System.out.println("File created: " + myFile2.getName());
+//        } else {
+//            System.out.println("File already exists.");
+//        }
     }
 
     public String getNodeName() {

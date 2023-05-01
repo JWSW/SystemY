@@ -33,7 +33,7 @@ public class Services implements MulticastObserver{
     //UnicastReceiver unicastReceiver;
 
     @PostConstruct
-    public void init() throws IOException {
+    public void init() throws Exception {
         node = new Node(InetAddress.getLocalHost().getHostName(), InetAddress.getLocalHost().getHostAddress());
 //        String json = objectMapper.writeValueAsString(node);
 //        HttpClient client = HttpClient.newHttpClient();
