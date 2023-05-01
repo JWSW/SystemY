@@ -33,7 +33,7 @@ public class Node implements UnicastObserver{
     private String previousIP = "";
     private static DatagramSocket socket = null;
     private Map<File,String> fileMap;
-//    private WatchDirectory watchDirectory;
+    private WatchDirectory watchDirectory;
     private String fileTest = "fileTest.txt";
     private String fileTwo = "file2.txt";
     protected byte[] buf = new byte[256];
@@ -65,10 +65,10 @@ public class Node implements UnicastObserver{
     }
 
     public Node(String nodeName, String ipAddress) throws Exception { // Constructor
-        ServerSocket serverSocket = new ServerSocket(uniPort, 0, InetAddress.getByName("localhost"));
-        if(!serverSocket.isClosed()){
-            killProcess();
-        }
+//        ServerSocket serverSocket = new ServerSocket(uniPort, 0, InetAddress.getByName("localhost"));
+//        if(!serverSocket.isClosed()){
+//            killProcess();
+//        }
         unicastReceiver = new UnicastReceiver(uniPort);
         unicastHeartbeatPrevious = new UnicastReceiver(heartbeatPortPrevious);
         unicastHeartbeatNext = new UnicastReceiver(heartbeatPortNext);
@@ -120,8 +120,8 @@ public class Node implements UnicastObserver{
 //        } else {
 //            System.out.println("Directory already exists.");
 //        }
-//        watchDirectory = new WatchDirectory();
-//        watchDirectory.start();
+        watchDirectory = new WatchDirectory();
+        watchDirectory.start();
 //        File myFile2 = new File(fileTwo);
 //        if (myFile2.createNewFile()) {
 //            System.out.println("File created: " + myFile2.getName());
