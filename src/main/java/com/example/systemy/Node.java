@@ -36,8 +36,8 @@ public class Node implements UnicastObserver{
     private UnicastReceiver unicastReceiver = new UnicastReceiver(uniPort);
     private UnicastReceiver unicastHeartbeatPrevious = new UnicastReceiver(heartbeatPortPrevious);
     private UnicastReceiver unicastHeartbeatNext = new UnicastReceiver(heartbeatPortNext);
-    private HeartbeatSender previousHeartbeatSender = new HeartbeatSender(previousIP, heartbeatPortPrevious, currentID);
-    private HeartbeatSender nextHeartbeatSender = new HeartbeatSender(nextIP, heartbeatPortNext, currentID);
+    private HeartbeatSender previousHeartbeatSender = new HeartbeatSender(previousIP, currentID, heartbeatPortPrevious);
+    private HeartbeatSender nextHeartbeatSender = new HeartbeatSender(nextIP, currentID, heartbeatPortNext);
     private String baseURL = "http://172.27.0.5:8080/requestName";
     ObjectMapper objectMapper = new ObjectMapper(); // or any other JSON serializer
 
