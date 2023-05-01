@@ -168,7 +168,7 @@ public class Node implements UnicastObserver{
                     setPreviousIP(parts[1]); // There are a couple things that need to be changed when changing your neighbours
                 }                            // IP, so this function does it all together so we don't forget anything
             }else{
-                System.out.println("Response was own node: " + response + ", currentID: " + currentID);
+                System.out.println("Response was own node: " + packet + ", currentID: " + currentID);
             }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
