@@ -61,6 +61,7 @@ public class Services implements MulticastObserver{
         try {
             int hash = getHash(name);
             nodeMap.remove(hash);
+            System.out.println("Node " + hash + " removed");
         }catch (IllegalStateException e){
             System.out.println("This node doesn't exist");
         }
@@ -68,6 +69,7 @@ public class Services implements MulticastObserver{
     public void removeNodeByHash(Integer id){
         try {
             nodeMap.remove(id);
+            System.out.println("Node " + id + " removed");
         }catch (IllegalStateException e){
             System.out.println("This node doesn't exist");
         }
