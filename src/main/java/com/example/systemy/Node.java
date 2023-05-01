@@ -62,10 +62,21 @@ public class Node implements UnicastObserver{
         this.ipAddress = ipAddress;
         currentID = getHash(nodeName);
         unicastReceiver.setObserver(this);
-        countdownTimerPrevious.start();
-        countdownTimerNext.start();
+        unicastHeartbeat.setObserver(this);
+        if(!(previousID ==0)) {
+            countdownTimerPrevious.start();
+        }else{
+            previousTimerStopped = true;
+        }
+        if(!(nextID==39999)) {
+            countdownTimerNext.start();
+        }else{
+            nextTimerStopped = true;
+        }
         heartbeatSender.start();
+        Thread receiverThreadHeartbeat = new Thread(unicastHeartbeat);
         Thread receiverThread = new Thread(unicastReceiver);
+        receiverThreadHeartbeat.start();
         receiverThread.start();
         String message = nodeName + "," + ipAddress;
         System.out.println("Send multicast message.");
@@ -85,8 +96,10 @@ public class Node implements UnicastObserver{
         heartbeatSender.setNextIP(nextIP);
         if(!nextTimerStopped) {
             countdownTimerNext.reset();     // We reset the countdown timer that checks if the node is down
+            System.out.println("Next timer has been reset.");
         }else{
             countdownTimerNext.start();
+            System.out.println("Next timer has been started.");
             nextTimerStopped = false;
         }
     }
@@ -96,8 +109,10 @@ public class Node implements UnicastObserver{
         heartbeatSender.setPreviousIP(previousIP);
         if(!previousTimerStopped) {
             countdownTimerPrevious.reset();     // We reset the countdown timer that checks if the node is down
+            System.out.println("Previous timer has been reset.");
         }else{
             countdownTimerPrevious.start();
+            System.out.println("Previous timer has been started.");
             previousTimerStopped = false;
         }
     }
@@ -116,7 +131,7 @@ public class Node implements UnicastObserver{
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(baseURL + "/" + id + "/get" + position))
                 //.header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.noBody())//ofString(json))//"{nodeName:" + node.getNodeName() + "ipAddress:" + node.getIpAddress() + "}"))
+                .GET()//HttpRequest.BodyPublishers.noBody())//ofString(json))//"{nodeName:" + node.getNodeName() + "ipAddress:" + node.getIpAddress() + "}"))
                 .build();
         try{
             System.out.println("Sending request to get new neighbour.");
