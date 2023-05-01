@@ -5,6 +5,7 @@ import java.net.*;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -30,7 +31,8 @@ public class Node implements UnicastObserver{
     private int previousID = 0;
     private String previousIP = "";
     private static DatagramSocket socket = null;
-    private String file1 = "file1.txt";
+    private Map<File,String> fileMap;
+    private String fileTest = "fileTest.txt";
     private String fileTwo = "file2.txt";
     protected byte[] buf = new byte[256];
     private UnicastReceiver unicastReceiver = new UnicastReceiver(uniPort);
@@ -94,6 +96,19 @@ public class Node implements UnicastObserver{
         String message = nodeName + "," + ipAddress;
         System.out.println("Send multicast message.");
         multicast(message);
+
+        File myFile = new File(fileTest);
+        if (myFile.createNewFile()) {
+            System.out.println("File created: " + myFile.getName());
+        } else {
+            System.out.println("File already exists.");
+        }
+        File myFile2 = new File(fileTwo);
+        if (myFile2.createNewFile()) {
+            System.out.println("File created: " + myFile2.getName());
+        } else {
+            System.out.println("File already exists.");
+        }
     }
 
     public String getNodeName() {
@@ -186,6 +201,16 @@ public class Node implements UnicastObserver{
         socket.send(packet);
         socket.close();
     }
+
+//    public void shutDown() throws IOException {
+//        unicast("Next" + nextID + "," + nextIP + "," + previousID,previousIP,uniPort); // Send next node parameters to previous node
+//        unicast("Previous" + previousID + "," + previousIP + "," + nextID,nextIP,uniPort); // Send previous node parameters to next node
+//        HttpRequest request = HttpRequest.newBuilder()
+//                .uri(URI.create(baseURL + "/" + currentID + "/removeNode"))
+//                //.header("Content-Type", "application/json")
+//                .POST(HttpRequest.BodyPublishers.noBody())//ofString(json))//"{nodeName:" + node.getNodeName() + "ipAddress:" + node.getIpAddress() + "}"))
+//                .build();
+//    }
 
 //    public void addFile(String fileName, String owner) {
 //        files.put(fileName, owner);
