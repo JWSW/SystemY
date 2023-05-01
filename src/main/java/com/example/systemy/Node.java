@@ -60,7 +60,7 @@ public class Node implements UnicastObserver{
     public Node() {
     }
 
-    public Node(String nodeName, String ipAddress) throws IOException {
+    public Node(String nodeName, String ipAddress) throws IOException { // Constructor
         this.nodeName = nodeName;
         this.ipAddress = ipAddress;
         currentID = getHash(nodeName);
@@ -159,14 +159,17 @@ public class Node implements UnicastObserver{
 
             String packet = response.body();
             String[] parts = packet.split(",");
-            if(position.equals("Next")){
-                nextID = Integer.parseInt(parts[0]);
-                setNextIP(parts[1]);    // There are a couple things that need to be changed when changing your neighbours
-            }else{                      // IP, so this function does it all together so we don't forget anything
-                previousID = Integer.parseInt(parts[0]);
-                setPreviousIP(parts[1]); // There are a couple things that need to be changed when changing your neighbours
-            }                            // IP, so this function does it all together so we don't forget anything
-
+            if(Integer.parseInt(parts[0])!=currentID) {
+                if (position.equals("Next")) {
+                    nextID = Integer.parseInt(parts[0]);
+                    setNextIP(parts[1]);    // There are a couple things that need to be changed when changing your neighbours
+                } else {                      // IP, so this function does it all together so we don't forget anything
+                    previousID = Integer.parseInt(parts[0]);
+                    setPreviousIP(parts[1]); // There are a couple things that need to be changed when changing your neighbours
+                }                            // IP, so this function does it all together so we don't forget anything
+            }else{
+                System.out.println("Response was own node: " + response + ", currentID: " + currentID);
+            }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
