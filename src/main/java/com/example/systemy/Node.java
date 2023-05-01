@@ -5,6 +5,7 @@ import java.net.*;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.file.*;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Timer;
@@ -36,11 +37,11 @@ public class Node implements UnicastObserver{
     private String fileTest = "fileTest.txt";
     private String fileTwo = "file2.txt";
     protected byte[] buf = new byte[256];
-    private UnicastReceiver unicastReceiver;
-    private UnicastReceiver unicastHeartbeatPrevious;
-    private UnicastReceiver unicastHeartbeatNext;
-    private HeartbeatSender previousHeartbeatSender;
-    private HeartbeatSender nextHeartbeatSender;
+    private UnicastReceiver unicastReceiver;// = new UnicastReceiver(uniPort);
+    private UnicastReceiver unicastHeartbeatPrevious;// = new UnicastReceiver(heartbeatPortPrevious);
+    private UnicastReceiver unicastHeartbeatNext;// = new UnicastReceiver(heartbeatPortNext);
+    private HeartbeatSender previousHeartbeatSender;// = new HeartbeatSender(previousIP, currentID, heartbeatPortPrevious);
+    private HeartbeatSender nextHeartbeatSender;// = new HeartbeatSender(nextIP, currentID, heartbeatPortNext);
     private String baseURL = "http://172.27.0.5:8080/requestName";
     ObjectMapper objectMapper = new ObjectMapper(); // or any other JSON serializer
 
@@ -108,15 +109,19 @@ public class Node implements UnicastObserver{
         System.out.println("Send multicast message.");
         multicast(message);
 
-        File myFile = new File("/home/Dist/SystemY/nodeFiles");
-        myFile.createNewFile();
-        if (myFile.mkdir()) {
-            System.out.println("Directory created: " + myFile.getName());
-        } else {
-            System.out.println("Directory already exists.");
-        }
-        watchDirectory = new WatchDirectory("/home/Dist/SystemY/nodeFiles");
-        watchDirectory.run();
+//        File myFile = new File("/home/Dist/SystemY/nodeFiles");
+//        if(myFile.createNewFile()){
+//            System.out.println("File created: " + myFile.getName());
+//        }else{
+//            System.out.println("File already exists.");
+//        }
+//        if (myFile.mkdir()) {
+//            System.out.println("Directory created: " + myFile.getName());
+//        } else {
+//            System.out.println("Directory already exists.");
+//        }
+        watchDirectory = new WatchDirectory();
+        watchDirectory.start();
 //        File myFile2 = new File(fileTwo);
 //        if (myFile2.createNewFile()) {
 //            System.out.println("File created: " + myFile2.getName());
@@ -484,6 +489,62 @@ public class Node implements UnicastObserver{
                 // Close the socket when done
                 if (socket != null) {
                     socket.close();
+                }
+            }
+        }
+    }
+
+
+    public class WatchDirectory extends Thread {
+        private WatchService watchService;
+
+
+        public void run() {
+            // Get the directory to watch
+            Path path = Paths.get("/home/Dist/SystemY/nodeFiles");
+
+            // Create a WatchService object
+            try {
+                watchService = FileSystems.getDefault().newWatchService();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            // Register the directory with the watch service for file creation events
+            try {
+                path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            // Start an infinite loop to wait for new files
+            while (true) {
+                // Wait for the watch service to receive a new event
+                WatchKey key = null;
+                try {
+                    key = watchService.take();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                // Loop over the events in the key
+                for (WatchEvent<?> event : key.pollEvents()) {
+                    // Check if the event is a create event
+                    if (event.kind() == StandardWatchEventKinds.ENTRY_CREATE) {
+                        // Get the file name from the event
+                        Path fileName = (Path) event.context();
+
+                        // Do something with the new file
+                        System.out.println("New file created: " + fileName.toString());
+                    }
+                }
+
+                // Reset the key for the next set of events
+                boolean valid = key.reset();
+
+                // If the key is no longer valid, break out of the loop
+                if (!valid) {
+                    System.out.println("Unvalid watch key!");
+                    break;
                 }
             }
         }

@@ -30,7 +30,6 @@ public class Services implements MulticastObserver{
 
     @Autowired
     MulticastReceive multicastReceive;
-    //UnicastReceiver unicastReceiver;
 
     @PostConstruct
     public void init() throws Exception {
