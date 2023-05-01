@@ -262,10 +262,10 @@ public class Node implements UnicastObserver{
             }
 
         }else{
-            if(Integer.parseInt(position)==previousID){ // If we receive a packet containing the previousID, it is pinging
+            if(Integer.parseInt(position)==previousID && countdownTimerPrevious.isRunning){ // If we receive a packet containing the previousID, it is pinging
                 countdownTimerPrevious.reset();         // to say it is still alive
                 System.out.println("Previous timer reset because of ping.");
-            }else if(Integer.parseInt(position)==nextID){ // If we receive a packet containing the nextID, it is pinging
+            }else if(Integer.parseInt(position)==nextID && countdownTimerNext.isRunning){ // If we receive a packet containing the nextID, it is pinging
                 countdownTimerNext.reset();               // to say it is still alive
                 System.out.println("Next timer reset because of ping.");
             }
@@ -348,6 +348,7 @@ public class Node implements UnicastObserver{
         private int seconds;
         private TimerCallback callback;
         private String position;
+        private boolean isRunning = false;
 
         public CountdownTimer(int seconds, TimerCallback callback, String position) {
             this.seconds = seconds;
@@ -357,6 +358,7 @@ public class Node implements UnicastObserver{
         }
 
         public void start() {
+            isRunning = true;
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
@@ -370,12 +372,14 @@ public class Node implements UnicastObserver{
         }
 
         public void stop(){
+            isRunning = false;
             timer.cancel();
         }
 
         public void reset() {
             timer.cancel();
             timer = new Timer();
+            start();
         }
     }
 
