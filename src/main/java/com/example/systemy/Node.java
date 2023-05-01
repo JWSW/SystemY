@@ -98,14 +98,15 @@ public class Node implements UnicastObserver{
         System.out.println("Send multicast message.");
         multicast(message);
 
-        watchDirectory = new WatchDirectory("/home/Dist/SystemY");
+        File myFile = new File("/home/Dist/SystemY/nodeFiles");
+        myFile.createNewFile();
+        if (myFile.mkdir()) {
+            System.out.println("Directory created: " + myFile.getName());
+        } else {
+            System.out.println("Directory already exists.");
+        }
+        watchDirectory = new WatchDirectory("/home/Dist/SystemY/nodeFiles");
         watchDirectory.run();
-//        File myFile = new File(fileTest);
-//        if (myFile.createNewFile()) {
-//            System.out.println("File created: " + myFile.getName());
-//        } else {
-//            System.out.println("File already exists.");
-//        }
 //        File myFile2 = new File(fileTwo);
 //        if (myFile2.createNewFile()) {
 //            System.out.println("File created: " + myFile2.getName());
