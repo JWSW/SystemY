@@ -308,11 +308,19 @@ public class Node implements UnicastObserver{
         try {
             // Try to create a server socket on the specified port
             ServerSocket serverSocket = new ServerSocket(uniPort, 0, InetAddress.getByName("localhost"));
+            ServerSocket serverSocket2 = new ServerSocket(heartbeatPortNext, 0, InetAddress.getByName("localhost"));
+            ServerSocket serverSocket3 = new ServerSocket(heartbeatPortPrevious, 0, InetAddress.getByName("localhost"));
             serverSocket.close(); // Close the socket to free the port
+            serverSocket2.close();
+            serverSocket3.close();
             System.out.println("Process on port " + uniPort + " has been killed.");
+            System.out.println("Process on port " + heartbeatPortNext + " has been killed.");
+            System.out.println("Process on port " + heartbeatPortPrevious + " has been killed.");
         } catch (IOException e) {
             // An exception is thrown if the port is already in use
             System.err.println("Unable to kill process on port " + uniPort + ": " + e.getMessage());
+            System.err.println("Unable to kill process on port " + heartbeatPortNext + ": " + e.getMessage());
+            System.err.println("Unable to kill process on port " + heartbeatPortPrevious + ": " + e.getMessage());
         }
     }
 
@@ -378,9 +386,9 @@ public class Node implements UnicastObserver{
 
         public UnicastReceiver(int port) {
             try {
-                socket = new DatagramSocket(uniPort);
+                socket = new DatagramSocket(port);
             } catch (SocketException e) {
-                System.err.println("Port " + uniPort + " is already in use");
+                System.err.println("Port " + port + " is already in use");
             }
         }
 
