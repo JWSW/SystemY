@@ -21,6 +21,10 @@ public class HeartbeatSender extends Thread{
         this.port = port;
     }
 
+    public void setCurrentID(int currentID) {
+        this.currentID = currentID;
+    }
+
     public void setSendingIP(String sendigIP) throws UnknownHostException {
         this.sendIP = sendigIP;
         sendAddress = InetAddress.getByName(sendigIP);

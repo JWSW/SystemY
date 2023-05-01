@@ -64,18 +64,23 @@ public class Node implements UnicastObserver{
         this.nodeName = nodeName;
         this.ipAddress = ipAddress;
         currentID = getHash(nodeName);
+        previousHeartbeatSender.setCurrentID(currentID);
+        nextHeartbeatSender.setCurrentID(currentID);
+
         unicastReceiver.setObserver(this);
         unicastHeartbeatPrevious.setObserver(this);
         unicastHeartbeatNext.setObserver(this);
         if(!(previousID ==0)) {
             countdownTimerPrevious.start();
             previousHeartbeatSender.start();
+            System.out.println("Previous timer started at Init()");
         }else{
             previousTimerStopped = true;
         }
         if(!(nextID==39999)) {
             countdownTimerNext.start();
             nextHeartbeatSender.start();
+            System.out.println("Next timer started at Init()");
         }else{
             nextTimerStopped = true;
         }
@@ -259,8 +264,10 @@ public class Node implements UnicastObserver{
         }else{
             if(Integer.parseInt(position)==previousID){ // If we receive a packet containing the previousID, it is pinging
                 countdownTimerPrevious.reset();         // to say it is still alive
+                System.out.println("Previous timer reset because of ping.");
             }else if(Integer.parseInt(position)==nextID){ // If we receive a packet containing the nextID, it is pinging
                 countdownTimerNext.reset();               // to say it is still alive
+                System.out.println("Next timer reset because of ping.");
             }
         }
     }
