@@ -36,11 +36,11 @@ public class Node implements UnicastObserver{
     private String fileTest = "fileTest.txt";
     private String fileTwo = "file2.txt";
     protected byte[] buf = new byte[256];
-    private UnicastReceiver unicastReceiver = new UnicastReceiver(uniPort);
-    private UnicastReceiver unicastHeartbeatPrevious = new UnicastReceiver(heartbeatPortPrevious);
-    private UnicastReceiver unicastHeartbeatNext = new UnicastReceiver(heartbeatPortNext);
-    private HeartbeatSender previousHeartbeatSender = new HeartbeatSender(previousIP, currentID, heartbeatPortPrevious);
-    private HeartbeatSender nextHeartbeatSender = new HeartbeatSender(nextIP, currentID, heartbeatPortNext);
+    private UnicastReceiver unicastReceiver;
+    private UnicastReceiver unicastHeartbeatPrevious;
+    private UnicastReceiver unicastHeartbeatNext;
+    private HeartbeatSender previousHeartbeatSender;
+    private HeartbeatSender nextHeartbeatSender;
     private String baseURL = "http://172.27.0.5:8080/requestName";
     ObjectMapper objectMapper = new ObjectMapper(); // or any other JSON serializer
 
@@ -68,6 +68,12 @@ public class Node implements UnicastObserver{
         if(!serverSocket.isClosed()){
             killProcess();
         }
+        unicastReceiver = new UnicastReceiver(uniPort);
+        unicastHeartbeatPrevious = new UnicastReceiver(heartbeatPortPrevious);
+        unicastHeartbeatNext = new UnicastReceiver(heartbeatPortNext);
+        previousHeartbeatSender = new HeartbeatSender(previousIP, currentID, heartbeatPortPrevious);
+        nextHeartbeatSender = new HeartbeatSender(nextIP, currentID, heartbeatPortNext);
+
         this.nodeName = nodeName;
         this.ipAddress = ipAddress;
         currentID = getHash(nodeName);
