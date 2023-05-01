@@ -28,12 +28,14 @@ public class HeartbeatSender extends Thread{
         this.previousIP = previousIP;
         previousAddress = InetAddress.getByName(previousIP);
         previousPacket = new DatagramPacket(buf, buf.length, previousAddress, port);
+        System.out.println("Changed previous parameters: " + this.previousIP + ", " + previousAddress + ", " + previousPacket);
     }
 
     public void setNextIP(String nextIP) throws UnknownHostException {
         this.nextIP = nextIP;
         nextAddress = InetAddress.getByName(nextIP);
         nextPacket = new DatagramPacket(buf, buf.length, nextAddress, port);
+        System.out.println("Changed next parameters: " + this.nextIP + ", " + nextAddress + ", " + nextPacket);
     }
 
     @Override
