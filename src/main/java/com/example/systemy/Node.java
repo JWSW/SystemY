@@ -41,7 +41,7 @@ public class Node implements Observer {
     private HeartbeatSender nextHeartbeatSender;// = new HeartbeatSender(nextIP, currentID, heartbeatPortNext);
     private String baseURL = "http://172.27.0.5:8080/requestName";
     ObjectMapper objectMapper = new ObjectMapper(); // or any other JSON serializer
-    private ArrayList<String> fileArray = new ArrayList<String>();
+    private Map<Integer,String> fileArray;
 
 
 
@@ -134,7 +134,7 @@ public class Node implements Observer {
             if (file.isFile()) {
                 // Do something with the file
                 System.out.println("File found: " + file.getName());
-                fileArray.add(file.getName());
+                fileArray.put(getHash(file.getName()),file.getName());
             }
         }
 //        File myFile2 = new File(fileTwo);
@@ -394,7 +394,7 @@ public class Node implements Observer {
     }
 
     public void FileEventHandler(String fileName){
-        fileArray.add(fileName);
+        fileArray.put(getHash(fileName),fileName);
         System.out.println("All files: " + fileArray);
     }
 
