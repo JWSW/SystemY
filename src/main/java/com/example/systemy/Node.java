@@ -120,6 +120,21 @@ public class Node implements UnicastObserver{
 //        } else {
 //            System.out.println("Directory already exists.");
 //        }
+        // Get the directory to search
+        File directory = new File("/home/Dist/SystemY/nodeFiles");
+
+        // Get the list of files in the directory
+        File[] files = directory.listFiles();
+
+        // Loop over the files in the list
+        for (File file : files) {
+            // Check if the file is a regular file (not a directory)
+            if (file.isFile()) {
+                // Do something with the file
+                System.out.println("File found: " + file.getName());
+            }
+        }
+        System.out.println("All the files: " + files);
         watchDirectory = new WatchDirectory();
         watchDirectory.start();
 //        File myFile2 = new File(fileTwo);
