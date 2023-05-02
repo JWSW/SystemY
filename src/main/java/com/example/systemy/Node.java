@@ -6,10 +6,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.*;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,7 +16,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class Node implements UnicastObserver{
+public class Node implements Observer {
 
     private String nodeName;
     private String ipAddress;
@@ -44,6 +41,7 @@ public class Node implements UnicastObserver{
     private HeartbeatSender nextHeartbeatSender;// = new HeartbeatSender(nextIP, currentID, heartbeatPortNext);
     private String baseURL = "http://172.27.0.5:8080/requestName";
     ObjectMapper objectMapper = new ObjectMapper(); // or any other JSON serializer
+    private ArrayList<String> fileArray = new ArrayList<String>();
 
 
 
@@ -74,6 +72,7 @@ public class Node implements UnicastObserver{
         unicastHeartbeatNext = new UnicastReceiver(heartbeatPortNext);
         previousHeartbeatSender = new HeartbeatSender(previousIP, currentID, heartbeatPortPrevious);
         nextHeartbeatSender = new HeartbeatSender(nextIP, currentID, heartbeatPortNext);
+        watchDirectory = new WatchDirectory();
 
         this.nodeName = nodeName;
         this.ipAddress = ipAddress;
@@ -81,9 +80,11 @@ public class Node implements UnicastObserver{
         previousHeartbeatSender.setCurrentID(currentID);
         nextHeartbeatSender.setCurrentID(currentID);
 
-        unicastReceiver.setObserver(this);
+        unicastReceiver.setObserver(this);          // Add the observers
         unicastHeartbeatPrevious.setObserver(this);
         unicastHeartbeatNext.setObserver(this);
+        watchDirectory.setObserver(this);
+
         if(!(previousID ==0)) {
             countdownTimerPrevious.start();
             previousHeartbeatSender.start();
@@ -99,6 +100,7 @@ public class Node implements UnicastObserver{
             nextTimerStopped = true;
         }
 
+        watchDirectory.start();
         Thread receiverThreadHeartbeatPrevious = new Thread(unicastHeartbeatPrevious);
         Thread receiverThreadHeartbeatNext = new Thread(unicastHeartbeatNext);
         Thread receiverThread = new Thread(unicastReceiver);
@@ -132,11 +134,9 @@ public class Node implements UnicastObserver{
             if (file.isFile()) {
                 // Do something with the file
                 System.out.println("File found: " + file.getName());
+                fileArray.add(file.getName());
             }
         }
-        System.out.println("All the files: " + files);
-        watchDirectory = new WatchDirectory();
-        watchDirectory.start();
 //        File myFile2 = new File(fileTwo);
 //        if (myFile2.createNewFile()) {
 //            System.out.println("File created: " + myFile2.getName());
@@ -393,9 +393,17 @@ public class Node implements UnicastObserver{
         }
     }
 
+    public void FileEventHandler(String fileName){
+        fileArray.add(fileName);
+    }
+
     @Override
-    public void onMessageReceived(String message) throws IOException {
-        unicastHandlePacket(message);
+    public void onMessageReceived(String type, String message) throws IOException {
+        if("Unicast".equals(type)) {
+            unicastHandlePacket(message);
+        }else if("FileEvent".equals(type)){
+            FileEventHandler(message);
+        }
     }
 
 
@@ -466,9 +474,9 @@ public class Node implements UnicastObserver{
             }
         }
 
-        private UnicastObserver observer;
+        private Observer observer;
 
-        public void setObserver(UnicastObserver observer) {
+        public void setObserver(Observer observer) {
             this.observer = observer;
         }
 
@@ -491,7 +499,7 @@ public class Node implements UnicastObserver{
 
                     //Notify the observer
                     if (observer != null) {
-                        observer.onMessageReceived(receivedMessage);
+                        observer.onMessageReceived("Unicast",receivedMessage);
                     }
 
                     if ("end".equals(receivedMessage)) {
@@ -513,7 +521,11 @@ public class Node implements UnicastObserver{
 
     public class WatchDirectory extends Thread {
         private WatchService watchService;
+        private Observer observer;
 
+        public void setObserver(Observer observer) {
+            this.observer = observer;
+        }
 
         public void run() {
             // Get the directory to watch
@@ -532,6 +544,7 @@ public class Node implements UnicastObserver{
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
             // Start an infinite loop to wait for new files
             while (true) {
                 // Wait for the watch service to receive a new event
@@ -551,6 +564,13 @@ public class Node implements UnicastObserver{
 
                         // Do something with the new file
                         System.out.println("New file created: " + fileName.toString());
+                        if (observer != null) {
+                            try {
+                                observer.onMessageReceived("FileEvent",fileName.toString());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
                 }
 
