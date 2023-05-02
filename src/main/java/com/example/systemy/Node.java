@@ -7,6 +7,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.*;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,7 +42,7 @@ public class Node implements Observer {
     private HeartbeatSender nextHeartbeatSender;// = new HeartbeatSender(nextIP, currentID, heartbeatPortNext);
     private String baseURL = "http://172.27.0.5:8080/requestName";
     ObjectMapper objectMapper = new ObjectMapper(); // or any other JSON serializer
-    private Map<Integer,String> fileArray;
+    private Map<Integer,String> fileArray = new ConcurrentHashMap<>();
 
 
 
