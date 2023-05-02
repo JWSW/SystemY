@@ -395,6 +395,7 @@ public class Node implements Observer {
 
     public void FileEventHandler(String fileName){
         fileArray.add(fileName);
+        System.out.println("All files: " + fileArray);
     }
 
     @Override
