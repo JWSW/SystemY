@@ -207,8 +207,6 @@ public class Node implements Observer {
         if(nodeHash!=currentID) {
             unicast("filename," + fileArray.get(hash) + "," + currentID + "," + ipAddress,nodeIP,uniPort);
             sendFile(ownerNode, hash);
-        }else{
-
         }
     }
 
