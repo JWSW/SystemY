@@ -151,7 +151,7 @@ public class Node implements Observer {
                 // Do something with the file
                 System.out.println("File found: " + file.getName());
                 fileArray.put(getHash(file.getName()),file.getName());
-                notifyNamingServer(getHash(file.getName()));
+//                notifyNamingServer(getHash(file.getName()));
             }
         }
     }
