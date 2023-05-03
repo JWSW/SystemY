@@ -204,10 +204,10 @@ public class Node implements Observer {
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
-        if(nodeHash!=currentID) {
-            unicast("filename," + fileArray.get(hash) + "," + currentID + "," + ipAddress,nodeIP,uniPort);
-            sendFile(ownerNode, hash);
-        }
+//        if(nodeHash!=currentID) {
+//            unicast("filename," + fileArray.get(hash) + "," + currentID + "," + ipAddress,nodeIP,uniPort);
+//            sendFile(ownerNode, hash);
+//        }
     }
 
     private void sendFile(String nodeParameters, int hash){
