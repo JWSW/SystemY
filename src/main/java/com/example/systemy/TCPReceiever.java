@@ -1,5 +1,7 @@
 package com.example.systemy;
 
+import org.springframework.stereotype.Component;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;

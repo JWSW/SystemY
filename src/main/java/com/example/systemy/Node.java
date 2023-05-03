@@ -128,10 +128,20 @@ public class Node implements Observer {
 //        } else {
 //            System.out.println("Directory already exists.");
 //        }
+        searchFiles();
+//        File myFile2 = new File(fileTwo);
+//        if (myFile2.createNewFile()) {
+//            System.out.println("File created: " + myFile2.getName());
+//        } else {
+//            System.out.println("File already exists.");
+//        }
+    }
+
+    public void searchFiles() throws IOException {
         // Get the directory to search
         File directory = new File("/home/Dist/SystemY/nodeFiles");
-
-        // Get the list of files in the directory
+//
+//        // Get the list of files in the directory
         File[] files = directory.listFiles();
 
         // Loop over the files in the list
@@ -141,15 +151,9 @@ public class Node implements Observer {
                 // Do something with the file
                 System.out.println("File found: " + file.getName());
                 fileArray.put(getHash(file.getName()),file.getName());
-                notifyNamingServer(getHash(file.getName()));
+//                notifyNamingServer(getHash(file.getName()));
             }
         }
-//        File myFile2 = new File(fileTwo);
-//        if (myFile2.createNewFile()) {
-//            System.out.println("File created: " + myFile2.getName());
-//        } else {
-//            System.out.println("File already exists.");
-//        }
     }
 
     public String getNodeName() {
@@ -441,17 +445,21 @@ public class Node implements Observer {
             ServerSocket serverSocket = new ServerSocket(uniPort, 0, InetAddress.getByName("localhost"));
             ServerSocket serverSocket2 = new ServerSocket(heartbeatPortNext, 0, InetAddress.getByName("localhost"));
             ServerSocket serverSocket3 = new ServerSocket(heartbeatPortPrevious, 0, InetAddress.getByName("localhost"));
+            ServerSocket serverSocket4 = new ServerSocket(tcpPort, 0, InetAddress.getByName("localhost"));
             serverSocket.close(); // Close the socket to free the port
             serverSocket2.close();
             serverSocket3.close();
+            serverSocket4.close();
             System.out.println("Process on port " + uniPort + " has been killed.");
             System.out.println("Process on port " + heartbeatPortNext + " has been killed.");
             System.out.println("Process on port " + heartbeatPortPrevious + " has been killed.");
+            System.out.println("Process on port " + tcpPort + " has been killed.");
         } catch (IOException e) {
             // An exception is thrown if the port is already in use
             System.err.println("Unable to kill process on port " + uniPort + ": " + e.getMessage());
             System.err.println("Unable to kill process on port " + heartbeatPortNext + ": " + e.getMessage());
             System.err.println("Unable to kill process on port " + heartbeatPortPrevious + ": " + e.getMessage());
+            System.err.println("Unable to kill process on port " + tcpPort + ": " + e.getMessage());
         }
     }
 
