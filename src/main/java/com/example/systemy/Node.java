@@ -117,27 +117,10 @@ public class Node implements Observer {
         System.out.println("Send multicast message.");
         multicast(message);
 
-//        File myFile = new File("/home/Dist/SystemY/nodeFiles");
-//        if(myFile.createNewFile()){
-//            System.out.println("File created: " + myFile.getName());
-//        }else{
-//            System.out.println("File already exists.");
-//        }
-//        if (myFile.mkdir()) {
-//            System.out.println("Directory created: " + myFile.getName());
-//        } else {
-//            System.out.println("Directory already exists.");
-//        }
         searchFiles();
-//        File myFile2 = new File(fileTwo);
-//        if (myFile2.createNewFile()) {
-//            System.out.println("File created: " + myFile2.getName());
-//        } else {
-//            System.out.println("File already exists.");
-//        }
     }
 
-    public void searchFiles() throws IOException {
+    public void searchFiles() {
         // Get the directory to search
         File directory = new File("/home/Dist/SystemY/nodeFiles");
 //
@@ -153,6 +136,12 @@ public class Node implements Observer {
                 fileArray.put(getHash(file.getName()),file.getName());
 //                notifyNamingServer(getHash(file.getName()));
             }
+        }
+    }
+
+    public void notifyFiles() throws IOException {
+        for(Integer fileHash : fileArray.keySet()){
+            notifyNamingServer(fileHash);
         }
     }
 
