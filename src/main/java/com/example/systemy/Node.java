@@ -118,6 +118,7 @@ public class Node implements Observer {
         multicast(message);
 
         searchFiles();
+        notifyFiles();
     }
 
     public void searchFiles() {
