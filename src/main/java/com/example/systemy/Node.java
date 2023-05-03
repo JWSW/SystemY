@@ -40,9 +40,11 @@ public class Node implements Observer {
     private UnicastReceiver unicastHeartbeatNext;// = new UnicastReceiver(heartbeatPortNext);
     private HeartbeatSender previousHeartbeatSender;// = new HeartbeatSender(previousIP, currentID, heartbeatPortPrevious);
     private HeartbeatSender nextHeartbeatSender;// = new HeartbeatSender(nextIP, currentID, heartbeatPortNext);
+    private TCPReceiever tcpReceiever;
     private String baseURL = "http://172.27.0.5:8080/requestName";
     ObjectMapper objectMapper = new ObjectMapper(); // or any other JSON serializer
     private Map<Integer,String> fileArray = new ConcurrentHashMap<>();
+    private Map<String, Map<Integer,String>> ownerMap = new ConcurrentHashMap<>();
 
 
 
@@ -58,6 +60,7 @@ public class Node implements Observer {
     CountdownTimer countdownTimerNext = new CountdownTimer(25, callback, "Next");
     private boolean nextTimerStopped = false;
     private boolean previousTimerStopped = false;
+    private int tcpPort = 45612;
 
 
     public Node() {
@@ -74,6 +77,7 @@ public class Node implements Observer {
         previousHeartbeatSender = new HeartbeatSender(previousIP, currentID, heartbeatPortPrevious);
         nextHeartbeatSender = new HeartbeatSender(nextIP, currentID, heartbeatPortNext);
         watchDirectory = new WatchDirectory();
+        tcpReceiever = new TCPReceiever(tcpPort);
 
         this.nodeName = nodeName;
         this.ipAddress = ipAddress;
@@ -85,6 +89,7 @@ public class Node implements Observer {
         unicastHeartbeatPrevious.setObserver(this);
         unicastHeartbeatNext.setObserver(this);
         watchDirectory.setObserver(this);
+        tcpReceiever.setObserver(this);
 
         if(!(previousID ==0)) {
             countdownTimerPrevious.start();
@@ -136,6 +141,7 @@ public class Node implements Observer {
                 // Do something with the file
                 System.out.println("File found: " + file.getName());
                 fileArray.put(getHash(file.getName()),file.getName());
+                notifyNamingServer(getHash(file.getName()));
             }
         }
 //        File myFile2 = new File(fileTwo);
@@ -182,7 +188,58 @@ public class Node implements Observer {
         }
     }
 
-    private void Nodefailure(String position) throws JsonProcessingException {
+    public void notifyNamingServer(Integer hash) throws IOException {
+        String ownerNode = "";
+        Integer nodeHash = 0;
+        String nodeIP = "";
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(baseURL + "/" + hash + "/" + currentID + "/getOwner"))
+                //.header("Content-Type", "application/json")
+                .GET()//HttpRequest.BodyPublishers.noBody())//ofString(json))//"{nodeName:" + node.getNodeName() + "ipAddress:" + node.getIpAddress() + "}"))
+                .build();
+        try {
+            System.out.println("Sending request to get owner node of " + hash);
+            HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println("Response: " + response.body());
+
+            String packet = response.body();
+            String[] parts = packet.split(",");
+            nodeHash = Integer.valueOf(parts[0]);
+            nodeIP = parts[1];
+            ownerNode = packet;
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        if(nodeHash!=currentID) {
+            unicast("filename," + fileArray.get(hash) + "," + currentID + "," + ipAddress,nodeIP,uniPort);
+            sendFile(ownerNode, hash);
+        }else{
+
+        }
+    }
+
+    private void sendFile(String nodeParameters, int hash){
+        String[] parts = nodeParameters.split(",");
+        String nodeName = parts[0];
+        String nodeIP = parts[1];
+        try (Socket socket = new Socket(nodeIP, tcpPort);
+             FileInputStream fileInputStream = new FileInputStream(fileArray.get(hash));
+             OutputStream outputStream = socket.getOutputStream()) {
+
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = fileInputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+            outputStream.flush();
+
+            System.out.println("File sent successfully.");
+        } catch (IOException e) {
+            System.out.println("Error sending file: " + e.getMessage());
+        }
+    }
+
+        private void Nodefailure(String position) throws JsonProcessingException {
         HttpClient client = HttpClient.newHttpClient();
         String json;
         Integer id;
@@ -298,6 +355,7 @@ public class Node implements Observer {
         String otherNodeID = "";
         String otherNodeIP = "";
         String myID = "";
+        Map<Integer,String> nodeMap = new ConcurrentHashMap<>();
         String[] parts = packet.split(","); // split the string at the space character
         String position = parts[0];
         if(parts.length>1) {
@@ -314,6 +372,9 @@ public class Node implements Observer {
             nextID = Integer.parseInt(otherNodeID);       // than that node is our next
             setNextIP(otherNodeIP);
             System.out.println("Set as nextID.");
+        }else if(position.equals("filename")){
+            tcpReceiever.setFileName(otherNodeID);
+            nodeMap.put(Integer.valueOf(otherNodeIP),myID); // Here the variable names are not what they say they are, it is first the nodeID and then the nodeIP
         }else if(Integer.parseInt(position)<2){ // If there is only 1 node, set own ID as neighbours.
             if(!nextTimerStopped) {
                 nextTimerStopped = true;
@@ -328,7 +389,7 @@ public class Node implements Observer {
             if(Integer.parseInt(position)==previousID && countdownTimerPrevious.isRunning){ // If we receive a packet containing the previousID, it is pinging
                 countdownTimerPrevious.reset();         // to say it is still alive
                 System.out.println("Previous timer reset because of ping.");
-            }else if(Integer.parseInt(position)==nextID && countdownTimerNext.isRunning){ // If we receive a packet containing the nextID, it is pinging
+            }else if(Integer.parseInt(position)==nextID && countdownTimerNext.isRunning) { // If we receive a packet containing the nextID, it is pinging
                 countdownTimerNext.reset();               // to say it is still alive
                 System.out.println("Next timer reset because of ping.");
             }
