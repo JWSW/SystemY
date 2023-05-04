@@ -167,7 +167,7 @@ public class Services implements MulticastObserver{
         String previousParameters;
         System.out.println("De map: " + nodeMap);
         System.out.println("De offline node: " + hash);
-        removeNodeByHash(hash);
+//        removeNodeByHash(hash);
         Set<Integer> hashSet = nodeMap.keySet();
         Integer kleinste = 32769;
         Integer grootste = 0;
@@ -202,7 +202,7 @@ public class Services implements MulticastObserver{
         String nextParameters;
         System.out.println("De map: " + nodeMap);
         System.out.println("De offline node: " + hash);
-        removeNodeByHash(hash);
+//        removeNodeByHash(hash);
         Set<Integer> hashSet = nodeMap.keySet();
         Integer kleinste = 32769;
         Integer grootste = 0;
