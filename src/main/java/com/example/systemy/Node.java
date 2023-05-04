@@ -262,7 +262,6 @@ public class Node implements Observer {
 //            nextHeartbeatSender.stop();
 //            nextTimerStopped = true;
         }else{
-            //json = objectMapper.writeValueAsString(previousID);
             id = previousID;
 //            countdownTimerPrevious.stop();
 //            previousHeartbeatSender.stop();
@@ -319,7 +318,7 @@ public class Node implements Observer {
             unicast("Next," + previousID + "," + previousIP + "," + nextID, nextIP, uniPort); // Send previous node parameters to next node
         }
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(baseURL + "/" + currentID + "/removeNode"))
+                .uri(URI.create(baseURL + "/" + currentID + "/removeNodeByHashId"))
                 //.header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.noBody())//ofString(json))//"{nodeName:" + node.getNodeName() + "ipAddress:" + node.getIpAddress() + "}"))
                 .build();
