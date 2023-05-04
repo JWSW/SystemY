@@ -311,15 +311,19 @@ public class Node implements Observer {
         socket.close();
     }
 
-//    public void shutDown() throws IOException {
-//        unicast("Next" + nextID + "," + nextIP + "," + previousID,previousIP,uniPort); // Send next node parameters to previous node
-//        unicast("Previous" + previousID + "," + previousIP + "," + nextID,nextIP,uniPort); // Send previous node parameters to next node
-//        HttpRequest request = HttpRequest.newBuilder()
-//                .uri(URI.create(baseURL + "/" + currentID + "/removeNode"))
-//                //.header("Content-Type", "application/json")
-//                .POST(HttpRequest.BodyPublishers.noBody())//ofString(json))//"{nodeName:" + node.getNodeName() + "ipAddress:" + node.getIpAddress() + "}"))
-//                .build();
-//    }
+    public void shutDown() throws IOException {
+        if (nextID != 39999) {
+            unicast("Next" + nextID + "," + nextIP + "," + previousID, previousIP, uniPort); // Send next node parameters to previous node
+        }
+        if (previousID != 0) {
+            unicast("Previous" + previousID + "," + previousIP + "," + nextID, nextIP, uniPort); // Send previous node parameters to next node
+        }
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(baseURL + "/" + currentID + "/removeNode"))
+                //.header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.noBody())//ofString(json))//"{nodeName:" + node.getNodeName() + "ipAddress:" + node.getIpAddress() + "}"))
+                .build();
+    }
 
 //    public void addFile(String fileName, String owner) {
 //        files.put(fileName, owner);
