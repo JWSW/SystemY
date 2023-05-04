@@ -50,7 +50,7 @@ public class HeartbeatSender extends Thread{
 
             sendPacket = new DatagramPacket(buf, buf.length, sendAddress, port);
 
-            while (true) {
+            while (!Thread.currentThread().isInterrupted()) {
                 System.out.println("Sending ping to " + sendAddress + " or " + sendIP + " with port " + port);
                 socket.send(sendPacket);
                 if (stopping) {

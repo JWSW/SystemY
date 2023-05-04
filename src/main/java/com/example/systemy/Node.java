@@ -252,14 +252,14 @@ public class Node implements Observer {
             //json = objectMapper.writeValueAsString(nextID);
             id = nextID;
 //            countdownTimerNext.stop();
-            nextHeartbeatSender.stop();
+            nextHeartbeatSender.interrupt();
             nextHeartbeatSenderStopped = true;
 //            nextTimerStopped = true;
         }else{
             //json = objectMapper.writeValueAsString(previousID);
             id = previousID;
 //            countdownTimerPrevious.stop();
-            previousHeartbeatSender.stop();
+            previousHeartbeatSender.interrupt();
             previousHeartbeatSenderStopped = true;
 //            previousTimerStopped = true;
         }
