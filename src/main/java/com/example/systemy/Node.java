@@ -390,10 +390,20 @@ public class Node implements Observer {
             setPreviousIP(otherNodeIP);                 // If we receive a reply that sais we are the other node its next,
             previousID = Integer.parseInt(otherNodeID); // than that node is our previous
             System.out.println("Set as previousID.");
+            if(amountOfNodes==2){                       // If there are only 2 nodes, then they are both each others previous and next node
+                setNextIP(otherNodeIP);
+                nextID = Integer.parseInt(otherNodeID);
+                System.out.println("Also set as nextID.");
+            }
         }else if(Objects.equals(position,"Previous")){ // If we receive a reply that sais we are the other node its previous,
             setNextIP(otherNodeIP);                       // than that node is our next
             nextID = Integer.parseInt(otherNodeID);
             System.out.println("Set as nextID.");
+            if(amountOfNodes==2){                       // If there are only 2 nodes, then they are both each others previous and next node
+                setPreviousIP(otherNodeIP);
+                previousID = Integer.parseInt(otherNodeID);
+                System.out.println("Also set as previousID.");
+            }
         }else if(position.equals("filename")){
             tcpReceiever.setFileName(otherNodeID);
             nodeMap.put(Integer.valueOf(otherNodeIP),myID); // Here the variable names are not what they say they are, it is first the nodeID and then the nodeIP
@@ -406,6 +416,8 @@ public class Node implements Observer {
                 previousTimerStopped = true;
                 countdownTimerPrevious.stop();
             }
+        }else if(Integer.parseInt(position)==2) { // If there are only 2 nodes, set other node as both previous and next node.
+            amountOfNodes = 2;
         }else if(Integer.parseInt(position)>2 && Integer.parseInt(position)<maxNodes) { // If there 4 nodes, start offline countdownTimers to maybe get connected to highest or lowest node
             if (nextTimerStopped) {
                 nextTimerStopped = false;
