@@ -61,6 +61,8 @@ public class Node implements Observer {
     private boolean nextTimerStopped = false;
     private boolean previousTimerStopped = false;
     private int tcpPort = 45612;
+    private boolean nextHeartbeatSenderStopped = false;
+    private boolean previousHeartbeatSenderStopped = false;
 
 
     public Node() {
@@ -160,6 +162,9 @@ public class Node implements Observer {
         if(!nextTimerStopped) {
             countdownTimerNext.reset();     // We reset the countdown timer that checks if the node is down
             System.out.println("Next timer has been reset.");
+            if(nextHeartbeatSenderStopped){
+                nextHeartbeatSender.start();
+            }
         }else{
             countdownTimerNext.start();
             System.out.println("Next timer has been started.");
@@ -175,6 +180,9 @@ public class Node implements Observer {
         if(!previousTimerStopped) {
             countdownTimerPrevious.reset();     // We reset the countdown timer that checks if the node is down
             System.out.println("Previous timer has been reset.");
+            if(previousHeartbeatSenderStopped){
+                previousHeartbeatSender.start();
+            }
         }else{
             countdownTimerPrevious.start();
             System.out.println("Previous timer has been started.");
@@ -241,15 +249,17 @@ public class Node implements Observer {
         if(position.equals("Next")){
             //json = objectMapper.writeValueAsString(nextID);
             id = nextID;
-            countdownTimerNext.stop();
+//            countdownTimerNext.stop();
             nextHeartbeatSender.stopSending();
-            nextTimerStopped = true;
+            nextHeartbeatSenderStopped = true;
+//            nextTimerStopped = true;
         }else{
             //json = objectMapper.writeValueAsString(previousID);
             id = previousID;
-            countdownTimerPrevious.stop();
+//            countdownTimerPrevious.stop();
             previousHeartbeatSender.stopSending();
-            previousTimerStopped = true;
+            previousHeartbeatSenderStopped = true;
+//            previousTimerStopped = true;
         }
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(baseURL + "/" + id + "/get" + position))
