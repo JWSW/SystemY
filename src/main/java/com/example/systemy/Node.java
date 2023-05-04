@@ -61,8 +61,6 @@ public class Node implements Observer {
     private boolean nextTimerStopped = false;
     private boolean previousTimerStopped = false;
     private int tcpPort = 45612;
-    private boolean nextHeartbeatSenderStopped = false;
-    private boolean previousHeartbeatSenderStopped = false;
 
 
     public Node() {
@@ -158,17 +156,13 @@ public class Node implements Observer {
 
     public void setNextIP(String nextIP) throws UnknownHostException {
         this.nextIP = nextIP;
-        nextHeartbeatSender.setSendingIP(nextIP);
+        nextHeartbeatSender.stop();
         if(!nextTimerStopped) {
             countdownTimerNext.reset();     // We reset the countdown timer that checks if the node is down
             System.out.println("Next timer has been reset.");
             if(!nextHeartbeatSender.isAlive()){
-                System.out.println("Is dead");
                 nextHeartbeatSender = new HeartbeatSender(nextIP, currentID, heartbeatPortNext);
                 nextHeartbeatSender.start();
-                nextHeartbeatSenderStopped = false;
-            }else{
-                System.out.println("Wel alive");
             }
         }else{
             countdownTimerNext.start();
@@ -181,7 +175,7 @@ public class Node implements Observer {
 
     public void setPreviousIP(String previousIP) throws UnknownHostException {
         this.previousIP = previousIP;
-        previousHeartbeatSender.setSendingIP(previousIP);
+        previousHeartbeatSender.stop();
         if(!previousTimerStopped) {
             countdownTimerPrevious.reset();     // We reset the countdown timer that checks if the node is down
             System.out.println("Previous timer has been reset.");
@@ -189,7 +183,6 @@ public class Node implements Observer {
                 System.out.println("Is dead");
                 previousHeartbeatSender = new HeartbeatSender(previousIP, currentID, heartbeatPortPrevious);
                 previousHeartbeatSender.start();
-                previousHeartbeatSenderStopped = false;
             }else{
                 System.out.println("Wel alive");
             }
@@ -202,6 +195,8 @@ public class Node implements Observer {
         }
     }
 
+
+    /*Afblijven Abdel, dit is voor lab 5*/
     public void notifyNamingServer(Integer hash) throws IOException {
         HttpClient client = HttpClient.newHttpClient();
         String ownerNode = "";
@@ -261,14 +256,12 @@ public class Node implements Observer {
             id = nextID;
 //            countdownTimerNext.stop();
             nextHeartbeatSender.stop();
-            nextHeartbeatSenderStopped = true;
 //            nextTimerStopped = true;
         }else{
             //json = objectMapper.writeValueAsString(previousID);
             id = previousID;
 //            countdownTimerPrevious.stop();
             previousHeartbeatSender.stop();
-            previousHeartbeatSenderStopped = true;
 //            previousTimerStopped = true;
         }
         HttpRequest request = HttpRequest.newBuilder()
