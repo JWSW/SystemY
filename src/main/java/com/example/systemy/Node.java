@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -250,7 +251,7 @@ public class Node implements Observer {
         }
     }
 
-    private void requestRemoveNode(int id) throws IOException, InterruptedException {
+    private void requestRemoveNode(Integer id) throws IOException, InterruptedException {
         HttpRequest request2 = HttpRequest.newBuilder()
                 .uri(URI.create(baseURL + "/" + id + "/removeNodeByHashId"))
                 .GET()
@@ -419,18 +420,24 @@ public class Node implements Observer {
             previousID = Integer.parseInt(otherNodeID); // than that node is our previous
             System.out.println("Set as previousID.");
             if (amountOfNodes == 2) {                       // If there are only 2 nodes, then they are both each others previous and next node
+                amountOfNodes = 3;
                 setNextIP(otherNodeIP);
                 nextID = Integer.parseInt(otherNodeID);
                 System.out.println("Also set as nextID.");
+                response = "Previous," + currentID + "," + this.ipAddress + "," + previousID; //The message to send as reply
+                unicast(response, otherNodeIP, uniPort);
             }
         } else if (Objects.equals(position, "Previous")) { // If we receive a reply that sais we are the other node its previous,
             setNextIP(otherNodeIP);                       // than that node is our next
             nextID = Integer.parseInt(otherNodeID);
             System.out.println("Set as nextID.");
             if (amountOfNodes == 2) {                       // If there are only 2 nodes, then they are both each others previous and next node
+                amountOfNodes = 3;
                 setPreviousIP(otherNodeIP);
                 previousID = Integer.parseInt(otherNodeID);
                 System.out.println("Also set as previousID.");
+                response = "Next," + currentID + "," + this.ipAddress + "," + previousID; //The message to send as reply
+                unicast(response, otherNodeIP, uniPort);
             }
         } else if (position.equals("filename")) {
             tcpReceiever.setFileName(otherNodeID);
