@@ -424,7 +424,7 @@ public class Node implements Observer {
                 setNextIP(otherNodeIP);
                 nextID = Integer.parseInt(otherNodeID);
                 System.out.println("Also set as nextID.");
-                response = "Previous," + currentID + "," + this.ipAddress + "," + previousID; //The message to send as reply
+                response = "Next," + currentID + "," + this.ipAddress + "," + previousID; //The message to send as reply
                 unicast(response, otherNodeIP, uniPort);
             }
         } else if (Objects.equals(position, "Previous")) { // If we receive a reply that sais we are the other node its previous,
@@ -436,7 +436,7 @@ public class Node implements Observer {
                 setPreviousIP(otherNodeIP);
                 previousID = Integer.parseInt(otherNodeID);
                 System.out.println("Also set as previousID.");
-                response = "Next," + currentID + "," + this.ipAddress + "," + previousID; //The message to send as reply
+                response = "Previous," + currentID + "," + this.ipAddress + "," + previousID; //The message to send as reply
                 unicast(response, otherNodeIP, uniPort);
             }
         } else if (position.equals("filename")) {
