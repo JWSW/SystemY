@@ -51,12 +51,12 @@ public class HeartbeatSender extends Thread{
             while (true) {
                 System.out.println("Sending ping to " + sendAddress + " or " + sendIP + " with port " + port);
                 socket.send(sendPacket);
-
-                sleep(10000);
                 if ("end".equals(stopping)) {
                     System.out.println("HeartbeatSender has stopped.");
                     break;
                 }
+
+                sleep(10000);
             }
         } catch (Exception e) {
             e.printStackTrace();
