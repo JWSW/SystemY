@@ -29,6 +29,8 @@ public class Node implements Observer {
     private String nextIP = "";
     private int previousID = 0;
     private String previousIP = "";
+    private int maxNodes = 10;
+    private int amountOfNodes = 1;
     private static DatagramSocket socket = null;
     private Map<File,String> fileMap;
     private WatchDirectory watchDirectory;
@@ -404,7 +406,7 @@ public class Node implements Observer {
                 previousTimerStopped = true;
                 countdownTimerPrevious.stop();
             }
-        }else if(Integer.parseInt(position)>2) { // If there 4 nodes, start offline countdownTimers to maybe get connected to highest or lowest node
+        }else if(Integer.parseInt(position)>2 && Integer.parseInt(position)<maxNodes) { // If there 4 nodes, start offline countdownTimers to maybe get connected to highest or lowest node
             if (nextTimerStopped) {
                 nextTimerStopped = false;
                 countdownTimerNext.start();
