@@ -316,7 +316,7 @@ public class Node implements Observer {
         }
         if (previousID != 0) {
             System.out.println("Sending new previous node");
-            unicast("next," + previousID + "," + previousIP + "," + nextID, nextIP, uniPort); // Send previous node parameters to next node
+            unicast("Next," + previousID + "," + previousIP + "," + nextID, nextIP, uniPort); // Send previous node parameters to next node
         }
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(baseURL + "/" + currentID + "/removeNode"))
