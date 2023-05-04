@@ -121,6 +121,7 @@ public class Node implements Observer {
         notifyFiles();
     }
 
+    /* Dit is voor lab 5 ook*/
     public void searchFiles() {
         // Get the directory to search
         File directory = new File("/home/Dist/SystemY/nodeFiles");
@@ -258,13 +259,13 @@ public class Node implements Observer {
             //json = objectMapper.writeValueAsString(nextID);
             id = nextID;
 //            countdownTimerNext.stop();
-            nextHeartbeatSender.stop();
+//            nextHeartbeatSender.stop();
 //            nextTimerStopped = true;
         }else{
             //json = objectMapper.writeValueAsString(previousID);
             id = previousID;
 //            countdownTimerPrevious.stop();
-            previousHeartbeatSender.stop();
+//            previousHeartbeatSender.stop();
 //            previousTimerStopped = true;
         }
         HttpRequest request = HttpRequest.newBuilder()
@@ -311,11 +312,11 @@ public class Node implements Observer {
         System.out.println("Shutting down");
         if (nextID != 39999) {
             System.out.println("Sending new next node");
-            unicast("Next," + nextID + "," + nextIP + "," + previousID, previousIP, uniPort); // Send next node parameters to previous node
+            unicast("Previous," + nextID + "," + nextIP + "," + previousID, previousIP, uniPort); // Send next node parameters to previous node
         }
         if (previousID != 0) {
             System.out.println("Sending new previous node");
-            unicast("Previous," + previousID + "," + previousIP + "," + nextID, nextIP, uniPort); // Send previous node parameters to next node
+            unicast("next," + previousID + "," + previousIP + "," + nextID, nextIP, uniPort); // Send previous node parameters to next node
         }
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(baseURL + "/" + currentID + "/removeNode"))
@@ -357,13 +358,13 @@ public class Node implements Observer {
         int port = uniPort;
         int hash = getHash(hostname);
         System.out.println("Processing multicast packet: " + hash + ", " + ipAddress);
-        if ((currentID < hash && hash < nextID) || (nextID<currentID && hash>currentID)) { // Ring topology: if we are the biggest hashID, our nextID is the smallest hashID
+        if ((currentID < hash && hash < nextID)){// || (nextID<currentID && hash>currentID)) { // Ring topology: if we are the biggest hashID, our nextID is the smallest hashID
             System.out.println("Registered as nextID");
             nextID = hash;
             setNextIP(ipAddress); // This function changes everything that needs to be changed when changing neighbours IP
             response = "Next," + currentID + "," + this.ipAddress + "," + nextID; //The message to send as reply
             unicast(response, ipAddress, port);
-        } else if ((previousID < hash && hash < currentID) || (previousID>currentID && hash < currentID)) { // Ring topology: if we are the smallest hashID, our previousID is the biggest hashID
+        } else if ((previousID < hash && hash < currentID)){// || (previousID>currentID && hash < currentID)) { // Ring topology: if we are the smallest hashID, our previousID is the biggest hashID
             System.out.println("Registered as previousID");
             previousID = hash;
             setPreviousIP(ipAddress); // This function changes everything that needs to be changed when changing neighbours IP
