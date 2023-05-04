@@ -54,6 +54,7 @@ public class HeartbeatSender extends Thread{
 
                 sleep(10000);
                 if ("end".equals(stopping)) {
+                    System.out.println("HeartbeatSender has stopped.");
                     break;
                 }
             }

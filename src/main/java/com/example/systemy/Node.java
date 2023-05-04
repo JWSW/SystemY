@@ -164,6 +164,7 @@ public class Node implements Observer {
             System.out.println("Next timer has been reset.");
             if(nextHeartbeatSenderStopped){
                 nextHeartbeatSender.start();
+                nextHeartbeatSenderStopped = false;
             }
         }else{
             countdownTimerNext.start();
@@ -182,6 +183,7 @@ public class Node implements Observer {
             System.out.println("Previous timer has been reset.");
             if(previousHeartbeatSenderStopped){
                 previousHeartbeatSender.start();
+                previousHeartbeatSenderStopped = false;
             }
         }else{
             countdownTimerPrevious.start();
