@@ -250,6 +250,16 @@ public class Node implements Observer {
         }
     }
 
+    private void requestRemoveNode(int id) throws IOException, InterruptedException {
+        HttpRequest request2 = HttpRequest.newBuilder()
+                .uri(URI.create(baseURL + "/" + id + "/removeNodeByHashId"))
+                .GET()
+                .build();
+        System.out.println("Sending request to remove offline node.");
+        HttpResponse<String> response2 = HttpClient.newHttpClient().send(request2, HttpResponse.BodyHandlers.ofString());
+        System.out.println("Response: " + response2.body());
+    }
+
         private void Nodefailure(String position) throws JsonProcessingException {
         HttpClient client = HttpClient.newHttpClient();
         String json;
@@ -271,14 +281,17 @@ public class Node implements Observer {
                 //.header("Content-Type", "application/json")
                 .GET()//HttpRequest.BodyPublishers.noBody())//ofString(json))//"{nodeName:" + node.getNodeName() + "ipAddress:" + node.getIpAddress() + "}"))
                 .build();
-            HttpRequest request2 = HttpRequest.newBuilder()
-                    .uri(URI.create(baseURL + "/" + id + "/removeNodeByHashId"))
-                    .GET()
-                    .build();
+//        HttpRequest request2 = HttpRequest.newBuilder()
+//                .uri(URI.create(baseURL + "/" + id + "/removeNodeByHashId"))
+//                .GET()
+//                .build();
         try{
-            System.out.println("Sending request to remove offline node.");
-            HttpResponse<String> response2 = HttpClient.newHttpClient().send(request1, HttpResponse.BodyHandlers.ofString());
-            System.out.println("Response: " + response2.body());
+//            System.out.println("Sending request to remove offline node.");
+//            HttpResponse<String> response2 = HttpClient.newHttpClient().send(request2, HttpResponse.BodyHandlers.ofString());
+//            System.out.println("Response: " + response2.body());
+            requestRemoveNode(id);
+
+
             System.out.println("Sending request to get new neighbour.");
             HttpResponse<String> response = HttpClient.newHttpClient().send(request1, HttpResponse.BodyHandlers.ofString());
             System.out.println("Response: " + response.body());
@@ -360,21 +373,29 @@ public class Node implements Observer {
         String hostname = parts[0];
         String ipAddress = parts[1];
         String response;
-        int port = uniPort;
+        String message;
         int hash = getHash(hostname);
         System.out.println("Processing multicast packet: " + hash + ", " + ipAddress);
         if ((currentID < hash && hash < nextID)){// || (nextID<currentID && hash>currentID)) { // Ring topology: if we are the biggest hashID, our nextID is the smallest hashID
-            System.out.println("Registered as nextID");
+            if(previousID == nextID){
+                message = "getPreviousNeighbour";
+                unicast(message,previousIP,uniPort);
+            }
             nextID = hash;
             setNextIP(ipAddress); // This function changes everything that needs to be changed when changing neighbours IP
+            System.out.println("Registered as nextID");
             response = "Next," + currentID + "," + this.ipAddress + "," + nextID; //The message to send as reply
-            unicast(response, ipAddress, port);
+            unicast(response, ipAddress, uniPort);
         } else if ((previousID < hash && hash < currentID)){// || (previousID>currentID && hash < currentID)) { // Ring topology: if we are the smallest hashID, our previousID is the biggest hashID
-            System.out.println("Registered as previousID");
+            if(previousID == nextID){
+                message = "getNextNeighbour";
+                unicast(message,nextIP,uniPort);
+            }
             previousID = hash;
             setPreviousIP(ipAddress); // This function changes everything that needs to be changed when changing neighbours IP
+            System.out.println("Registered as previousID");
             response = "Previous," + currentID + "," + this.ipAddress + "," + previousID; //The message to send as reply
-            unicast(response, ipAddress, port);
+            unicast(response, ipAddress, uniPort);
         }
 
 
@@ -384,36 +405,79 @@ public class Node implements Observer {
         String otherNodeID = "";
         String otherNodeIP = "";
         String myID = "";
-        Map<Integer,String> nodeMap = new ConcurrentHashMap<>();
+        Map<Integer, String> nodeMap = new ConcurrentHashMap<>();
         String[] parts = packet.split(","); // split the string at the space character
         String position = parts[0];
-        if(parts.length>1) {
+        if (parts.length > 1) {
             otherNodeID = parts[1];
             otherNodeIP = parts[2];
             myID = parts[3];
         }
         String response;
-        if(Objects.equals(position, "Next")){
+        if (Objects.equals(position, "Next")) {
             setPreviousIP(otherNodeIP);                 // If we receive a reply that sais we are the other node its next,
             previousID = Integer.parseInt(otherNodeID); // than that node is our previous
             System.out.println("Set as previousID.");
-            if(amountOfNodes==2){                       // If there are only 2 nodes, then they are both each others previous and next node
+            if (amountOfNodes == 2) {                       // If there are only 2 nodes, then they are both each others previous and next node
                 setNextIP(otherNodeIP);
                 nextID = Integer.parseInt(otherNodeID);
                 System.out.println("Also set as nextID.");
             }
-        }else if(Objects.equals(position,"Previous")){ // If we receive a reply that sais we are the other node its previous,
+        } else if (Objects.equals(position, "Previous")) { // If we receive a reply that sais we are the other node its previous,
             setNextIP(otherNodeIP);                       // than that node is our next
             nextID = Integer.parseInt(otherNodeID);
             System.out.println("Set as nextID.");
-            if(amountOfNodes==2){                       // If there are only 2 nodes, then they are both each others previous and next node
+            if (amountOfNodes == 2) {                       // If there are only 2 nodes, then they are both each others previous and next node
                 setPreviousIP(otherNodeIP);
                 previousID = Integer.parseInt(otherNodeID);
                 System.out.println("Also set as previousID.");
             }
-        }else if(position.equals("filename")){
+        } else if (position.equals("filename")) {
             tcpReceiever.setFileName(otherNodeID);
-            nodeMap.put(Integer.valueOf(otherNodeIP),myID); // Here the variable names are not what they say they are, it is first the nodeID and then the nodeIP
+            nodeMap.put(Integer.valueOf(otherNodeIP), myID); // Here the variable names are not what they say they are, it is first the nodeID and then the nodeIP
+        }else if(position.equals("getPreviousNeighbour") && previousID==nextID) {
+            String packet2 = "";
+            HttpRequest request1 = HttpRequest.newBuilder()
+                    .uri(URI.create(baseURL + "/" + previousID + "/getPrevious"))
+                    //.header("Content-Type", "application/json")
+                    .GET()//HttpRequest.BodyPublishers.noBody())//ofString(json))//"{nodeName:" + node.getNodeName() + "ipAddress:" + node.getIpAddress() + "}"))
+                    .build();
+            try {
+                System.out.println("Sending request to get new neighbour.");
+                HttpResponse<String> response1 = HttpClient.newHttpClient().send(request1, HttpResponse.BodyHandlers.ofString());
+                System.out.println("Response: " + response1.body());
+                packet2 = response1.body();
+            }catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
+            String[] parts2 = packet2.split(",");
+            if(Integer.parseInt(parts[0])!=currentID) {
+                previousID = Integer.parseInt(parts2[0]);
+                setPreviousIP(parts2[1]);
+            }else{
+                System.out.println("Response was own node: " + packet + ", currentID: " + currentID);
+            }
+        } else if (position.equals("getNextNeighbour") && previousID==nextID) {
+            String packet2 = "";
+            HttpRequest request1 = HttpRequest.newBuilder()
+                    .uri(URI.create(baseURL + "/" + nextID + "/getNext"))
+                    //.header("Content-Type", "application/json")
+                    .GET()//HttpRequest.BodyPublishers.noBody())//ofString(json))//"{nodeName:" + node.getNodeName() + "ipAddress:" + node.getIpAddress() + "}"))
+                    .build();
+            try {
+                System.out.println("Sending request to get new neighbour.");
+                HttpResponse<String> response1 = HttpClient.newHttpClient().send(request1, HttpResponse.BodyHandlers.ofString());
+                System.out.println("Response: " + response1.body());
+            }catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
+            String[] parts2 = packet2.split(",");
+            if(Integer.parseInt(parts[0])!=currentID) {
+                nextID = Integer.parseInt(parts2[0]);
+                setNextIP(parts2[1]);
+            }else{
+                System.out.println("Response was own node: " + packet + ", currentID: " + currentID);
+            }
         }else if(Integer.parseInt(position)<2) { // If there is only 1 node, set own ID as neighbours.
             if (!nextTimerStopped) {
                 nextTimerStopped = true;
