@@ -311,18 +311,24 @@ public class Node implements Observer {
         socket.close();
     }
 
-    public void shutDown() throws IOException {
+    public void shutDown() throws IOException, InterruptedException {
+        System.out.println("Shutting down");
         if (nextID != 39999) {
-            unicast("Next" + nextID + "," + nextIP + "," + previousID, previousIP, uniPort); // Send next node parameters to previous node
+            System.out.println("Sending new next node");
+            unicast("Next," + nextID + "," + nextIP + "," + previousID, previousIP, uniPort); // Send next node parameters to previous node
         }
         if (previousID != 0) {
-            unicast("Previous" + previousID + "," + previousIP + "," + nextID, nextIP, uniPort); // Send previous node parameters to next node
+            System.out.println("Sending new previous node");
+            unicast("Previous," + previousID + "," + previousIP + "," + nextID, nextIP, uniPort); // Send previous node parameters to next node
         }
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(baseURL + "/" + currentID + "/removeNode"))
                 //.header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.noBody())//ofString(json))//"{nodeName:" + node.getNodeName() + "ipAddress:" + node.getIpAddress() + "}"))
                 .build();
+        System.out.println("Sending request to remove node");
+        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+        System.out.println("Response: " + response.body());
     }
 
 //    public void addFile(String fileName, String owner) {

@@ -60,7 +60,7 @@ public class Services implements MulticastObserver{
     }
 
     @PreDestroy
-    public void destroy() throws IOException {
+    public void destroy() throws IOException, InterruptedException {
         node.shutDown();
         node.killProcess();
         ObjectMapper objectMapper = new ObjectMapper();
