@@ -91,20 +91,20 @@ public class Node implements Observer {
         watchDirectory.setObserver(this);
         tcpReceiever.setObserver(this);
 
-//        if(!(previousID ==0)) {
-//            countdownTimerPrevious.start();
-//            previousHeartbeatSender.start();
-//            System.out.println("Previous timer started at Init()");
-//        }else{
-//            previousTimerStopped = true;
-//        }
-//        if(!(nextID==39999)) {
-//            countdownTimerNext.start();
-//            nextHeartbeatSender.start();
-//            System.out.println("Next timer started at Init()");
-//        }else{
-//            nextTimerStopped = true;
-//        }
+        if(!(previousID ==0)) {
+            countdownTimerPrevious.start();
+            previousHeartbeatSender.start();
+            System.out.println("Previous timer started at Init()");
+        }else{
+            previousTimerStopped = true;
+        }
+        if(!(nextID==39999)) {
+            countdownTimerNext.start();
+            nextHeartbeatSender.start();
+            System.out.println("Next timer started at Init()");
+        }else{
+            nextTimerStopped = true;
+        }
 
         watchDirectory.start();
         Thread receiverThreadHeartbeatPrevious = new Thread(unicastHeartbeatPrevious);
