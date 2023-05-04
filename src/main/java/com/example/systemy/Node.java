@@ -266,14 +266,21 @@ public class Node implements Observer {
 //            previousHeartbeatSender.stop();
 //            previousTimerStopped = true;
         }
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpRequest request1 = HttpRequest.newBuilder()
                 .uri(URI.create(baseURL + "/" + id + "/get" + position))
                 //.header("Content-Type", "application/json")
                 .GET()//HttpRequest.BodyPublishers.noBody())//ofString(json))//"{nodeName:" + node.getNodeName() + "ipAddress:" + node.getIpAddress() + "}"))
                 .build();
+            HttpRequest request2 = HttpRequest.newBuilder()
+                    .uri(URI.create(baseURL + "/" + id + "/removeNodeByHashId"))
+                    .GET()
+                    .build();
         try{
+            System.out.println("Sending request to remove offline node.");
+            HttpResponse<String> response2 = HttpClient.newHttpClient().send(request1, HttpResponse.BodyHandlers.ofString());
+            System.out.println("Response: " + response2.body());
             System.out.println("Sending request to get new neighbour.");
-            HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = HttpClient.newHttpClient().send(request1, HttpResponse.BodyHandlers.ofString());
             System.out.println("Response: " + response.body());
 
             String packet = response.body();
