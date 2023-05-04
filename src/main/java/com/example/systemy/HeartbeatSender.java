@@ -1,5 +1,6 @@
 package com.example.systemy;
 
+import java.io.IOException;
 import java.net.*;
 
 public class HeartbeatSender extends Thread{
@@ -8,7 +9,7 @@ public class HeartbeatSender extends Thread{
     private String sendIP;
     private InetAddress sendAddress;
     DatagramPacket sendPacket;
-    private String stopping = "";
+    private boolean stopping = false;
     protected byte[] buf = new byte[256];
 
     public HeartbeatSender(String sendIP, int currentID, int port) {
@@ -33,12 +34,13 @@ public class HeartbeatSender extends Thread{
     }
 
     public void stopSending(){
-        stopping = "end";
+        stopping = true;
     }
 
     @Override
     public void run() {
         try {
+            stopping = false;
             DatagramSocket socket;
             sendAddress = InetAddress.getByName(sendIP);
             socket = new DatagramSocket();
@@ -48,17 +50,18 @@ public class HeartbeatSender extends Thread{
 
             sendPacket = new DatagramPacket(buf, buf.length, sendAddress, port);
 
-            while (true) {
+            while (!stopping) {
                 System.out.println("Sending ping to " + sendAddress + " or " + sendIP + " with port " + port);
                 socket.send(sendPacket);
-                if ("end".equals(stopping)) {
+                if (stopping) {
                     System.out.println("HeartbeatSender has stopped.");
                     break;
                 }
 
                 sleep(10000);
             }
-        } catch (Exception e) {
+        } catch (InterruptedException | IOException e) {
+            stopping = true;
             e.printStackTrace();
         }
     }
