@@ -183,6 +183,7 @@ public class Node implements Observer {
     }
 
     public void notifyNamingServer(Integer hash) throws IOException {
+        HttpClient client = HttpClient.newHttpClient();
         String ownerNode = "";
         Integer nodeHash = 0;
         String nodeIP = "";
