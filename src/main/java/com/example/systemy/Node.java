@@ -241,11 +241,13 @@ public class Node implements Observer {
         if(position.equals("Next")){
             //json = objectMapper.writeValueAsString(nextID);
             id = nextID;
+            countdownTimerNext.stop();
             nextHeartbeatSender.stopSending();
             nextTimerStopped = true;
         }else{
             //json = objectMapper.writeValueAsString(previousID);
             id = previousID;
+            countdownTimerPrevious.stop();
             previousHeartbeatSender.stopSending();
             previousTimerStopped = true;
         }
