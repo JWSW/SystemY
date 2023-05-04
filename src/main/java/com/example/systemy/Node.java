@@ -163,6 +163,7 @@ public class Node implements Observer {
             countdownTimerNext.reset();     // We reset the countdown timer that checks if the node is down
             System.out.println("Next timer has been reset.");
             if(!nextHeartbeatSender.isAlive()){
+                System.out.println("Is dead");
                 nextHeartbeatSender.start();
                 nextHeartbeatSenderStopped = false;
             }else{
@@ -184,6 +185,7 @@ public class Node implements Observer {
             countdownTimerPrevious.reset();     // We reset the countdown timer that checks if the node is down
             System.out.println("Previous timer has been reset.");
             if(!nextHeartbeatSender.isAlive()){
+                System.out.println("Is dead");
                 previousHeartbeatSender.start();
                 previousHeartbeatSenderStopped = false;
             }else{
