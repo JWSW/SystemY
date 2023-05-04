@@ -164,6 +164,7 @@ public class Node implements Observer {
             System.out.println("Next timer has been reset.");
             if(!nextHeartbeatSender.isAlive()){
                 System.out.println("Is dead");
+                nextHeartbeatSender = new HeartbeatSender(nextIP, currentID, heartbeatPortNext);
                 nextHeartbeatSender.start();
                 nextHeartbeatSenderStopped = false;
             }else{
@@ -186,6 +187,7 @@ public class Node implements Observer {
             System.out.println("Previous timer has been reset.");
             if(!nextHeartbeatSender.isAlive()){
                 System.out.println("Is dead");
+                previousHeartbeatSender = new HeartbeatSender(previousIP, currentID, heartbeatPortPrevious);
                 previousHeartbeatSender.start();
                 previousHeartbeatSenderStopped = false;
             }else{
