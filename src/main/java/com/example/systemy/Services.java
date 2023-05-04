@@ -188,7 +188,7 @@ public class Services implements MulticastObserver{
                 }
             }
         }
-        if(hash==kleinste || nodeMap.keySet().size()==1){
+        if(hash<=kleinste || nodeMap.keySet().size()==1){
             previousParameters = grootste + "," + nodeMap.get(grootste);
             System.out.println("New previous parameters (grootste): " + previousParameters);
         }else{
@@ -224,7 +224,7 @@ public class Services implements MulticastObserver{
                 }
             }
         }
-        if(hash==grootste || nodeMap.keySet().size()==1){
+        if(hash>=grootste || nodeMap.keySet().size()==1){
             nextParameters = kleinste + "," + nodeMap.get(kleinste);
             System.out.println("New next parameters (kleinste): " + nextParameters);
         }else{
