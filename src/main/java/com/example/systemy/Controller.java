@@ -28,7 +28,6 @@ public class Controller {
     @PostMapping("/{nodeHashId}/removeNodeByHashId")
     public void removeNodeByHash(@PathVariable Integer nodeHashId) {
         services.removeNodeByHash(nodeHashId);
-        System.out.println("node with "+nodeHashId+" has been removed");
     }
 
     @GetMapping("/{nodeName}/getHash")
