@@ -42,7 +42,7 @@ public class Node implements Observer {
     private HeartbeatSender nextHeartbeatSender;// = new HeartbeatSender(nextIP, currentID, heartbeatPortNext);
     private TCPReceiever tcpReceiever;
     private String baseURL = "http://172.27.0.5:8080/requestName";
-    ObjectMapper objectMapper = new ObjectMapper(); // or any other JSON serializer
+    private ObjectMapper objectMapper = new ObjectMapper(); // or any other JSON serializer
     private Map<Integer,String> fileArray = new ConcurrentHashMap<>();
     private Map<String, Map<Integer,String>> ownerMap = new ConcurrentHashMap<>();
 
@@ -56,8 +56,8 @@ public class Node implements Observer {
         }
     };
 
-    CountdownTimer countdownTimerPrevious = new CountdownTimer(25, callback, "Previous");
-    CountdownTimer countdownTimerNext = new CountdownTimer(25, callback, "Next");
+    private CountdownTimer countdownTimerPrevious = new CountdownTimer(25, callback, "Previous");
+    private CountdownTimer countdownTimerNext = new CountdownTimer(25, callback, "Next");
     private boolean nextTimerStopped = false;
     private boolean previousTimerStopped = false;
     private int tcpPort = 45612;
@@ -181,7 +181,7 @@ public class Node implements Observer {
         if(!previousTimerStopped) {
             countdownTimerPrevious.reset();     // We reset the countdown timer that checks if the node is down
             System.out.println("Previous timer has been reset.");
-            if(!nextHeartbeatSender.isAlive()){
+            if(!previousHeartbeatSender.isAlive()){
                 System.out.println("Is dead");
                 previousHeartbeatSender = new HeartbeatSender(previousIP, currentID, heartbeatPortPrevious);
                 previousHeartbeatSender.start();
