@@ -501,12 +501,20 @@ public class Node implements Observer {
                 System.out.println("Previous timer has started.");
             }
         }else{
-            if(Integer.parseInt(position)==previousID && countdownTimerPrevious.isRunning){ // If we receive a packet containing the previousID, it is pinging
-                countdownTimerPrevious.reset();         // to say it is still alive
+            if((Integer.parseInt(position)==previousID) && countdownTimerPrevious.isRunning){ // If we receive a packet containing the previousID, it is pinging
+                countdownTimerPrevious.reset();
                 System.out.println("Previous timer reset because of ping.");
+                if(previousID==nextID){
+                    countdownTimerNext.reset();               // to say it is still alive
+                    System.out.println("Next timer reset because of ping.");
+                }
             }else if(Integer.parseInt(position)==nextID && countdownTimerNext.isRunning) { // If we receive a packet containing the nextID, it is pinging
                 countdownTimerNext.reset();               // to say it is still alive
                 System.out.println("Next timer reset because of ping.");
+                if(previousID==nextID){
+                    countdownTimerPrevious.reset();
+                    System.out.println("Previous timer reset because of ping.");
+                }
             }
         }
     }
