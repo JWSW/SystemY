@@ -22,7 +22,6 @@ public class Controller {
     @PostMapping("/{nodeName}/removeNode")
     public void removeNode(@PathVariable String nodeName) {
         services.removeNode(nodeName);
-        System.out.println("node "+nodeName+ " has been removed");
     }
 
     @PostMapping("/{nodeHashId}/removeNodeByHashId")
