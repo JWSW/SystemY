@@ -182,11 +182,8 @@ public class Node implements Observer {
             countdownTimerPrevious.reset();     // We reset the countdown timer that checks if the node is down
             System.out.println("Previous timer has been reset.");
             if(!previousHeartbeatSender.isAlive()){
-                System.out.println("Is dead");
                 previousHeartbeatSender = new HeartbeatSender(previousIP, currentID, heartbeatPortPrevious);
                 previousHeartbeatSender.start();
-            }else{
-                System.out.println("Wel alive");
             }
         }else{
             countdownTimerPrevious.start();
@@ -398,16 +395,24 @@ public class Node implements Observer {
         }else if(position.equals("filename")){
             tcpReceiever.setFileName(otherNodeID);
             nodeMap.put(Integer.valueOf(otherNodeIP),myID); // Here the variable names are not what they say they are, it is first the nodeID and then the nodeIP
-        }else if(Integer.parseInt(position)<2){ // If there is only 1 node, set own ID as neighbours.
-            if(!nextTimerStopped) {
+        }else if(Integer.parseInt(position)<2) { // If there is only 1 node, set own ID as neighbours.
+            if (!nextTimerStopped) {
                 nextTimerStopped = true;
                 countdownTimerNext.stop();
             }
-            if(!previousTimerStopped) {
+            if (!previousTimerStopped) {
                 previousTimerStopped = true;
                 countdownTimerPrevious.stop();
             }
-
+        }else if(Integer.parseInt(position)>2) { // If there 4 nodes, start offline countdownTimers to maybe get connected to highest or lowest node
+            if (nextTimerStopped) {
+                nextTimerStopped = false;
+                countdownTimerNext.start();
+            }
+            if (previousTimerStopped) {
+                previousTimerStopped = false;
+                countdownTimerPrevious.start();
+            }
         }else{
             if(Integer.parseInt(position)==previousID && countdownTimerPrevious.isRunning){ // If we receive a packet containing the previousID, it is pinging
                 countdownTimerPrevious.reset();         // to say it is still alive
