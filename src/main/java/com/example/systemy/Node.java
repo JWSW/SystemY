@@ -167,6 +167,7 @@ public class Node implements Observer {
         }else{
             countdownTimerNext.start();
             System.out.println("Next timer has been started.");
+            nextHeartbeatSender = new HeartbeatSender(nextIP, currentID, heartbeatPortNext);
             nextHeartbeatSender.start();
             System.out.println("heartbeatSender has been started.");
             nextTimerStopped = false;
@@ -189,6 +190,7 @@ public class Node implements Observer {
         }else{
             countdownTimerPrevious.start();
             System.out.println("Previous timer has been started.");
+            previousHeartbeatSender = new HeartbeatSender(previousIP, currentID, heartbeatPortPrevious);
             previousHeartbeatSender.start();
             System.out.println("HeartbeatSender has been started.");
             previousTimerStopped = false;
@@ -226,6 +228,7 @@ public class Node implements Observer {
 //        }
     }
 
+    /*Afblijven Abdel, dit is voor lab 5*/
     private void sendFile(String nodeParameters, int hash){
         String[] parts = nodeParameters.split(",");
         String nodeName = parts[0];
