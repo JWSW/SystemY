@@ -388,12 +388,12 @@ public class Node implements Observer {
         }
         String response;
         if(Objects.equals(position, "Next")){
-            previousID = Integer.parseInt(otherNodeID); // If we receive a reply that sais we are the other node its next,
-            setPreviousIP(otherNodeIP);                 // than that node is our previous
+            setPreviousIP(otherNodeIP);                 // If we receive a reply that sais we are the other node its next,
+            previousID = Integer.parseInt(otherNodeID); // than that node is our previous
             System.out.println("Set as previousID.");
         }else if(Objects.equals(position,"Previous")){ // If we receive a reply that sais we are the other node its previous,
-            nextID = Integer.parseInt(otherNodeID);       // than that node is our next
-            setNextIP(otherNodeIP);
+            setNextIP(otherNodeIP);                       // than that node is our next
+            nextID = Integer.parseInt(otherNodeID);
             System.out.println("Set as nextID.");
         }else if(position.equals("filename")){
             tcpReceiever.setFileName(otherNodeID);
