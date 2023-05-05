@@ -99,6 +99,7 @@ public class Node implements Observer {
             previousHeartbeatSender.start();
             System.out.println("Previous timer started at Init()");
         }else{
+            countdownTimerPrevious.stop();
             previousTimerStopped = true;
         }
         if(!(nextID==39999)) {
@@ -106,6 +107,7 @@ public class Node implements Observer {
             nextHeartbeatSender.start();
             System.out.println("Next timer started at Init()");
         }else{
+            countdownTimerNext.stop();
             nextTimerStopped = true;
         }
 
@@ -268,12 +270,12 @@ public class Node implements Observer {
         if(position.equals("Next")){
             //json = objectMapper.writeValueAsString(nextID);
             id = nextID;
-//            countdownTimerNext.stop();
+            countdownTimerNext.stop();
 //            nextHeartbeatSender.stop();
 //            nextTimerStopped = true;
         }else{
             id = previousID;
-//            countdownTimerPrevious.stop();
+            countdownTimerPrevious.stop();
 //            previousHeartbeatSender.stop();
 //            previousTimerStopped = true;
         }
