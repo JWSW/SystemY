@@ -254,7 +254,7 @@ public class Node implements Observer {
     private void requestRemoveNode(Integer id) throws IOException, InterruptedException {
         HttpRequest request2 = HttpRequest.newBuilder()
                 .uri(URI.create(baseURL + "/" + id + "/removeNodeByHashId"))
-                .GET()
+                .POST(HttpRequest.BodyPublishers.noBody())
                 .build();
         System.out.println("Sending request to remove offline node.");
         HttpResponse<String> response2 = HttpClient.newHttpClient().send(request2, HttpResponse.BodyHandlers.ofString());
