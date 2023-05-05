@@ -404,7 +404,7 @@ public class Node implements Observer {
 
     }
 
-    public void unicastHandlePacket(String packet) throws IOException {
+    public synchronized void unicastHandlePacket(String packet) throws IOException {
         String otherNodeID = "";
         String otherNodeIP = "";
         String myID = "";
