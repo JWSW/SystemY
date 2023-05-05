@@ -490,10 +490,12 @@ public class Node implements Observer {
             if (!nextTimerStopped) {
                 nextTimerStopped = true;
                 countdownTimerNext.stop();
+                System.out.println("next timer stopped");
             }
             if (!previousTimerStopped) {
                 previousTimerStopped = true;
                 countdownTimerPrevious.stop();
+                System.out.println("previous timer stopped");
             }
         }else if(Integer.parseInt(position)==2) { // If there are only 2 nodes, set other node as both previous and next node.
             amountOfNodes = 2;
