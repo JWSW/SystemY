@@ -371,7 +371,7 @@ public class Node implements Observer {
                 '}';
     }
 
-    public void multicastHandlePacket(String packet) throws IOException {
+    public synchronized void multicastHandlePacket(String packet) throws IOException {
         String[] parts = packet.split(","); // split the string at the space character
         String hostname = parts[0];
         String ipAddress = parts[1];
