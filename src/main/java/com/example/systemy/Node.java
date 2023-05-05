@@ -379,7 +379,7 @@ public class Node implements Observer {
         String message;
         int hash = getHash(hostname);
         System.out.println("Processing multicast packet: " + hash + ", " + ipAddress);
-        if ((currentID < hash && hash < nextID)){// || (nextID<currentID && hash>currentID)) { // Ring topology: if we are the biggest hashID, our nextID is the smallest hashID
+        if ((currentID < hash && (hash < nextID || (hash > nextID && nextID==previousID)))){// || (nextID<currentID && hash>currentID)) { // Ring topology: if we are the biggest hashID, our nextID is the smallest hashID
             if(previousID == nextID){
                 message = "getPreviousNeighbour";
                 unicast(message,previousIP,uniPort);
@@ -389,7 +389,7 @@ public class Node implements Observer {
             System.out.println("Registered as nextID");
             response = "Next," + currentID + "," + this.ipAddress + "," + nextID; //The message to send as reply
             unicast(response, ipAddress, uniPort);
-        } else if ((previousID < hash && hash < currentID)){// || (previousID>currentID && hash < currentID)) { // Ring topology: if we are the smallest hashID, our previousID is the biggest hashID
+        } else if (((previousID < hash || (previousID > hash && previousID==nextID)) && hash < currentID)){// || (previousID>currentID && hash < currentID)) { // Ring topology: if we are the smallest hashID, our previousID is the biggest hashID
             if(previousID == nextID){
                 message = "getNextNeighbour";
                 unicast(message,nextIP,uniPort);
