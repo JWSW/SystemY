@@ -419,7 +419,7 @@ public class Node implements Observer {
             setPreviousIP(otherNodeIP);                 // If we receive a reply that sais we are the other node its next,
             previousID = Integer.parseInt(otherNodeID); // than that node is our previous
             System.out.println("Set as previousID.");
-            if (amountOfNodes == 2) {                       // If there are only 2 nodes, then they are both each others previous and next node
+            if (amountOfNodes == 2 || amountOfNodes == 1) {                       // If there are only 2 nodes, then they are both each others previous and next node
                 amountOfNodes = 3;
                 setNextIP(otherNodeIP);
                 nextID = Integer.parseInt(otherNodeID);
@@ -431,7 +431,7 @@ public class Node implements Observer {
             setNextIP(otherNodeIP);                       // than that node is our next
             nextID = Integer.parseInt(otherNodeID);
             System.out.println("Set as nextID.");
-            if (amountOfNodes == 2) {                       // If there are only 2 nodes, then they are both each others previous and next node
+            if (amountOfNodes == 2 || amountOfNodes == 1) {                       // If there are only 2 nodes, then they are both each others previous and next node
                 amountOfNodes = 3;
                 setPreviousIP(otherNodeIP);
                 previousID = Integer.parseInt(otherNodeID);
@@ -442,7 +442,7 @@ public class Node implements Observer {
         } else if (position.equals("filename")) {
             tcpReceiever.setFileName(otherNodeID);
             nodeMap.put(Integer.valueOf(otherNodeIP), myID); // Here the variable names are not what they say they are, it is first the nodeID and then the nodeIP
-        }else if(position.equals("getPreviousNeighbour") && previousID==nextID) {
+        }else if(position.equals("getPreviousNeighbour") && previousID==nextID) { //If the other node (if it were woth our next and previous), it tells us to get another previous neighbour
             String packet2 = "";
             HttpRequest request1 = HttpRequest.newBuilder()
                     .uri(URI.create(baseURL + "/" + previousID + "/getPrevious"))
@@ -464,7 +464,7 @@ public class Node implements Observer {
             }else{
                 System.out.println("Response was own node: " + packet + ", currentID: " + currentID);
             }
-        } else if (position.equals("getNextNeighbour") && previousID==nextID) {
+        } else if (position.equals("getNextNeighbour") && previousID==nextID) { //If the other node (if it were woth our next and previous), it tells us to get another next neighbour
             String packet2 = "";
             HttpRequest request1 = HttpRequest.newBuilder()
                     .uri(URI.create(baseURL + "/" + nextID + "/getNext"))
@@ -486,6 +486,7 @@ public class Node implements Observer {
                 System.out.println("Response was own node: " + packet + ", currentID: " + currentID);
             }
         }else if(Integer.parseInt(position)<2) { // If there is only 1 node, set own ID as neighbours.
+            amountOfNodes = 1;
             if (!nextTimerStopped) {
                 nextTimerStopped = true;
                 countdownTimerNext.stop();
