@@ -616,6 +616,7 @@ public class Node implements Observer {
         private TimerCallback callback;
         private String position;
         private boolean isRunning = false;
+        private boolean isCanceled;
 
         public CountdownTimer(int seconds, TimerCallback callback, String position) {
             this.seconds = seconds;
@@ -630,7 +631,11 @@ public class Node implements Observer {
                 @Override
                 public void run() {
                     try {
-                        callback.onTimerFinished(position);
+                        synchronized (CountdownTimer.this) {
+                            if (!isCanceled) {
+                                callback.onTimerFinished(position);
+                            }
+                        }
                     } catch (JsonProcessingException e) {
                         e.printStackTrace();
                     }
@@ -639,8 +644,10 @@ public class Node implements Observer {
         }
 
         public void stop(){
-            isRunning = false;
+            isCanceled = true;
             timer.cancel();
+            timer = new Timer();
+            isCanceled = false;
         }
 
         public void reset() {
