@@ -64,6 +64,7 @@ public class Node implements Observer {
     private boolean nextTimerStopped = false;
     private boolean previousTimerStopped = false;
     private int tcpPort = 45612;
+    private boolean first = false;
 
 
     public Node() {
@@ -379,7 +380,8 @@ public class Node implements Observer {
         String message;
         int hash = getHash(hostname);
         System.out.println("Processing multicast packet: " + hash + ", " + ipAddress);
-        if ((currentID < hash && (hash < nextID || (hash > nextID && nextID==previousID)))){// || (nextID<currentID && hash>currentID)) { // Ring topology: if we are the biggest hashID, our nextID is the smallest hashID
+        if ((currentID < hash && (hash < nextID || (hash > nextID && first)))){// || (nextID<currentID && hash>currentID)) { // Ring topology: if we are the biggest hashID, our nextID is the smallest hashID
+            first = false;
             if(previousID == nextID){
                 message = "getPreviousNeighbour";
                 unicast(message,previousIP,uniPort);
@@ -389,7 +391,8 @@ public class Node implements Observer {
             System.out.println("Registered as nextID");
             response = "Next," + currentID + "," + this.ipAddress + "," + nextID; //The message to send as reply
             unicast(response, ipAddress, uniPort);
-        } else if (((previousID < hash || (previousID > hash && previousID==nextID)) && hash < currentID)){// || (previousID>currentID && hash < currentID)) { // Ring topology: if we are the smallest hashID, our previousID is the biggest hashID
+        } else if (((previousID < hash || (previousID > hash && first)) && hash < currentID)){// || (previousID>currentID && hash < currentID)) { // Ring topology: if we are the smallest hashID, our previousID is the biggest hashID
+            first = false;
             if(previousID == nextID){
                 message = "getNextNeighbour";
                 unicast(message,nextIP,uniPort);
@@ -489,6 +492,7 @@ public class Node implements Observer {
             }
         }else if(Integer.parseInt(position)<2) { // If there is only 1 node, set own ID as neighbours.
             amountOfNodes = 1;
+            first = true; // Om aan te duiden dat deze node een van de 2 eersten was die met elkaar verbonden werden
             if (!nextTimerStopped) {
                 nextTimerStopped = true;
                 countdownTimerNext.stop();
@@ -501,6 +505,7 @@ public class Node implements Observer {
             }
         }else if(Integer.parseInt(position)==2) { // If there are only 2 nodes, set other node as both previous and next node.
             amountOfNodes = 2;
+            first = true; // Om aan te duiden dat deze node een van de 2 eersten was die met elkaar verbonden werden
         }else if(Integer.parseInt(position)>2 && Integer.parseInt(position)<maxNodes) { // If there 4 nodes, start offline countdownTimers to maybe get connected to highest or lowest node
             if (nextTimerStopped) {
                 nextTimerStopped = false;
