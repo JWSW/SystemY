@@ -513,14 +513,14 @@ public class Node implements Observer {
                 System.out.println("Previous timer reset because of ping.");
                 if(previousID==nextID){
                     countdownTimerNext.reset();               // to say it is still alive
-                    System.out.println("Next timer reset because of ping.");
+                    System.out.println("Next timer also reset because of ping.");
                 }
             }else if(Integer.parseInt(position)==nextID && countdownTimerNext.isRunning) { // If we receive a packet containing the nextID, it is pinging
                 countdownTimerNext.reset();               // to say it is still alive
                 System.out.println("Next timer reset because of ping.");
                 if(previousID==nextID){
                     countdownTimerPrevious.reset();
-                    System.out.println("Previous timer reset because of ping.");
+                    System.out.println("Previous timer also reset because of ping.");
                 }
             }
         }
