@@ -380,6 +380,7 @@ public class Node implements Observer {
         String message;
         int hash = getHash(hostname);
         System.out.println("Processing multicast packet: " + hash + ", " + ipAddress);
+        System.out.println("Fisrt: " + first);
         if ((currentID < hash && (hash < nextID || (hash > nextID && first)))){// || (nextID<currentID && hash>currentID)) { // Ring topology: if we are the biggest hashID, our nextID is the smallest hashID
             first = false;
             if(previousID == nextID){
@@ -447,48 +448,52 @@ public class Node implements Observer {
         } else if (position.equals("filename")) {
             tcpReceiever.setFileName(otherNodeID);
             nodeMap.put(Integer.valueOf(otherNodeIP), myID); // Here the variable names are not what they say they are, it is first the nodeID and then the nodeIP
-        }else if(position.equals("getPreviousNeighbour") && previousID==nextID) { //If the other node (if it were woth our next and previous), it tells us to get another previous neighbour
-            String packet2 = "";
-            HttpRequest request1 = HttpRequest.newBuilder()
-                    .uri(URI.create(baseURL + "/" + previousID + "/getPrevious"))
-                    //.header("Content-Type", "application/json")
-                    .GET()//HttpRequest.BodyPublishers.noBody())//ofString(json))//"{nodeName:" + node.getNodeName() + "ipAddress:" + node.getIpAddress() + "}"))
-                    .build();
-            try {
-                System.out.println("Sending request to get new neighbour.");
-                HttpResponse<String> response1 = HttpClient.newHttpClient().send(request1, HttpResponse.BodyHandlers.ofString());
-                System.out.println("Response: " + response1.body());
-                packet2 = response1.body();
-            }catch (IOException | InterruptedException e) {
-                e.printStackTrace();
+        }else if(position.equals("getPreviousNeighbour")) { //If the other node (if it were woth our next and previous), it tells us to get another previous neighbour
+            if(previousID==nextID) { //Dit moet in aparte if-statements gebeuren om errors te voorkomen
+                String packet2 = "";
+                HttpRequest request1 = HttpRequest.newBuilder()
+                        .uri(URI.create(baseURL + "/" + previousID + "/getPrevious"))
+                        //.header("Content-Type", "application/json")
+                        .GET()//HttpRequest.BodyPublishers.noBody())//ofString(json))//"{nodeName:" + node.getNodeName() + "ipAddress:" + node.getIpAddress() + "}"))
+                        .build();
+                try {
+                    System.out.println("Sending request to get new neighbour.");
+                    HttpResponse<String> response1 = HttpClient.newHttpClient().send(request1, HttpResponse.BodyHandlers.ofString());
+                    System.out.println("Response: " + response1.body());
+                    packet2 = response1.body();
+                } catch (IOException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+                String[] parts2 = packet2.split(",");
+                if (Integer.parseInt(parts[0]) != currentID) {
+                    previousID = Integer.parseInt(parts2[0]);
+                    setPreviousIP(parts2[1]);
+                } else {
+                    System.out.println("Response was own node: " + packet + ", currentID: " + currentID);
+                }
             }
-            String[] parts2 = packet2.split(",");
-            if(Integer.parseInt(parts[0])!=currentID) {
-                previousID = Integer.parseInt(parts2[0]);
-                setPreviousIP(parts2[1]);
-            }else{
-                System.out.println("Response was own node: " + packet + ", currentID: " + currentID);
-            }
-        } else if (position.equals("getNextNeighbour") && previousID==nextID) { //If the other node (if it were woth our next and previous), it tells us to get another next neighbour
-            String packet2 = "";
-            HttpRequest request1 = HttpRequest.newBuilder()
-                    .uri(URI.create(baseURL + "/" + nextID + "/getNext"))
-                    //.header("Content-Type", "application/json")
-                    .GET()//HttpRequest.BodyPublishers.noBody())//ofString(json))//"{nodeName:" + node.getNodeName() + "ipAddress:" + node.getIpAddress() + "}"))
-                    .build();
-            try {
-                System.out.println("Sending request to get new neighbour.");
-                HttpResponse<String> response1 = HttpClient.newHttpClient().send(request1, HttpResponse.BodyHandlers.ofString());
-                System.out.println("Response: " + response1.body());
-            }catch (IOException | InterruptedException e) {
-                e.printStackTrace();
-            }
-            String[] parts2 = packet2.split(",");
-            if(Integer.parseInt(parts[0])!=currentID) {
-                nextID = Integer.parseInt(parts2[0]);
-                setNextIP(parts2[1]);
-            }else{
-                System.out.println("Response was own node: " + packet + ", currentID: " + currentID);
+        } else if (position.equals("getNextNeighbour")) { //If the other node (if it were woth our next and previous), it tells us to get another next neighbour
+            if(previousID==nextID) { //Dit moet in aparte if-statements gebeuren om errors te voorkomen
+                String packet2 = "";
+                HttpRequest request1 = HttpRequest.newBuilder()
+                        .uri(URI.create(baseURL + "/" + nextID + "/getNext"))
+                        //.header("Content-Type", "application/json")
+                        .GET()//HttpRequest.BodyPublishers.noBody())//ofString(json))//"{nodeName:" + node.getNodeName() + "ipAddress:" + node.getIpAddress() + "}"))
+                        .build();
+                try {
+                    System.out.println("Sending request to get new neighbour.");
+                    HttpResponse<String> response1 = HttpClient.newHttpClient().send(request1, HttpResponse.BodyHandlers.ofString());
+                    System.out.println("Response: " + response1.body());
+                } catch (IOException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+                String[] parts2 = packet2.split(",");
+                if (Integer.parseInt(parts[0]) != currentID) {
+                    nextID = Integer.parseInt(parts2[0]);
+                    setNextIP(parts2[1]);
+                } else {
+                    System.out.println("Response was own node: " + packet + ", currentID: " + currentID);
+                }
             }
         }else if(Integer.parseInt(position)<2) { // If there is only 1 node, set own ID as neighbours.
             amountOfNodes = 1;
