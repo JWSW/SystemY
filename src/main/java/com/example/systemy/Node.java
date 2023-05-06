@@ -444,7 +444,7 @@ public class Node implements Observer {
             setPreviousIP(otherNodeIP);                 // If we receive a reply that sais we are the other node its next,
             previousID = Integer.parseInt(otherNodeID); // than that node is our previous
             System.out.println("Set as previousID.");
-            if (amountOfNodes == 2 || amountOfNodes == 1) {                       // If there are only 2 nodes, then they are both each others previous and next node
+            if (first){//(amountOfNodes == 2 || amountOfNodes == 1) {                       // If there are only 2 nodes, then they are both each others previous and next node
                 amountOfNodes = 3;
                 setNextIP(otherNodeIP);
                 nextID = Integer.parseInt(otherNodeID);
@@ -456,7 +456,7 @@ public class Node implements Observer {
             setNextIP(otherNodeIP);                       // than that node is our next
             nextID = Integer.parseInt(otherNodeID);
             System.out.println("Set as nextID.");
-            if (amountOfNodes == 2 || amountOfNodes == 1) {                       // If there are only 2 nodes, then they are both each others previous and next node
+            if (first){//(amountOfNodes == 2 || amountOfNodes == 1) {                       // If there are only 2 nodes, then they are both each others previous and next node
                 amountOfNodes = 3;
                 setPreviousIP(otherNodeIP);
                 previousID = Integer.parseInt(otherNodeID);
