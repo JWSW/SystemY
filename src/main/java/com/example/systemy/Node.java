@@ -380,24 +380,43 @@ public class Node implements Observer {
         String message;
         int hash = getHash(hostname);
         System.out.println("Processing multicast packet: " + hash + ", " + ipAddress);
-        System.out.println("Fisrt: " + first);
-        if ((currentID < hash && (hash < nextID || (hash > nextID && first)))){// || (nextID<currentID && hash>currentID)) { // Ring topology: if we are the biggest hashID, our nextID is the smallest hashID
-            first = false;
-            if(previousID == nextID){
-                message = "getPreviousNeighbour";
-                unicast(message,previousIP,uniPort);
-            }
+        if (currentID < hash && hash < nextID){// || (nextID<currentID && hash>currentID)) { // Ring topology: if we are the biggest hashID, our nextID is the smallest hashID
             nextID = hash;
             setNextIP(ipAddress); // This function changes everything that needs to be changed when changing neighbours IP
             System.out.println("Registered as nextID");
             response = "Next," + currentID + "," + this.ipAddress + "," + nextID; //The message to send as reply
             unicast(response, ipAddress, uniPort);
-        } else if (((previousID < hash || (previousID > hash && first)) && hash < currentID)){// || (previousID>currentID && hash < currentID)) { // Ring topology: if we are the smallest hashID, our previousID is the biggest hashID
-            first = false;
-            if(previousID == nextID){
-                message = "getNextNeighbour";
-                unicast(message,nextIP,uniPort);
-            }
+        } else if (previousID < hash && hash < currentID){// || (previousID>currentID && hash < currentID)) { // Ring topology: if we are the smallest hashID, our previousID is the biggest hashID
+            previousID = hash;
+            setPreviousIP(ipAddress); // This function changes everything that needs to be changed when changing neighbours IP
+            System.out.println("Registered as previousID");
+            response = "Previous," + currentID + "," + this.ipAddress + "," + previousID; //The message to send as reply
+            unicast(response, ipAddress, uniPort);
+        }else if(currentID < hash && hash > nextID && currentID>nextID){ // The following 'else if' statements are to be able to close the ring, the first to the last and vice versa
+//            first = false;
+//            message = "getPreviousNeighbour";
+//            unicast(message,previousIP,uniPort);
+            nextID = hash;
+            setNextIP(ipAddress); // This function changes everything that needs to be changed when changing neighbours IP
+            System.out.println("Registered as nextID");
+            response = "Next," + currentID + "," + this.ipAddress + "," + nextID; //The message to send as reply
+            unicast(response, ipAddress, uniPort);
+        }else if((previousID > hash && previousID>currentID) && hash < currentID){
+//            message = "getNextNeighbour";
+//            unicast(message,nextIP,uniPort);
+
+            previousID = hash;
+            setPreviousIP(ipAddress); // This function changes everything that needs to be changed when changing neighbours IP
+            System.out.println("Registered as previousID");
+            response = "Previous," + currentID + "," + this.ipAddress + "," + previousID; //The message to send as reply
+            unicast(response, ipAddress, uniPort);
+        }else if(nextID<hash && nextID<currentID){
+            nextID = hash;
+            setNextIP(ipAddress); // This function changes everything that needs to be changed when changing neighbours IP
+            System.out.println("Registered as nextID");
+            response = "Next," + currentID + "," + this.ipAddress + "," + nextID; //The message to send as reply
+            unicast(response, ipAddress, uniPort);
+        }else if(hash>previousID && previousID>currentID){
             previousID = hash;
             setPreviousIP(ipAddress); // This function changes everything that needs to be changed when changing neighbours IP
             System.out.println("Registered as previousID");
