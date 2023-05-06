@@ -507,6 +507,7 @@ public class Node implements Observer {
             amountOfNodes = 2;
             first = true; // Om aan te duiden dat deze node een van de 2 eersten was die met elkaar verbonden werden
         }else if(Integer.parseInt(position)>2 && Integer.parseInt(position)<maxNodes) { // If there 4 nodes, start offline countdownTimers to maybe get connected to highest or lowest node
+            amountOfNodes = 3;
             if (nextTimerStopped) {
                 nextTimerStopped = false;
                 countdownTimerNext.start();
