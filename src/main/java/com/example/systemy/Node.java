@@ -410,7 +410,7 @@ public class Node implements Observer {
 //            System.out.println("Registered as previousID");
 //            response = "Previous," + currentID + "," + this.ipAddress + "," + previousID; //The message to send as reply
 //            unicast(response, ipAddress, uniPort);
-        }else if(nextID<hash && nextID<currentID){
+        }else if(nextID>hash && nextID<currentID){
             nextID = hash;
             setNextIP(ipAddress); // This function changes everything that needs to be changed when changing neighbours IP
             System.out.println("Registered as nextID");
