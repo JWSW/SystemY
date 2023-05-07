@@ -70,6 +70,10 @@ public class Node implements Observer {
     }
 
     public Node(String nodeName, String ipAddress) throws Exception { // Constructor
+//        ServerSocket serverSocket = new ServerSocket(uniPort, 0, InetAddress.getByName("localhost"));
+//        if(!serverSocket.isClosed()){
+//            killProcess();
+//        }
         unicastReceiver = new UnicastReceiver(uniPort);
         unicastHeartbeatPrevious = new UnicastReceiver(heartbeatPortPrevious);
         unicastHeartbeatNext = new UnicastReceiver(heartbeatPortNext);
