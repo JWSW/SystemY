@@ -239,9 +239,9 @@ public class Node implements com.example.systemy.interfaces.Observer {
     }
 
     public void startTCPReceiver(String otherNodeID){
-        tcpReceiver = new TCPReceiver(tcpPort);
-        tcpReceiver.setFileName(otherNodeID);
-        tcpReceiver.start();
+//        tcpReceiver = new TCPReceiver(tcpPort);
+//        tcpReceiver.setFileName(otherNodeID);
+//        tcpReceiver.start();
     }
 
     /*Afblijven Abdel, dit is voor lab 5*/
