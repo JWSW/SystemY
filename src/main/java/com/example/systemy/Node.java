@@ -123,7 +123,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
         multicast(message);
 
         searchFiles();
-//        notifyFiles();
+        notifyFiles();
     }
 
     /* Dit is voor lab 5 ook*/
