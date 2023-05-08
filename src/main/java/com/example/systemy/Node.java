@@ -206,7 +206,6 @@ public class Node implements Observer {
         String nodeIP = "";
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(baseURL + "/" + fileArray.get(hash) + "/getFileLocation"))
-                //.header("Content-Type", "application/json")
                 .GET()//HttpRequest.BodyPublishers.noBody())//ofString(json))//"{nodeName:" + node.getNodeName() + "ipAddress:" + node.getIpAddress() + "}"))
                 .build();
         try {
