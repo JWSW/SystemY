@@ -9,16 +9,16 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.example.systemy.interfaces.Observer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 
 @Data
 @AllArgsConstructor
-public class Node implements Observer {
+public class Node implements com.example.systemy.interfaces.Observer {
 
     private String nodeName;
     private String ipAddress;
@@ -703,9 +703,9 @@ public class Node implements Observer {
             }
         }
 
-        private Observer observer;
+        private com.example.systemy.interfaces.Observer observer;
 
-        public void setObserver(Observer observer) {
+        public void setObserver(com.example.systemy.interfaces.Observer observer) {
             this.observer = observer;
         }
 
@@ -750,7 +750,7 @@ public class Node implements Observer {
 
     public class WatchDirectory extends Thread {
         private WatchService watchService;
-        private Observer observer;
+        private com.example.systemy.interfaces.Observer observer;
 
         public void setObserver(Observer observer) {
             this.observer = observer;

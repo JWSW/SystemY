@@ -1,5 +1,6 @@
 package com.example.systemy;
 
+import com.example.systemy.interfaces.MulticastObserver;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
@@ -10,17 +11,13 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
-public class Services implements MulticastObserver{
+public class Services implements MulticastObserver {
     private Map<Integer, String> nodeMap = new ConcurrentHashMap<>();
     private static final String NODE_MAP_FILE_PATH = "node_map.json";
     private Node node;

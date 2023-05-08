@@ -1,4 +1,5 @@
 package com.example.systemy;
+import com.example.systemy.interfaces.MulticastObserver;
 import org.springframework.stereotype.Component;
 
 import java.net.*;

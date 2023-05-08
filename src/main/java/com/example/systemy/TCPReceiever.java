@@ -1,6 +1,6 @@
 package com.example.systemy;
 
-import org.springframework.stereotype.Component;
+import com.example.systemy.interfaces.Observer;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
