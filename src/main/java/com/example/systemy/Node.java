@@ -218,7 +218,7 @@ public class Node implements Observer {
             packet = response.body();
             parts = packet.split(",");
 //            nodeHash = Integer.valueOf(parts[0]);
-            nodeIP = parts[1];
+//            nodeIP = parts[1];
             ownerNode = packet;
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
