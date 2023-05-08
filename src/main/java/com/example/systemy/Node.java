@@ -206,18 +206,18 @@ public class Node implements Observer {
         String nodeIP = "";
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(baseURL + "/" + fileArray.get(hash) + "/getFileLocation"))
-                .GET()//HttpRequest.BodyPublishers.noBody())//ofString(json))//"{nodeName:" + node.getNodeName() + "ipAddress:" + node.getIpAddress() + "}"))
+                .GET()
                 .build();
         try {
             System.out.println("Sending request to get owner node of " + hash);
             HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
             System.out.println("Response: " + response.body());
 
-            String packet = response.body();
-            String[] parts = packet.split(",");
-            nodeHash = Integer.valueOf(parts[0]);
-            nodeIP = parts[1];
-            ownerNode = packet;
+//            String packet = response.body();
+//            String[] parts = packet.split(",");
+//            nodeHash = Integer.valueOf(parts[0]);
+//            nodeIP = parts[1];
+//            ownerNode = packet;
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
