@@ -8,7 +8,6 @@ import java.net.http.HttpResponse;
 import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-
 import com.example.systemy.interfaces.Observer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -43,7 +42,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
     private UnicastReceiver unicastHeartbeatNext;// = new UnicastReceiver(heartbeatPortNext);
     private HeartbeatSender previousHeartbeatSender;// = new HeartbeatSender(previousIP, currentID, heartbeatPortPrevious);
     private HeartbeatSender nextHeartbeatSender;// = new HeartbeatSender(nextIP, currentID, heartbeatPortNext);
-    private TCPReceiever tcpReceiever;
+    private TCPReceiver tcpReceiver;
     private String baseURL = "http://172.27.0.5:8080/requestName";
     private ObjectMapper objectMapper = new ObjectMapper(); // or any other JSON serializer
     private Map<Integer,String> fileArray = new ConcurrentHashMap<>();
@@ -80,7 +79,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
         previousHeartbeatSender = new HeartbeatSender(previousIP, currentID, heartbeatPortPrevious);
         nextHeartbeatSender = new HeartbeatSender(nextIP, currentID, heartbeatPortNext);
         watchDirectory = new WatchDirectory();
-        tcpReceiever = new TCPReceiever(tcpPort);
+        tcpReceiver = new TCPReceiver(tcpPort);
 
         this.nodeName = nodeName;
         this.ipAddress = ipAddress;
@@ -92,7 +91,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
         unicastHeartbeatPrevious.setObserver(this);
         unicastHeartbeatNext.setObserver(this);
         watchDirectory.setObserver(this);
-        tcpReceiever.setObserver(this);
+        tcpReceiver.setObserver(this);
 
         if(!(previousID ==0)) {
             countdownTimerPrevious.start();
@@ -459,7 +458,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
                 unicast(response, otherNodeIP, uniPort);
             }
         } else if (position.equals("filename")) {
-            tcpReceiever.setFileName(otherNodeID);
+            tcpReceiver.setFileName(otherNodeID);
             nodeMap.put(Integer.valueOf(otherNodeIP), myID); // Here the variable names are not what they say they are, it is first the nodeID and then the nodeIP
         }else if(position.equals("getPreviousNeighbour")) { //If the other node (if it were woth our next and previous), it tells us to get another previous neighbour
             if(previousID==nextID) { //Dit moet in aparte if-statements gebeuren om errors te voorkomen
@@ -748,71 +747,6 @@ public class Node implements com.example.systemy.interfaces.Observer {
     }
 
 
-    public class WatchDirectory extends Thread {
-        private WatchService watchService;
-        private com.example.systemy.interfaces.Observer observer;
 
-        public void setObserver(Observer observer) {
-            this.observer = observer;
-        }
-
-        public void run() {
-            // Get the directory to watch
-            Path path = Paths.get("/home/Dist/SystemY/nodeFiles");
-
-            // Create a WatchService object
-            try {
-                watchService = FileSystems.getDefault().newWatchService();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            // Register the directory with the watch service for file creation events
-            try {
-                path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            // Start an infinite loop to wait for new files
-            while (true) {
-                // Wait for the watch service to receive a new event
-                WatchKey key = null;
-                try {
-                    key = watchService.take();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                // Loop over the events in the key
-                for (WatchEvent<?> event : key.pollEvents()) {
-                    // Check if the event is a create event
-                    if (event.kind() == StandardWatchEventKinds.ENTRY_CREATE) {
-                        // Get the file name from the event
-                        Path fileName = (Path) event.context();
-
-                        // Do something with the new file
-                        System.out.println("New file created: " + fileName.toString());
-                        if (observer != null) {
-                            try {
-                                observer.onMessageReceived("FileEvent",fileName.toString());
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                }
-
-                // Reset the key for the next set of events
-                boolean valid = key.reset();
-
-                // If the key is no longer valid, break out of the loop
-                if (!valid) {
-                    System.out.println("Unvalid watch key!");
-                    break;
-                }
-            }
-        }
-    }
 }
 

@@ -8,12 +8,12 @@ import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class TCPReceiever extends Thread {
+public class TCPReceiver extends Thread {
     private int port;
     String fileName = "receivedFile.txt";
     private Observer observer;
 
-    public TCPReceiever(int port) {
+    public TCPReceiver(int port) {
         this.port = port;
     }
 
