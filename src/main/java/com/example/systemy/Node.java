@@ -201,6 +201,8 @@ public class Node implements Observer {
     /*Afblijven Abdel, dit is voor lab 5*/
     public void notifyNamingServer(Integer hash) throws IOException {
         HttpClient client = HttpClient.newHttpClient();
+        String packet;
+        String[] parts;
         String ownerNode = "";
         Integer nodeHash = 0;
         String nodeIP = "";
@@ -213,11 +215,11 @@ public class Node implements Observer {
             HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
             System.out.println("Response: " + response.body());
 
-//            String packet = response.body();
-//            String[] parts = packet.split(",");
-//            nodeHash = Integer.valueOf(parts[0]);
-//            nodeIP = parts[1];
-//            ownerNode = packet;
+            packet = response.body();
+            parts = packet.split(",");
+            nodeHash = Integer.valueOf(parts[0]);
+            nodeIP = parts[1];
+            ownerNode = packet;
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
