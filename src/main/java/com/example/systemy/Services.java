@@ -35,6 +35,4 @@ public class Services implements MulticastObserver {
     public void onMessageReceived(String message) throws IOException {
         node.multicastHandlePacket(message);
     }
-
-
 }

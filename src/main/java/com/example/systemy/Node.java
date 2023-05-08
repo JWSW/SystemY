@@ -123,7 +123,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
         multicast(message);
 
         searchFiles();
-        notifyFiles();
+//        notifyFiles();
     }
 
     /* Dit is voor lab 5 ook*/
@@ -141,7 +141,6 @@ public class Node implements com.example.systemy.interfaces.Observer {
                 // Do something with the file
                 System.out.println("File found: " + file.getName());
                 fileArray.put(getHash(file.getName()),file.getName());
-//                notifyNamingServer(getHash(file.getName()));
             }
         }
     }
@@ -220,8 +219,8 @@ public class Node implements com.example.systemy.interfaces.Observer {
 
             packet = response.body();
             parts = packet.split(",");
-//            nodeHash = Integer.valueOf(parts[0]);
-//            nodeIP = parts[1];
+            nodeHash = Integer.valueOf(parts[0]);
+            nodeIP = parts[1];
             ownerNode = packet;
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
@@ -399,7 +398,6 @@ public class Node implements com.example.systemy.interfaces.Observer {
             response = "Next," + currentID + "," + this.ipAddress + "," + nextID; //The message to send as reply
             unicast(response, ipAddress, uniPort);
         }else if(currentID > hash && hash < previousID && currentID<previousID){
-
             previousID = hash;
             setPreviousIP(ipAddress); // This function changes everything that needs to be changed when changing neighbours IP
             System.out.println("Registered as previousID");
