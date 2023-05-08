@@ -203,7 +203,7 @@ public class Node implements Observer {
         HttpClient client = HttpClient.newHttpClient();
         String packet;
         String[] parts;
-        String ownerNode = "";
+        String ownerNode;
         Integer nodeHash = 0;
         String nodeIP = "";
         HttpRequest request = HttpRequest.newBuilder()
@@ -217,9 +217,9 @@ public class Node implements Observer {
 
             packet = response.body();
             parts = packet.split(",");
-            nodeHash = Integer.valueOf(parts[0]);
-            nodeIP = parts[1];
-            ownerNode = packet;
+//            nodeHash = Integer.valueOf(parts[0]);
+//            nodeIP = parts[1];
+//            ownerNode = packet;
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
