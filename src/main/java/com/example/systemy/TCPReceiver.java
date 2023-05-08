@@ -45,6 +45,9 @@ public class TCPReceiver extends Thread {
             }
             Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
             System.out.println("File received successfully.");
+            if (observer != null) {
+                observer.onMessageReceived("fileReceived","No message");
+            }
         } catch (IOException e) {
             System.out.println("Error receiving file: " + e.getMessage());
         }

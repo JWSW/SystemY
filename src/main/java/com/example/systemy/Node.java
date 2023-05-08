@@ -64,7 +64,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
     private CountdownTimer countdownTimerNext = new CountdownTimer(25, callback, "Next");
     private boolean nextTimerStopped = false;
     private boolean previousTimerStopped = false;
-    private int tcpPort = 25;
+    private int tcpPort = 45612;
 
 
     public Node() {
@@ -81,7 +81,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
         previousHeartbeatSender = new HeartbeatSender(previousIP, currentID, heartbeatPortPrevious);
         nextHeartbeatSender = new HeartbeatSender(nextIP, currentID, heartbeatPortNext);
         watchDirectory = new WatchDirectory();
-        tcpReceiver = new TCPReceiver(tcpPort);
+        //tcpReceiver = new TCPReceiver(tcpPort);
 
         this.nodeName = nodeName;
         this.ipAddress = ipAddress;
@@ -236,6 +236,12 @@ public class Node implements com.example.systemy.interfaces.Observer {
             tempMap.put(currentID,ipAddress);
             ownerMap.put(fileArray.get(hash),tempMap);
         }
+    }
+
+    public void startTCPReceiver(String otherNodeID){
+        tcpReceiver = new TCPReceiver(tcpPort);
+        tcpReceiver.setFileName(otherNodeID);
+        tcpReceiver.start();
     }
 
     /*Afblijven Abdel, dit is voor lab 5*/
@@ -479,9 +485,11 @@ public class Node implements com.example.systemy.interfaces.Observer {
                 filesNotified = true;
             }
         } else if (position.equals("filename")) {
-            tcpReceiver.setFileName(otherNodeID); // The variable name is not what is says, this is actually the filename.
+            startTCPReceiver(otherNodeID); // The variable name is not what is says, this is actually the filename.
             tempMap.put(Integer.valueOf(otherNodeIP), myID); // Here the variable names are not what they say they are, it is first the nodeID and then the nodeIP
             ownerMap.put(otherNodeID,tempMap);
+            tcpReceiver.stop();
+            tcpReceiver = null;
         }else if(position.equals("getPreviousNeighbour")) { //If the other node (if it were woth our next and previous), it tells us to get another previous neighbour
             if(previousID==nextID) { //Dit moet in aparte if-statements gebeuren om errors te voorkomen
                 String packet2 = "";
@@ -611,6 +619,17 @@ public class Node implements com.example.systemy.interfaces.Observer {
         throw new RuntimeException("Could not find a free port");
     }
 
+    public void killSpecificProcess(int port) throws IOException {
+        try {
+            ServerSocket serverSocket4 = new ServerSocket(port, 0, InetAddress.getByName("localhost"));
+            serverSocket4.close();
+            System.out.println("Process on port " + port + " has been killed.");
+        }catch (IOException e) {
+            // An exception is thrown if the port is already in use
+            System.err.println("Unable to kill process on port " + port + ": " + e.getMessage());
+        }
+    }
+
     public void killProcess(){
         try {
             // Try to create a server socket on the specified port
@@ -646,6 +665,10 @@ public class Node implements com.example.systemy.interfaces.Observer {
             unicastHandlePacket(message);
         }else if("FileEvent".equals(type)){
             FileEventHandler(message);
+        }else if("fileReceived".equals(type)){
+            tcpReceiver.stop();
+            tcpReceiver = null;
+            killSpecificProcess(tcpPort);
         }
     }
 
