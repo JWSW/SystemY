@@ -619,16 +619,16 @@ public class Node implements com.example.systemy.interfaces.Observer {
         throw new RuntimeException("Could not find a free port");
     }
 
-    public void killSpecificProcess(int port) throws IOException {
-        try {
-            ServerSocket serverSocket4 = new ServerSocket(port, 0, InetAddress.getByName("localhost"));
-            serverSocket4.close();
-            System.out.println("Process on port " + port + " has been killed.");
-        }catch (IOException e) {
-            // An exception is thrown if the port is already in use
-            System.err.println("Unable to kill process on port " + port + ": " + e.getMessage());
-        }
-    }
+//    public void killSpecificProcess(int port) throws IOException {
+//        try {
+//            ServerSocket serverSocket4 = new ServerSocket(port, 0, InetAddress.getByName("localhost"));
+//            serverSocket4.close();
+//            System.out.println("Process on port " + port + " has been killed.");
+//        }catch (IOException e) {
+//            // An exception is thrown if the port is already in use
+//            System.err.println("Unable to kill process on port " + port + ": " + e.getMessage());
+//        }
+//    }
 
     public void killProcess(){
         try {
@@ -666,9 +666,9 @@ public class Node implements com.example.systemy.interfaces.Observer {
         }else if("FileEvent".equals(type)){
             FileEventHandler(message);
         }else if("fileReceived".equals(type)){
-            tcpReceiver.stop();
-            tcpReceiver = null;
-            killSpecificProcess(tcpPort);
+//            tcpReceiver.stop();
+//            tcpReceiver = null;
+//            killSpecificProcess(tcpPort);
         }
     }
 
