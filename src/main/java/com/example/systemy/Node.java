@@ -32,7 +32,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
     private int maxNodes = 10;
     private int amountOfNodes = 1;
     private static DatagramSocket socket = null;
-    private Map<File,String> fileMap;
+    private Map<String,File> fileMap;
     private WatchDirectory watchDirectory;
     private String fileTest = "fileTest.txt";
     private String fileTwo = "file2.txt";
@@ -47,6 +47,8 @@ public class Node implements com.example.systemy.interfaces.Observer {
     private ObjectMapper objectMapper = new ObjectMapper(); // or any other JSON serializer
     private Map<Integer,String> fileArray = new ConcurrentHashMap<>();
     private Map<String, Map<Integer,String>> ownerMap = new ConcurrentHashMap<>();
+    private Map<Integer,String> tempMap = new ConcurrentHashMap<>();
+    private boolean filesNotified = false;
 
 
 
@@ -123,7 +125,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
         multicast(message);
 
         searchFiles();
-        notifyFiles();
+//        notifyFiles();
     }
 
     /* Dit is voor lab 5 ook*/
@@ -205,7 +207,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
         HttpClient client = HttpClient.newHttpClient();
         String packet;
         String[] parts;
-        String ownerNode;
+        String ownerNode = "";
         Integer nodeHash = 0;
         String nodeIP = "";
         HttpRequest request = HttpRequest.newBuilder()
@@ -225,16 +227,21 @@ public class Node implements com.example.systemy.interfaces.Observer {
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
-//        if(nodeHash!=currentID) {
-//            unicast("filename," + fileArray.get(hash) + "," + currentID + "," + ipAddress,nodeIP,uniPort);
-//            sendFile(ownerNode, hash);
-//        }
+        if(nodeHash!=currentID) {
+            unicast("filename," + fileArray.get(hash) + "," + currentID + "," + ipAddress,nodeIP,uniPort);
+            sendFile(ownerNode, hash);
+        }else{
+            File file = new File(fileArray.get(hash));
+            fileMap.put(fileArray.get(hash), file);
+            tempMap.put(currentID,ipAddress);
+            ownerMap.put(fileArray.get(hash),tempMap);
+        }
     }
 
     /*Afblijven Abdel, dit is voor lab 5*/
     private void sendFile(String nodeParameters, int hash){
         String[] parts = nodeParameters.split(",");
-        String nodeName = parts[0];
+        String nodeHash = parts[0];
         String nodeIP = parts[1];
         try (Socket socket = new Socket(nodeIP, tcpPort);
              FileInputStream fileInputStream = new FileInputStream(fileArray.get(hash));
@@ -385,12 +392,22 @@ public class Node implements com.example.systemy.interfaces.Observer {
             System.out.println("Registered as nextID");
             response = "Next," + currentID + "," + this.ipAddress + "," + nextID; //The message to send as reply
             unicast(response, ipAddress, uniPort);
+            if(!filesNotified){
+                notifyFiles();
+                filesNotified = true;
+            }
+
         } else if (previousID < hash && hash < currentID){// || (previousID>currentID && hash < currentID)) { // Ring topology: if we are the smallest hashID, our previousID is the biggest hashID
             previousID = hash;
             setPreviousIP(ipAddress); // This function changes everything that needs to be changed when changing neighbours IP
             System.out.println("Registered as previousID");
             response = "Previous," + currentID + "," + this.ipAddress + "," + previousID; //The message to send as reply
             unicast(response, ipAddress, uniPort);
+            if(!filesNotified){
+                notifyFiles();
+                filesNotified = true;
+            }
+
         }else if(currentID < hash && hash > nextID && currentID>nextID){ // The following 'else if' statements are to be able to close the ring, the first to the last and vice versa
             nextID = hash;
             setNextIP(ipAddress); // This function changes everything that needs to be changed when changing neighbours IP
@@ -403,6 +420,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
             System.out.println("Registered as previousID");
             response = "Previous," + currentID + "," + this.ipAddress + "," + previousID; //The message to send as reply
             unicast(response, ipAddress, uniPort);
+
         }else if(nextID>hash && nextID<currentID){
             nextID = hash;
             setNextIP(ipAddress); // This function changes everything that needs to be changed when changing neighbours IP
@@ -422,7 +440,6 @@ public class Node implements com.example.systemy.interfaces.Observer {
         String otherNodeID = "";
         String otherNodeIP = "";
         String myID = "";
-        Map<Integer, String> nodeMap = new ConcurrentHashMap<>();
         String[] parts = packet.split(","); // split the string at the space character
         String position = parts[0];
         if (parts.length > 1) {
@@ -442,6 +459,8 @@ public class Node implements com.example.systemy.interfaces.Observer {
                 System.out.println("Also set as nextID.");
                 response = "Next," + currentID + "," + this.ipAddress + "," + previousID; //The message to send as reply
                 unicast(response, otherNodeIP, uniPort);
+                notifyFiles();
+                filesNotified = true;
             }
         } else if (Objects.equals(position, "Previous")) { // If we receive a reply that sais we are the other node its previous,
             setNextIP(otherNodeIP);                       // than that node is our next
@@ -454,10 +473,13 @@ public class Node implements com.example.systemy.interfaces.Observer {
                 System.out.println("Also set as previousID.");
                 response = "Previous," + currentID + "," + this.ipAddress + "," + previousID; //The message to send as reply
                 unicast(response, otherNodeIP, uniPort);
+                notifyFiles();
+                filesNotified = true;
             }
         } else if (position.equals("filename")) {
-            tcpReceiver.setFileName(otherNodeID);
-            nodeMap.put(Integer.valueOf(otherNodeIP), myID); // Here the variable names are not what they say they are, it is first the nodeID and then the nodeIP
+            tcpReceiver.setFileName(otherNodeID); // The variable name is not what is says, this is actually the filename.
+            tempMap.put(Integer.valueOf(otherNodeIP), myID); // Here the variable names are not what they say they are, it is first the nodeID and then the nodeIP
+            ownerMap.put(otherNodeID,tempMap);
         }else if(position.equals("getPreviousNeighbour")) { //If the other node (if it were woth our next and previous), it tells us to get another previous neighbour
             if(previousID==nextID) { //Dit moet in aparte if-statements gebeuren om errors te voorkomen
                 String packet2 = "";

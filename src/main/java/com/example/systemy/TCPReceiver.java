@@ -7,9 +7,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 public class TCPReceiver extends Thread {
     private int port;
+    String directory = "/nodeFiles/";
     String fileName = "receivedFile.txt";
     private Observer observer;
 
@@ -25,8 +29,10 @@ public class TCPReceiver extends Thread {
         this.fileName = fileName;
     }
 
+
     @Override
     public void run() {
+        Path filePath = Path.of(directory, fileName);
         try (ServerSocket serverSocket = new ServerSocket(port);
              Socket socket = serverSocket.accept();
              InputStream inputStream = socket.getInputStream();
@@ -37,7 +43,7 @@ public class TCPReceiver extends Thread {
             while ((bytesRead = inputStream.read(buffer)) != -1) {
                 fileOutputStream.write(buffer, 0, bytesRead);
             }
-
+            Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
             System.out.println("File received successfully.");
         } catch (IOException e) {
             System.out.println("Error receiving file: " + e.getMessage());
