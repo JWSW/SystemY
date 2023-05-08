@@ -211,7 +211,7 @@ public class Node implements Observer {
                 .GET()
                 .build();
         try {
-            System.out.println("Sending request to get owner node of " + hash);
+            System.out.println("Sending request to get owner node of " + fileArray.get(hash) + " with hash: " + hash);
             HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
             System.out.println("Response: " + response.body());
 
