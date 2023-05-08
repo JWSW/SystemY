@@ -1,20 +1,13 @@
 package com.example.systemy;
 
 import com.example.systemy.interfaces.MulticastObserver;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class Services implements MulticastObserver {
@@ -22,13 +15,13 @@ public class Services implements MulticastObserver {
 
 
     @Autowired
-    MulticastReceive multicastReceive;
+    MulticastReceiver multicastReceiver;
 
     @PostConstruct
     public void init() throws Exception {
         node = new Node(InetAddress.getLocalHost().getHostName(), InetAddress.getLocalHost().getHostAddress());
-        multicastReceive.setObserver(this);
-        multicastReceive.start();
+        multicastReceiver.setObserver(this);
+        multicastReceiver.start();
     }
 
     @PreDestroy
