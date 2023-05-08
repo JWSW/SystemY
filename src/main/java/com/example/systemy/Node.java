@@ -64,17 +64,12 @@ public class Node implements Observer {
     private boolean nextTimerStopped = false;
     private boolean previousTimerStopped = false;
     private int tcpPort = 45612;
-    private boolean first = false;
 
 
     public Node() {
     }
 
     public Node(String nodeName, String ipAddress) throws Exception { // Constructor
-//        ServerSocket serverSocket = new ServerSocket(uniPort, 0, InetAddress.getByName("localhost"));
-//        if(!serverSocket.isClosed()){
-//            killProcess();
-//        }
         unicastReceiver = new UnicastReceiver(uniPort);
         unicastHeartbeatPrevious = new UnicastReceiver(heartbeatPortPrevious);
         unicastHeartbeatNext = new UnicastReceiver(heartbeatPortNext);
@@ -119,6 +114,7 @@ public class Node implements Observer {
         receiverThreadHeartbeatPrevious.start();
         receiverThreadHeartbeatNext.start();
         receiverThread.start();
+
         String message = nodeName + "," + ipAddress;
         System.out.println("Send multicast message.");
         multicast(message);
@@ -128,7 +124,7 @@ public class Node implements Observer {
     }
 
     /* Dit is voor lab 5 ook*/
-    public void searchFiles() {
+    public void searchFiles() throws IOException {
         // Get the directory to search
         File directory = new File("/home/Dist/SystemY/nodeFiles");
 //
@@ -393,17 +389,12 @@ public class Node implements Observer {
             response = "Previous," + currentID + "," + this.ipAddress + "," + previousID; //The message to send as reply
             unicast(response, ipAddress, uniPort);
         }else if(currentID < hash && hash > nextID && currentID>nextID){ // The following 'else if' statements are to be able to close the ring, the first to the last and vice versa
-//            first = false;
-//            message = "getPreviousNeighbour";
-//            unicast(message,previousIP,uniPort);
             nextID = hash;
             setNextIP(ipAddress); // This function changes everything that needs to be changed when changing neighbours IP
             System.out.println("Registered as nextID");
             response = "Next," + currentID + "," + this.ipAddress + "," + nextID; //The message to send as reply
             unicast(response, ipAddress, uniPort);
         }else if(currentID > hash && hash < previousID && currentID<previousID){
-//            message = "getNextNeighbour";
-//            unicast(message,nextIP,uniPort);
 
             previousID = hash;
             setPreviousIP(ipAddress); // This function changes everything that needs to be changed when changing neighbours IP
@@ -423,8 +414,6 @@ public class Node implements Observer {
             response = "Previous," + currentID + "," + this.ipAddress + "," + previousID; //The message to send as reply
             unicast(response, ipAddress, uniPort);
         }
-
-
     }
 
     public synchronized void unicastHandlePacket(String packet) throws IOException {
@@ -472,8 +461,7 @@ public class Node implements Observer {
                 String packet2 = "";
                 HttpRequest request1 = HttpRequest.newBuilder()
                         .uri(URI.create(baseURL + "/" + previousID + "/getPrevious"))
-                        //.header("Content-Type", "application/json")
-                        .GET()//HttpRequest.BodyPublishers.noBody())//ofString(json))//"{nodeName:" + node.getNodeName() + "ipAddress:" + node.getIpAddress() + "}"))
+                        .GET()
                         .build();
                 try {
                     System.out.println("Sending request to get new neighbour.");
@@ -496,8 +484,7 @@ public class Node implements Observer {
                 String packet2 = "";
                 HttpRequest request1 = HttpRequest.newBuilder()
                         .uri(URI.create(baseURL + "/" + nextID + "/getNext"))
-                        //.header("Content-Type", "application/json")
-                        .GET()//HttpRequest.BodyPublishers.noBody())//ofString(json))//"{nodeName:" + node.getNodeName() + "ipAddress:" + node.getIpAddress() + "}"))
+                        .GET()
                         .build();
                 try {
                     System.out.println("Sending request to get new neighbour.");
@@ -516,7 +503,6 @@ public class Node implements Observer {
             }
         }else if(Integer.parseInt(position)<2) { // If there is only 1 node, set own ID as neighbours.
             amountOfNodes = 3;
-            first = true; // Om aan te duiden dat deze node een van de 2 eersten was die met elkaar verbonden werden
             if (!nextTimerStopped) {
                 nextTimerStopped = true;
                 countdownTimerNext.stop();
@@ -529,7 +515,6 @@ public class Node implements Observer {
             }
         }else if(Integer.parseInt(position)==2) { // If there are only 2 nodes, set other node as both previous and next node.
             amountOfNodes = 2;
-            first = true; // Om aan te duiden dat deze node een van de 2 eersten was die met elkaar verbonden werden
         }else if(Integer.parseInt(position)>2 && Integer.parseInt(position)<maxNodes) { // If there 4 nodes, start offline countdownTimers to maybe get connected to highest or lowest node
             amountOfNodes = 3;
             if (nextTimerStopped) {
