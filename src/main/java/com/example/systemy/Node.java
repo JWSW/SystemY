@@ -64,7 +64,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
     private CountdownTimer countdownTimerNext = new CountdownTimer(25, callback, "Next");
     private boolean nextTimerStopped = false;
     private boolean previousTimerStopped = false;
-    private int tcpPort = 45612;
+    private int tcpPort = 25;
 
 
     public Node() {
