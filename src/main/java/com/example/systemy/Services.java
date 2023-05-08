@@ -85,14 +85,14 @@ public class Services implements MulticastObserver{
         return hash;
     }
 
-    public Map<Integer, String> getFile(String filename) {
+    public String getFile(String filename) {
         int fileHash = getHash(filename);
         Integer kleinste = 32769;
         Integer grootste = 0;
         Integer groterDanFile = 32769;
         Integer kleinerDanFile = 0;
         boolean Hoogste = false;
-        Map<Integer, String> nodeData = new HashMap<>();
+        String nodeData = "";
         Set<Integer> hashSet = nodeMap.keySet();
         System.out.println("De map: " + nodeMap);
         System.out.println("De fileHash: " + fileHash);
@@ -130,9 +130,9 @@ public class Services implements MulticastObserver{
         System.out.println(Hoogste);
         if(Hoogste){
             System.out.println(grootste);
-            nodeData.put(grootste,nodeMap.get(grootste));
+            nodeData = grootste + "," + nodeMap.get(grootste);
         }else{
-            nodeData.put(kleinerDanFile,nodeMap.get(kleinerDanFile));
+            nodeData = kleinerDanFile + "," + nodeMap.get(kleinerDanFile);
         }
         return nodeData;
     }

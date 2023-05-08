@@ -35,7 +35,7 @@ public class Controller {
     }
 
     @GetMapping("/{filename}/getFileLocation")
-    public Map<Integer,String> getFileLocation(@PathVariable String filename ) {
+    public String getFileLocation(@PathVariable String filename ) {
         return services.getFile(filename);
     }
 
