@@ -666,9 +666,9 @@ public class Node implements com.example.systemy.interfaces.Observer {
         }else if("FileEvent".equals(type)){
             FileEventHandler(message);
         }else if("fileReceived".equals(type)){
-            tcpReceiver.stop();
-            tcpReceiver = null;
-            killSpecificProcess(tcpPort);
+//            tcpReceiver.stop();
+//            tcpReceiver = null;
+//            killSpecificProcess(tcpPort);
         }
     }
 
