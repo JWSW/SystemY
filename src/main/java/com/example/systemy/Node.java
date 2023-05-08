@@ -485,11 +485,11 @@ public class Node implements com.example.systemy.interfaces.Observer {
                 filesNotified = true;
             }
         } else if (position.equals("filename")) {
-            startTCPReceiver(otherNodeID); // The variable name is not what is says, this is actually the filename.
+//            startTCPReceiver(otherNodeID); // The variable name is not what is says, this is actually the filename.
             tempMap.put(Integer.valueOf(otherNodeIP), myID); // Here the variable names are not what they say they are, it is first the nodeID and then the nodeIP
             ownerMap.put(otherNodeID,tempMap);
-            tcpReceiver.stop();
-            tcpReceiver = null;
+//            tcpReceiver.stop();
+//            tcpReceiver = null;
         }else if(position.equals("getPreviousNeighbour")) { //If the other node (if it were woth our next and previous), it tells us to get another previous neighbour
             if(previousID==nextID) { //Dit moet in aparte if-statements gebeuren om errors te voorkomen
                 String packet2 = "";
@@ -619,16 +619,16 @@ public class Node implements com.example.systemy.interfaces.Observer {
         throw new RuntimeException("Could not find a free port");
     }
 
-//    public void killSpecificProcess(int port) throws IOException {
-//        try {
-//            ServerSocket serverSocket4 = new ServerSocket(port, 0, InetAddress.getByName("localhost"));
-//            serverSocket4.close();
-//            System.out.println("Process on port " + port + " has been killed.");
-//        }catch (IOException e) {
-//            // An exception is thrown if the port is already in use
-//            System.err.println("Unable to kill process on port " + port + ": " + e.getMessage());
-//        }
-//    }
+    public void killSpecificProcess(int port) throws IOException {
+        try {
+            ServerSocket serverSocket4 = new ServerSocket(port, 0, InetAddress.getByName("localhost"));
+            serverSocket4.close();
+            System.out.println("Process on port " + port + " has been killed.");
+        }catch (IOException e) {
+            // An exception is thrown if the port is already in use
+            System.err.println("Unable to kill process on port " + port + ": " + e.getMessage());
+        }
+    }
 
     public void killProcess(){
         try {
@@ -666,9 +666,9 @@ public class Node implements com.example.systemy.interfaces.Observer {
         }else if("FileEvent".equals(type)){
             FileEventHandler(message);
         }else if("fileReceived".equals(type)){
-//            tcpReceiver.stop();
-//            tcpReceiver = null;
-//            killSpecificProcess(tcpPort);
+            tcpReceiver.stop();
+            tcpReceiver = null;
+            killSpecificProcess(tcpPort);
         }
     }
 
