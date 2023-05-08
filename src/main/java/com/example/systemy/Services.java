@@ -26,9 +26,6 @@ public class Services implements MulticastObserver{
     protected byte[] buf = new byte[256];
     private MulticastReceive multicastReceive = new MulticastReceive();
 
-//    @Autowired
-//    private MulticastReceive multicastReceive;
-
     @PostConstruct
     public void init() throws IOException {
         multicastReceive.setObserver(this);
@@ -123,7 +120,8 @@ public class Services implements MulticastObserver{
                 }
             }else if(fileHash<kleinste){
                 Hoogste = true;
-            }else if(fileHash>grootste){
+            }
+            if(fileHash>grootste){
                 Hoogste = true;
             }
         }
