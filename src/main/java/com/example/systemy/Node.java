@@ -243,6 +243,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
         String[] parts = nodeParameters.split(",");
         String nodeHash = parts[0];
         String nodeIP = parts[1];
+        System.out.println("nodeIP: " + nodeIP);
         try (Socket socket = new Socket(nodeIP, tcpPort);
              FileInputStream fileInputStream = new FileInputStream(fileArray.get(hash));
              OutputStream outputStream = socket.getOutputStream()) {
@@ -257,6 +258,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
             System.out.println("File sent successfully.");
         } catch (IOException e) {
             System.out.println("Error sending file: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
