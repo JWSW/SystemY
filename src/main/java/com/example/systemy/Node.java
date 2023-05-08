@@ -145,7 +145,7 @@ public class Node implements Observer {
 
     public void notifyFiles() throws IOException {
         for(Integer fileHash : fileArray.keySet()){
-//            notifyNamingServer(fileHash);
+            notifyNamingServer(fileHash);
         }
     }
 
