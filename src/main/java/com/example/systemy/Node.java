@@ -32,7 +32,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
     private int maxNodes = 10;
     private int amountOfNodes = 1;
     private static DatagramSocket socket = null;
-    private Map<String,File> fileMap;
+    private Map<String,File> fileMap = new ConcurrentHashMap<>();
     private WatchDirectory watchDirectory;
     private String fileTest = "fileTest.txt";
     private String fileTwo = "file2.txt";
