@@ -221,9 +221,9 @@ public class Node implements com.example.systemy.interfaces.Observer {
 
             packet = response.body();
             parts = packet.split(",");
-            nodeHash = Integer.valueOf(parts[0]);
+//            nodeHash = Integer.valueOf(parts[0]);
 //            nodeIP = parts[1];
-//            ownerNode = packet;
+            ownerNode = packet;
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
