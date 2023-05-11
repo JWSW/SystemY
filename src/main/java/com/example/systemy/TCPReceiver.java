@@ -29,7 +29,7 @@ public class TCPReceiver extends Thread {
 
     public void setFileName(String fileName){
         this.fileName = fileName;
-        System.out.println("Filename has been set");
+        System.out.println("Filename has been set to " + this.fileName);
     }
 
     public void close() throws IOException {
