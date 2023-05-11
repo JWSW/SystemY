@@ -260,9 +260,22 @@ public class Node implements com.example.systemy.interfaces.Observer {
         String nodeHash = parts[0];
         String nodeIP = parts[1];
         System.out.println("nodeIP: " + nodeIP);
-        while(tcpReceiver.isAccepted)
-        tcpReceiver.close();
-        tcpReceiver.stop();
+//        while(tcpReceiver.isAccepted)
+//        tcpReceiver.close();
+//        tcpReceiver.stop();
+
+        // Close the receiver if it's open and not currently accepting
+        if (tcpReceiver.isAlive() && !tcpReceiver.isAccepted) {
+            tcpReceiver.close();
+            try {
+                System.out.println("Waiting to finish receiving");
+                tcpReceiver.join(); // Wait for the receiver thread to complete before proceeding with sending
+                System.out.println("Finished receiving");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
         try  {
             Socket socket = new Socket(nodeIP, tcpPort);
             FileInputStream fileInputStream = new FileInputStream("/home/Dist/SystemY/nodeFiles/" + fileArray.get(hash));
