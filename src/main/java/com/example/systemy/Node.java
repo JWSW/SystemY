@@ -42,7 +42,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
     private UnicastReceiver unicastHeartbeatNext;// = new UnicastReceiver(heartbeatPortNext);
     private HeartbeatSender previousHeartbeatSender;// = new HeartbeatSender(previousIP, currentID, heartbeatPortPrevious);
     private HeartbeatSender nextHeartbeatSender;// = new HeartbeatSender(nextIP, currentID, heartbeatPortNext);
-    private TCPReceiver tcpReceiver;
+    private TCPReceiver tcpReceiver=null;
     private String baseURL = "http://172.27.0.5:8080/requestName";
     private ObjectMapper objectMapper = new ObjectMapper(); // or any other JSON serializer
     private Map<Integer,String> fileArray = new ConcurrentHashMap<>();
@@ -93,7 +93,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
         unicastHeartbeatPrevious.setObserver(this);
         unicastHeartbeatNext.setObserver(this);
         watchDirectory.setObserver(this);
-        tcpReceiver.setObserver(this);
+//        tcpReceiver.setObserver(this);
 
         if(!(previousID ==0)) {
             countdownTimerPrevious.start();
