@@ -281,7 +281,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
             System.out.println("Error sending file: " + e.getMessage());
             e.printStackTrace();
         }
-        tcpReceiver.open();
+//        tcpReceiver.open();
     }
 
     private void requestRemoveNode(Integer id) throws IOException, InterruptedException {
