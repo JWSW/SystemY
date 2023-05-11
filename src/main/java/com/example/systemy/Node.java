@@ -81,7 +81,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
         previousHeartbeatSender = new HeartbeatSender(previousIP, currentID, heartbeatPortPrevious);
         nextHeartbeatSender = new HeartbeatSender(nextIP, currentID, heartbeatPortNext);
         watchDirectory = new WatchDirectory();
-        //tcpReceiver = new TCPReceiver(tcpPort);
+        tcpReceiver = new TCPReceiver(tcpPort);
 
         this.nodeName = nodeName;
         this.ipAddress = ipAddress;
@@ -94,7 +94,6 @@ public class Node implements com.example.systemy.interfaces.Observer {
         unicastHeartbeatNext.setObserver(this);
         watchDirectory.setObserver(this);
         tcpReceiver.setObserver(this);
-        System.out.println("Hij komt hier");
 
         if(!(previousID ==0)) {
             countdownTimerPrevious.start();
