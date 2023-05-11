@@ -16,6 +16,7 @@ public class TCPReceiver extends Thread {
     String directory = "/nodeFiles/";
     String fileName = "receivedFile.txt";
     private Observer observer;
+    private ServerSocket serverSocket;
 
     public TCPReceiver(int port) {
         this.port = port;
@@ -29,14 +30,18 @@ public class TCPReceiver extends Thread {
         this.fileName = fileName;
     }
 
+    public void close() throws IOException {
+        serverSocket.close();
+    }
 
     @Override
     public void run() {
         Path filePath = Path.of(directory, fileName);
-        try (ServerSocket serverSocket = new ServerSocket(port);
-             Socket socket = serverSocket.accept();
-             InputStream inputStream = socket.getInputStream();
-             FileOutputStream fileOutputStream = new FileOutputStream(fileName)) {
+        try {
+            serverSocket = new ServerSocket(port);
+            Socket socket = serverSocket.accept();
+            InputStream inputStream = socket.getInputStream();
+            FileOutputStream fileOutputStream = new FileOutputStream(fileName);
 
             byte[] buffer = new byte[1024];
             int bytesRead;

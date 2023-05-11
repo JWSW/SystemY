@@ -81,7 +81,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
         previousHeartbeatSender = new HeartbeatSender(previousIP, currentID, heartbeatPortPrevious);
         nextHeartbeatSender = new HeartbeatSender(nextIP, currentID, heartbeatPortNext);
         watchDirectory = new WatchDirectory();
-//        tcpReceiver = new TCPReceiver(tcpPort);
+        tcpReceiver = new TCPReceiver(tcpPort);
 
         this.nodeName = nodeName;
         this.ipAddress = ipAddress;
@@ -93,7 +93,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
         unicastHeartbeatPrevious.setObserver(this);
         unicastHeartbeatNext.setObserver(this);
         watchDirectory.setObserver(this);
-//        tcpReceiver.setObserver(this);
+        tcpReceiver.setObserver(this);
 
         if(!(previousID ==0)) {
             countdownTimerPrevious.start();
@@ -119,6 +119,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
         receiverThreadHeartbeatPrevious.start();
         receiverThreadHeartbeatNext.start();
         receiverThread.start();
+        tcpReceiver.start();
 
         String message = nodeName + "," + ipAddress;
         System.out.println("Send multicast message.");
@@ -245,11 +246,13 @@ public class Node implements com.example.systemy.interfaces.Observer {
     }
 
     /*Afblijven Abdel, dit is voor lab 5*/
-    private void sendFile(String nodeParameters, int hash){
+    private void sendFile(String nodeParameters, int hash) throws IOException {
         String[] parts = nodeParameters.split(",");
         String nodeHash = parts[0];
         String nodeIP = parts[1];
         System.out.println("nodeIP: " + nodeIP);
+        tcpReceiver.close();
+        tcpReceiver.stop();
         try (Socket socket = new Socket(nodeIP, tcpPort);
              FileInputStream fileInputStream = new FileInputStream(fileArray.get(hash));
              OutputStream outputStream = socket.getOutputStream()) {
@@ -266,6 +269,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
             System.out.println("Error sending file: " + e.getMessage());
             e.printStackTrace();
         }
+        tcpReceiver.start();
     }
 
     private void requestRemoveNode(Integer id) throws IOException, InterruptedException {
