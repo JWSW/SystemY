@@ -506,9 +506,9 @@ public class Node implements com.example.systemy.interfaces.Observer {
             tempMap.put(Integer.valueOf(otherNodeIP), myID); // Here the variable names are not what they say they are, it is first the nodeID and then the nodeIP
             ownerMap.put(otherNodeID,tempMap);
             receivingFile = true;
-            if(!tcpReceiver.isAccepted){
-                tcpReceiver.open();
-            }
+//            if(!tcpReceiver.isAccepted){
+//                tcpReceiver.open();
+//            }
 //            tcpReceiver.stop();
 //            tcpReceiver = null;
         }else if(position.equals("getPreviousNeighbour")) { //If the other node (if it were woth our next and previous), it tells us to get another previous neighbour
