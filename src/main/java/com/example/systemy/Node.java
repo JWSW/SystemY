@@ -254,6 +254,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
         System.out.println("nodeIP: " + nodeIP);
         tcpReceiver.close();
         tcpReceiver.stop();
+        System.out.println("Is alive?: " + tcpReceiver.isAlive());
         try  {
             Socket socket = new Socket(nodeIP, tcpPort);
             FileInputStream fileInputStream = new FileInputStream("/home/Dist/SystemY/nodeFiles/" + fileArray.get(hash));
