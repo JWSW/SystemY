@@ -43,15 +43,16 @@ public class TCPReceiver extends Thread {
 
     @Override
     public void run() {
-        Path filePath = Path.of(directory, fileName);
         try {
             serverSocket = new ServerSocket(port);
             Socket socket = serverSocket.accept();
             System.out.println("Connection accepted");
             isAccepted = true;
             InputStream inputStream = socket.getInputStream();
+            System.out.println("Filename now: " + fileName);
             FileOutputStream fileOutputStream = new FileOutputStream(fileName);
 
+            Path filePath = Path.of(directory, fileName);
             byte[] buffer = new byte[1024];
             int bytesRead;
             while ((bytesRead = inputStream.read(buffer)) != -1) {
