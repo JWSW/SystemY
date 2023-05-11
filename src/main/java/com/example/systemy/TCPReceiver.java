@@ -13,7 +13,7 @@ import java.nio.file.StandardCopyOption;
 
 public class TCPReceiver extends Thread {
     private int port;
-    String directory = "/nodeFiles/";
+    String directory = "/home/Dist/SystemY/nodeFiles/";
     String fileName = "receivedFile.txt";
     private Observer observer;
     private ServerSocket serverSocket;
