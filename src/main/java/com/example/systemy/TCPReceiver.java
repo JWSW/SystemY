@@ -34,6 +34,11 @@ public class TCPReceiver extends Thread {
         serverSocket.close();
     }
 
+    public void open() throws IOException {
+        serverSocket = new ServerSocket(port);
+        Socket socket = serverSocket.accept();
+    }
+
     @Override
     public void run() {
         Path filePath = Path.of(directory, fileName);
