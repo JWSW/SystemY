@@ -65,7 +65,7 @@ public class TCPReceiver extends Thread {
                     observer.onMessageReceived("fileReceived","No message");
                 }
                 isAccepted = false;
-                serverSocket.close();
+//                serverSocket.close();
             }
         } catch (IOException e) {
             System.out.println("Error receiving file: " + e.getMessage());
