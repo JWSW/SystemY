@@ -45,26 +45,28 @@ public class TCPReceiver extends Thread {
     public void run() {
         try {
             serverSocket = new ServerSocket(port);
-            Socket socket = serverSocket.accept();
+            while (!Thread.currentThread().isInterrupted()) {
+                Socket socket = serverSocket.accept();
 //            System.out.println("Connection accepted");
-            isAccepted = true;
-            InputStream inputStream = socket.getInputStream();
+                isAccepted = true;
+                InputStream inputStream = socket.getInputStream();
 //            System.out.println("Filename now: " + fileName);
-            FileOutputStream fileOutputStream = new FileOutputStream(fileName);
+                FileOutputStream fileOutputStream = new FileOutputStream(fileName);
 
-            Path filePath = Path.of(directory, fileName);
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                fileOutputStream.write(buffer, 0, bytesRead);
+                Path filePath = Path.of(directory, fileName);
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    fileOutputStream.write(buffer, 0, bytesRead);
+                }
+                Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+                System.out.println("File received successfully.");
+                if (observer != null) {
+                    observer.onMessageReceived("fileReceived","No message");
+                }
+                isAccepted = false;
+                serverSocket.close();
             }
-            Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
-            System.out.println("File received successfully.");
-            if (observer != null) {
-                observer.onMessageReceived("fileReceived","No message");
-            }
-            isAccepted = false;
-            serverSocket.close();
         } catch (IOException e) {
             System.out.println("Error receiving file: " + e.getMessage());
         }

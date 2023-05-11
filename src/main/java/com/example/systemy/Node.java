@@ -764,7 +764,6 @@ public class Node implements com.example.systemy.interfaces.Observer {
                 socket = new DatagramSocket(port);
             } catch (SocketException e) {
                 System.err.println("Port " + port + " is already in use");
-                killProcess();
             }
         }
 
