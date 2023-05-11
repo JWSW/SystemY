@@ -266,7 +266,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
 
         // Close the receiver if it's open and not currently accepting
         if (tcpReceiver.isAlive() && !tcpReceiver.isAccepted) {
-            tcpReceiver.close();
+//            tcpReceiver.close();
             try {
                 System.out.println("Waiting to finish receiving");
                 tcpReceiver.join(); // Wait for the receiver thread to complete before proceeding with sending
