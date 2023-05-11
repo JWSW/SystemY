@@ -46,7 +46,7 @@ public class TCPReceiver extends Thread {
         try {
             serverSocket = new ServerSocket(port);
             Socket socket = serverSocket.accept();
-            System.out.println("Connection accepted");
+//            System.out.println("Connection accepted");
             isAccepted = true;
             InputStream inputStream = socket.getInputStream();
 //            System.out.println("Filename now: " + fileName);
