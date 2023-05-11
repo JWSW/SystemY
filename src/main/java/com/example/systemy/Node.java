@@ -239,9 +239,9 @@ public class Node implements com.example.systemy.interfaces.Observer {
     }
 
     public void startTCPReceiver(String otherNodeID){
-//        tcpReceiver = new TCPReceiver(tcpPort);
-//        tcpReceiver.setFileName(otherNodeID);
-//        tcpReceiver.start();
+        tcpReceiver = new TCPReceiver(tcpPort);
+        tcpReceiver.setFileName(otherNodeID);
+        tcpReceiver.start();
     }
 
     /*Afblijven Abdel, dit is voor lab 5*/
@@ -485,7 +485,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
                 filesNotified = true;
             }
         } else if (position.equals("filename")) {
-//            startTCPReceiver(otherNodeID); // The variable name is not what it says, this is actually the filename.
+            startTCPReceiver(otherNodeID); // The variable name is not what it says, this is actually the filename.
             tempMap.put(Integer.valueOf(otherNodeIP), myID); // Here the variable names are not what they say they are, it is first the nodeID and then the nodeIP
             ownerMap.put(otherNodeID,tempMap);
 //            tcpReceiver.stop();
