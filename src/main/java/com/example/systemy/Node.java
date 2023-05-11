@@ -252,6 +252,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
         String nodeHash = parts[0];
         String nodeIP = parts[1];
         System.out.println("nodeIP: " + nodeIP);
+        while(tcpReceiver.isAccepted)
         tcpReceiver.close();
         tcpReceiver.stop();
         System.out.println("Is alive?: " + tcpReceiver.isAlive());

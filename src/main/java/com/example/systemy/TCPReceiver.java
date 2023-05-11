@@ -17,6 +17,7 @@ public class TCPReceiver extends Thread {
     String fileName = "receivedFile.txt";
     private Observer observer;
     private ServerSocket serverSocket;
+    public boolean isAccepted = false;
 
     public TCPReceiver(int port) {
         this.port = port;
@@ -45,6 +46,7 @@ public class TCPReceiver extends Thread {
         try {
             serverSocket = new ServerSocket(port);
             Socket socket = serverSocket.accept();
+            isAccepted = true;
             InputStream inputStream = socket.getInputStream();
             FileOutputStream fileOutputStream = new FileOutputStream(fileName);
 
@@ -58,6 +60,7 @@ public class TCPReceiver extends Thread {
             if (observer != null) {
                 observer.onMessageReceived("fileReceived","No message");
             }
+            isAccepted = false;
         } catch (IOException e) {
             System.out.println("Error receiving file: " + e.getMessage());
         }
