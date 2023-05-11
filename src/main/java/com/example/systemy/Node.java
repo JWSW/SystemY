@@ -65,6 +65,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
     private boolean nextTimerStopped = false;
     private boolean previousTimerStopped = false;
     private int tcpPort = 2001;
+    private boolean receivingFile = false;
 
 
     public Node() {
@@ -253,9 +254,10 @@ public class Node implements com.example.systemy.interfaces.Observer {
         System.out.println("nodeIP: " + nodeIP);
         tcpReceiver.close();
         tcpReceiver.stop();
-        try (Socket socket = new Socket(nodeIP, tcpPort);
-             FileInputStream fileInputStream = new FileInputStream(fileArray.get(hash));
-             OutputStream outputStream = socket.getOutputStream()) {
+        try  {
+            Socket socket = new Socket(nodeIP, tcpPort);
+            FileInputStream fileInputStream = new FileInputStream(fileArray.get(hash));
+            OutputStream outputStream = socket.getOutputStream();
 
             byte[] buffer = new byte[1024];
             int bytesRead;
@@ -265,6 +267,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
             outputStream.flush();
 
             System.out.println("File sent successfully.");
+            socket.close();
         } catch (IOException e) {
             System.out.println("Error sending file: " + e.getMessage());
             e.printStackTrace();
@@ -492,6 +495,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
             startTCPReceiver(otherNodeID); // The variable name is not what it says, this is actually the filename.
             tempMap.put(Integer.valueOf(otherNodeIP), myID); // Here the variable names are not what they say they are, it is first the nodeID and then the nodeIP
             ownerMap.put(otherNodeID,tempMap);
+            receivingFile = true;
 //            tcpReceiver.stop();
 //            tcpReceiver = null;
         }else if(position.equals("getPreviousNeighbour")) { //If the other node (if it were woth our next and previous), it tells us to get another previous neighbour
