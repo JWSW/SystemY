@@ -131,6 +131,7 @@ public class Services implements MulticastObserver{
             nodeData = grootste + "," + nodeMap.get(grootste);
         }else{
             nodeData = kleinerDanFile + "," + nodeMap.get(kleinerDanFile);
+            System.out.println(nodeData);
         }
         return nodeData;
     }
