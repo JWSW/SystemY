@@ -256,7 +256,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
         tcpReceiver.stop();
         try  {
             Socket socket = new Socket(nodeIP, tcpPort);
-            FileInputStream fileInputStream = new FileInputStream(fileArray.get(hash));
+            FileInputStream fileInputStream = new FileInputStream("/home/Dist/SystemY/nodeFiles/" + fileArray.get(hash));
             OutputStream outputStream = socket.getOutputStream();
 
             byte[] buffer = new byte[1024];
