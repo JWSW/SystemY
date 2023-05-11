@@ -49,7 +49,7 @@ public class TCPReceiver extends Thread {
             System.out.println("Connection accepted");
             isAccepted = true;
             InputStream inputStream = socket.getInputStream();
-            System.out.println("Filename now: " + fileName);
+//            System.out.println("Filename now: " + fileName);
             FileOutputStream fileOutputStream = new FileOutputStream(fileName);
 
             Path filePath = Path.of(directory, fileName);
