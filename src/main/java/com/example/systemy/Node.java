@@ -281,7 +281,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
             System.out.println("Error sending file: " + e.getMessage());
             e.printStackTrace();
         }
-        tcpReceiver.open();
+//        tcpReceiver.open();
     }
 
     private void requestRemoveNode(Integer id) throws IOException, InterruptedException {
@@ -501,14 +501,14 @@ public class Node implements com.example.systemy.interfaces.Observer {
                 filesNotified = true;
             }
         } else if (position.equals("filename")) {
-            if(!tcpReceiver.isAccepted){
-                tcpReceiver.open();
-            }
 //            startTCPReceiver(otherNodeID); // The variable name is not what it says, this is actually the filename.
             tcpReceiver.setFileName(otherNodeID); // The variable name is not what it says, this is actually the filename.
             tempMap.put(Integer.valueOf(otherNodeIP), myID); // Here the variable names are not what they say they are, it is first the nodeID and then the nodeIP
             ownerMap.put(otherNodeID,tempMap);
             receivingFile = true;
+            if(!tcpReceiver.isAccepted){
+                tcpReceiver.open();
+            }
 //            tcpReceiver.stop();
 //            tcpReceiver = null;
         }else if(position.equals("getPreviousNeighbour")) { //If the other node (if it were woth our next and previous), it tells us to get another previous neighbour
