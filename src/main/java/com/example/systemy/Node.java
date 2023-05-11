@@ -8,6 +8,8 @@ import java.net.http.HttpResponse;
 import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+
 import com.example.systemy.interfaces.Observer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -231,8 +233,14 @@ public class Node implements com.example.systemy.interfaces.Observer {
         }
         if(nodeHash!=currentID) {
             unicast("filename," + fileArray.get(hash) + "," + currentID + "," + ipAddress,nodeIP,uniPort);
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            }catch (InterruptedException e){
+                e.printStackTrace();
+            }
             sendFile(ownerNode, hash);
         }else{
+            System.out.println("Node self is owner of " + fileArray.get(hash));
             File file = new File(fileArray.get(hash));
             fileMap.put(fileArray.get(hash), file);
             tempMap.put(currentID,ipAddress);
