@@ -75,7 +75,6 @@ public class Node implements com.example.systemy.interfaces.Observer {
 //        if(!serverSocket.isClosed()){
 //            killProcess();
 //        }
-        System.out.println("Hij komt hier");
         unicastReceiver = new UnicastReceiver(uniPort);
         unicastHeartbeatPrevious = new UnicastReceiver(heartbeatPortPrevious);
         unicastHeartbeatNext = new UnicastReceiver(heartbeatPortNext);
@@ -95,6 +94,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
         unicastHeartbeatNext.setObserver(this);
         watchDirectory.setObserver(this);
         tcpReceiver.setObserver(this);
+        System.out.println("Hij komt hier");
 
         if(!(previousID ==0)) {
             countdownTimerPrevious.start();
