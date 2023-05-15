@@ -69,6 +69,11 @@ public class TCPReceiver extends Thread {
             }
         } catch (IOException e) {
             System.out.println("Error receiving file: " + e.getMessage());
+            try {
+                serverSocket.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 }
