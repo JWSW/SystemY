@@ -2,10 +2,13 @@ package com.example.systemy.Agents;
 
 import com.example.systemy.Node;
 
+import java.io.IOException;
 import java.io.Serial;
 import java.io.Serializable;
 import java.net.URI;
+import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -38,7 +41,11 @@ public class SyncAgent implements Runnable, Serializable {
                 e.printStackTrace();
             }
 
-            syncWithNeighbors();
+            try {
+                syncWithNeighbors();
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
 
             for (String fileName : ownerMap.keySet()) {
                 boolean updated = false;
@@ -83,7 +90,7 @@ public class SyncAgent implements Runnable, Serializable {
         }
     }
 
-    private void syncWithNeighbors() {
+    private void syncWithNeighbors() throws IOException, InterruptedException {
         for (String neighbor : currentNode.getNeighbors()) {
             if (neighbor != null) {
                 String baseURL = "http://"+neighbor+":8081/requestNode";
@@ -91,6 +98,8 @@ public class SyncAgent implements Runnable, Serializable {
                         .uri(URI.create(baseURL + "/syncWithNeighbor"))
                         .GET()
                         .build();
+                HttpResponse<String> response = HttpClient.newHttpClient().send(request1, HttpResponse.BodyHandlers.ofString());
+                System.out.println("Response: " + response.body());
              //   Map<String, Boolean> neighborFileList = neighbor.getFileList();
               //  agentFileList.putAll(neighborFileList);
             }
