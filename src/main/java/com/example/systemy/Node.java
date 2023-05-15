@@ -262,6 +262,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
         String nodeHash = parts[0];
         String nodeIP = parts[1];
         System.out.println("nodeIP: " + nodeIP);
+        String jsonData="";
         try {
             // Read the file content
             File file = new File("/home/Dist/SystemY/nodeFiles/" + fileArray.get(hash));
@@ -274,20 +275,18 @@ public class Node implements com.example.systemy.interfaces.Observer {
             String base64Content = Base64.getEncoder().encodeToString(fileContent);
 
             // Convert the JSON object to a string
-            String jsonData = objectMapper.writeValueAsString(base64Content);
+            jsonData = objectMapper.writeValueAsString(base64Content);
         }catch (IOException e) {
         e.printStackTrace();
         }
-        String json;
-        json = objectMapper.writeValueAsString(nextID);
         try {
             HttpRequest request2 = HttpRequest.newBuilder()
                     .uri(URI.create("http://" + nodeIP + ":8081/requestNode" + "/" + fileArray.get(hash) + "/" + currentID + "/" + ipAddress + "/sendNewFile"))
                     .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString(json))
+                    .POST(HttpRequest.BodyPublishers.ofString(jsonData))
                     .build();
             System.out.println("Sending POST request to owner of file " + fileArray.get(hash));
-            System.out.println("The json body: " + json);
+            System.out.println("The json body: " + jsonData);
             HttpResponse<String> response2 = HttpClient.newHttpClient().send(request2, HttpResponse.BodyHandlers.ofString());
             System.out.println("Response: " + response2.body());
             System.out.println("If response empty, file is sent succesfully.");
