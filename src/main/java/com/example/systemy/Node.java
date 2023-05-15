@@ -231,12 +231,6 @@ public class Node implements com.example.systemy.interfaces.Observer {
             e.printStackTrace();
         }
         if(nodeHash!=currentID) {
-            unicast("filename," + fileArray.get(hash) + "," + currentID + "," + ipAddress,nodeIP,uniPort);
-            try {
-                TimeUnit.MILLISECONDS.sleep(500);
-            }catch (InterruptedException e){
-                e.printStackTrace();
-            }
             sendFile(ownerNode, hash);
         }else{
             System.out.println("Node self is owner of " + fileArray.get(hash));
