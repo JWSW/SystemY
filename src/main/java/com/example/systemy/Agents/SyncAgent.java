@@ -70,7 +70,7 @@ public class SyncAgent implements Runnable, Serializable {
                         boolean locked = currentNode.lockFile(lockedFile, LOCK_WAIT_TIME);
 
                         if (locked) {
-                            agentFileList.keySet())
+                            agentFileList.keySet();
                             currentNode.setFileList(agentFileList);
                         }
                     }
