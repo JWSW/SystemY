@@ -266,14 +266,15 @@ public class Node implements com.example.systemy.interfaces.Observer {
         try {
             // Read the file content
             File file = new File("/home/Dist/SystemY/nodeFiles/" + fileArray.get(hash));
-            byte[] fileContent = new byte[(int) file.length()];
+//            byte[] fileContent = new byte[(int) file.length()];
+            byte[] fileContent = Files.readAllBytes(Paths.get("/home/Dist/SystemY/nodeFiles/" + fileArray.get(hash)));
             FileInputStream fileInputStream = new FileInputStream(file);
             fileInputStream.read(fileContent);
             fileInputStream.close();
             System.out.println("filecontent: " + fileContent);
 
             // Encode the file content as Base64
-            String base64Content = Base64.getEncoder().encodeToString(fileContent);
+            String base64Content = Base64.getEncoder().encodeToString(fileContent); //Deze doet niks
             System.out.println("base64: " + base64Content);
             // Convert the JSON object to a string
             jsonData = objectMapper.writeValueAsString(base64Content);
