@@ -36,7 +36,7 @@ public class SyncAgent implements Runnable, Serializable {
                 e.printStackTrace();
             }
 
-            syncWithNeighbors();
+//            syncWithNeighbors();
         }
 
         // Keep checking for lock requests
@@ -84,12 +84,12 @@ public class SyncAgent implements Runnable, Serializable {
 //        }
     }
 
-    private void syncWithNeighbors() {
-        for (Node neighbor : currentNode.getNeighbors()) {
-            if (neighbor != null) {
-                Map<String, Boolean> neighborFileList = neighbor.getFileList();
-                agentFileList.putAll(neighborFileList);
-            }
-        }
-    }
+//    private void syncWithNeighbors() {
+//        for (Node neighbor : currentNode.getNeighbors()) {
+//            if (neighbor != null) {
+//                Map<String, Boolean> neighborFileList = neighbor.getFileList();
+//                agentFileList.putAll(neighborFileList);
+//            }
+//        }
+//    }
 }
