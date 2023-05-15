@@ -729,19 +729,25 @@ public class Node implements com.example.systemy.interfaces.Observer {
     public void setFileList(Map<String, Boolean> fileList) {
     }
 
-    public Node[] getNeighbors() {
-    }
+    public String[] getNeighbors() {
+        String[] neighbors = new String[2];
+        neighbors[0] = previousIP;
+        neighbors[1] = nextIP;
+        return neighbors;
 
-    public Map<String, Boolean> getFileList() {
-    }
-
-    public void unlockFile(String lockedFile) {
-
-    }
-
-    public boolean lockFile(String lockedFile, long lockWaitTime) {
 
     }
+//
+//    public Map<String, Boolean> getFileList() {
+//    }
+//
+//    public void unlockFile(String lockedFile) {
+//
+//    }
+//
+//    public boolean lockFile(String lockedFile, long lockWaitTime) {
+//
+//    }
 
 
 
