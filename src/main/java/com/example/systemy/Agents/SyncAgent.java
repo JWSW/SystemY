@@ -105,4 +105,8 @@ public class SyncAgent implements Runnable, Serializable {
             }
         }
     }
+
+    public Map<String, Boolean> getAgentFileList() {
+        return agentFileList;
+    }
 }

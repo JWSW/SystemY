@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.Map;
 
 @Service
 public class Services implements MulticastObserver {
@@ -37,5 +38,9 @@ public class Services implements MulticastObserver {
     @Override
     public void onMessageReceived(String message) throws IOException {
         node.multicastHandlePacket(message);
+    }
+
+    public Map<String, Boolean> getAgentFileList() {
+        return syncAgent.getAgentFileList();
     }
 }
