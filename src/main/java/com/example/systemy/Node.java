@@ -272,13 +272,13 @@ public class Node implements com.example.systemy.interfaces.Observer {
                 tcpReceiver.join(); // Wait for the receiver thread to complete before proceeding with sending
                 System.out.println("Finished receiving");
                 tcpReceiver.close();
-                tcpReceiver.stop();
+                tcpReceiver.interrupt();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }else{
             tcpReceiver.close();
-            tcpReceiver.stop();
+            tcpReceiver.interrupt();
         }
 
         try  {
