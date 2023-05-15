@@ -271,6 +271,8 @@ public class Node implements com.example.systemy.interfaces.Observer {
                 System.out.println("Waiting to finish receiving");
                 tcpReceiver.join(); // Wait for the receiver thread to complete before proceeding with sending
                 System.out.println("Finished receiving");
+                tcpReceiver.close();
+                tcpReceiver.interrupt();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -297,7 +299,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
             System.out.println("Error sending file: " + e.getMessage());
             e.printStackTrace();
         }
-//        tcpReceiver.start();
+        tcpReceiver.start();
     }
 
     private void requestRemoveNode(Integer id) throws IOException, InterruptedException {
