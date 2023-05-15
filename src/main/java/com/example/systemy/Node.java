@@ -282,7 +282,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
         json = objectMapper.writeValueAsString(nextID);
         try {
             HttpRequest request2 = HttpRequest.newBuilder()
-                    .uri(URI.create("http://" + nodeIP + ":8081/requestNode" + "/" + fileArray.get(hash) + "/" + currentID + "/" + ipAddress + "/removeNodeByHashId"))
+                    .uri(URI.create("http://" + nodeIP + ":8081/requestNode" + "/" + fileArray.get(hash) + "/" + currentID + "/" + ipAddress + "/sendNewFile"))
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(json))
                     .build();
