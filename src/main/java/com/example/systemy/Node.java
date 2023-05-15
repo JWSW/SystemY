@@ -274,14 +274,12 @@ public class Node implements com.example.systemy.interfaces.Observer {
                 System.out.println("Finished receiving");
                 tcpReceiver.close();
                 tcpReceiver.interrupt();
-                tcpReceiver.isRunning = false;
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }else{
             tcpReceiver.close();
             tcpReceiver.interrupt();
-            tcpReceiver.isRunning = false;
         }
 
         try  {
@@ -302,7 +300,6 @@ public class Node implements com.example.systemy.interfaces.Observer {
             System.out.println("Error sending file: " + e.getMessage());
             e.printStackTrace();
         }
-        tcpReceiver.isRunning = true;
         tcpReceiver.start();
     }
 
@@ -729,22 +726,28 @@ public class Node implements com.example.systemy.interfaces.Observer {
         }
     }
 
-//    public void setFileList(Map<String, Boolean> fileList) {
-//    }
-//
-//    public Node[] getNeighbors() {
-//    }
-//
-//    public Map<String, Boolean> getFileList() {
-//    }
-//
-//    public void unlockFile(String lockedFile) {
-//
-//    }
-//
-//    public boolean lockFile(String lockedFile, long lockWaitTime) {
-//
-//    }
+    public void setFileList(Map<String, Boolean> fileList) {
+    }
+
+    public String[] getNeighbors() {
+        String[] neighbors = new String[2];
+        neighbors[0] = previousIP;
+        neighbors[1] = nextIP;
+        return neighbors;
+
+    }
+
+/*    public Map<String, Boolean> getFileList() {
+
+    }*/
+
+    public void unlockFile(String lockedFile) {
+
+    }
+
+    public boolean lockFile(String lockedFile, long lockWaitTime) {
+        return true;
+    }
 
 
 
