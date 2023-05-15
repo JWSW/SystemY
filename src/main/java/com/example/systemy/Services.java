@@ -99,10 +99,11 @@ public class Services implements MulticastObserver{
                 kleinste = nodeHash;
                 System.out.println("Nieuwe kleinste: " + kleinste);
             }
-            if(nodeHash> grootste){
+            if(nodeHash> grootste) {
                 grootste = nodeHash;
                 System.out.println("Nieuwe grootste: " + grootste);
             }
+        for(Integer nodehash : hashSet){
             if(fileHash>kleinste){
                 if(fileHash<grootste) {
                     Hoogste = false;
