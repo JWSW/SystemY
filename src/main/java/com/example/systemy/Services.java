@@ -23,7 +23,9 @@ public class Services implements MulticastObserver {
     @PostConstruct
     public void init() throws Exception {
         node = new Node(InetAddress.getLocalHost().getHostName(), InetAddress.getLocalHost().getHostAddress());
-        new SyncAgent(node);
+        syncAgent = new SyncAgent(node);
+        Thread syncAgent1 = new Thread(syncAgent);
+        syncAgent1.start();
         multicastReceiver.setObserver(this);
         multicastReceiver.start();
     }
