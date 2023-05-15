@@ -40,48 +40,48 @@ public class SyncAgent implements Runnable, Serializable {
         }
 
         // Keep checking for lock requests
-        while (true) {
-            for (String fileName : ownerMap.keySet()) {
-                boolean updated = false;
-
-                // If the agent's list doesn't contain a file that the node owns, add it to the list
-                if (!agentFileList.containsKey(fileName)) {
-                    agentFileList.put(fileName, false);
-                    updated = true;
-                }
-
-                // If the agent's list contains a file that the node no longer owns, remove it from the list
-                if (!ownerMap.containsKey(fileName) && agentFileList.containsKey(fileName)) {
-                    agentFileList.remove(fileName);
-                    updated = true;
-                }
-
-                // If the local file list was updated, synchronize with the node's file list
-                if (updated) {
-                    currentNode.setFileList(agentFileList);
-                }
-
-                // Check if there is a lock request on the current node
-                if (currentNode.hasLockRequest()) {
-                    String lockedFile = currentNode.getLockedFile();
-
-                    // If the file is not locked on the agent's list, lock it and synchronize the lists
-                    if (!agentFileList.containsKey(lockedFile)) {
-                        boolean locked = currentNode.lockFile(lockedFile, LOCK_WAIT_TIME);
-
-                        if (locked) {
-                            agentFileList.keySet();
-                            currentNode.setFileList(agentFileList);
-                        }
-                    }
-
-                    // Remove the lock when it is not needed anymore
-                    currentNode.unlockFile(lockedFile);
-                    agentFileList.remove(lockedFile);
-                    currentNode.setFileList(agentFileList);
-                }
-            }
-        }
+//        while (true) {
+//            for (String fileName : ownerMap.keySet()) {
+//                boolean updated = false;
+//
+//                // If the agent's list doesn't contain a file that the node owns, add it to the list
+//                if (!agentFileList.containsKey(fileName)) {
+//                    agentFileList.put(fileName, false);
+//                    updated = true;
+//                }
+//
+//                // If the agent's list contains a file that the node no longer owns, remove it from the list
+//                if (!ownerMap.containsKey(fileName) && agentFileList.containsKey(fileName)) {
+//                    agentFileList.remove(fileName);
+//                    updated = true;
+//                }
+//
+//                // If the local file list was updated, synchronize with the node's file list
+//                if (updated) {
+//                    currentNode.setFileList(agentFileList);
+//                }
+//
+//                // Check if there is a lock request on the current node
+//                if (currentNode.hasLockRequest()) {
+//                    String lockedFile = currentNode.getLockedFile();
+//
+//                    // If the file is not locked on the agent's list, lock it and synchronize the lists
+//                    if (!agentFileList.containsKey(lockedFile)) {
+//                        boolean locked = currentNode.lockFile(lockedFile, LOCK_WAIT_TIME);
+//
+//                        if (locked) {
+//                            agentFileList.keySet();
+//                            currentNode.setFileList(agentFileList);
+//                        }
+//                    }
+//
+//                    // Remove the lock when it is not needed anymore
+//                    currentNode.unlockFile(lockedFile);
+//                    agentFileList.remove(lockedFile);
+//                    currentNode.setFileList(agentFileList);
+//                }
+//            }
+//        }
     }
 
     private void syncWithNeighbors() {
