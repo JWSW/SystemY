@@ -287,6 +287,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
                     .POST(HttpRequest.BodyPublishers.ofString(json))
                     .build();
             System.out.println("Sending POST request to owner of file " + fileArray.get(hash));
+            System.out.println("The json body: " + json);
             HttpResponse<String> response2 = HttpClient.newHttpClient().send(request2, HttpResponse.BodyHandlers.ofString());
             System.out.println("Response: " + response2.body());
             System.out.println("If response empty, file is sent succesfully.");
