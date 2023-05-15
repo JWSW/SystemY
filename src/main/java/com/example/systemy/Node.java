@@ -126,6 +126,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
         String message = nodeName + "," + ipAddress;
         System.out.println("Send multicast message.");
         multicast(message);
+        System.out.println("Ownermap begin: " + ownerMap);
 
         searchFiles();
 //        notifyFiles();
