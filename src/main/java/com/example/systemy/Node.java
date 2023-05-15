@@ -272,19 +272,15 @@ public class Node implements com.example.systemy.interfaces.Observer {
             FileInputStream fileInputStream = new FileInputStream(file);
             fileInputStream.read(fileContent);
             fileInputStream.close();
-            System.out.println("filecontent: " + fileContent);
 
             // Encode the file content as Base64
             String base64Content = Base64.getEncoder().encodeToString(fileContent); //Deze doet niks
-            System.out.println("base64: " + base64Content);
-            // Convert the JSON object to a string
-//            jsonData = objectMapper.writeValueAsString(base64Content);
+
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("fileData", base64Content);
 
             // Convert the JSON object to a string
             jsonData = jsonObject.toString();
-            System.out.println("JsonData: " + jsonData);
         }catch (IOException | JSONException e) {
         e.printStackTrace();
         }
@@ -295,10 +291,13 @@ public class Node implements com.example.systemy.interfaces.Observer {
                     .POST(HttpRequest.BodyPublishers.ofString(jsonData))
                     .build();
             System.out.println("Sending POST request to owner of file " + fileArray.get(hash));
-            System.out.println("The json body: " + jsonData);
             HttpResponse<String> response2 = HttpClient.newHttpClient().send(request2, HttpResponse.BodyHandlers.ofString());
-            System.out.println("Response: " + response2.body());
-            System.out.println("If response empty, file is sent succesfully.");
+            if(response2.body().isEmpty()){
+                System.out.println("File is sent succesfully.");
+            }else {
+                System.out.println("Response: " + response2.body());
+            }
+
         }catch (IOException | InterruptedException e) {
             System.out.println("Error sending file: " + e.getMessage());
             e.printStackTrace();
