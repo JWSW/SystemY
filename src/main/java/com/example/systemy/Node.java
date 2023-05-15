@@ -50,7 +50,6 @@ public class Node implements com.example.systemy.interfaces.Observer {
     private ObjectMapper objectMapper = new ObjectMapper(); // or any other JSON serializer
     private Map<Integer,String> fileArray = new ConcurrentHashMap<>();
     private Map<String, Map<Integer,String>> ownerMap = new ConcurrentHashMap<>();
-    private Map<Integer,String> tempMap = new ConcurrentHashMap<>();
     private boolean filesNotified = false;
     private FileLock fileLock;
 
@@ -209,6 +208,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
     /*Afblijven Abdel, dit is voor lab 5*/
     public void notifyNamingServer(Integer hash) throws IOException {
         HttpClient client = HttpClient.newHttpClient();
+        Map<Integer,String> tempMap = new ConcurrentHashMap<>();
         String packet;
         String[] parts;
         String ownerNode = "";
@@ -708,6 +708,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
     }
 
     public void setOwnerFile(String filename, int nodeID, String nodeIP) {
+        Map<Integer,String> tempMap = new ConcurrentHashMap<>();
         tempMap.put(nodeID, nodeIP);
         ownerMap.put(filename,tempMap);
         System.out.println("Ownermap: " + ownerMap);
