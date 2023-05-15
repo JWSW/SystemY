@@ -46,7 +46,6 @@ public class Node implements com.example.systemy.interfaces.Observer {
     private UnicastReceiver unicastHeartbeatNext;// = new UnicastReceiver(heartbeatPortNext);
     private HeartbeatSender previousHeartbeatSender;// = new HeartbeatSender(previousIP, currentID, heartbeatPortPrevious);
     private HeartbeatSender nextHeartbeatSender;// = new HeartbeatSender(nextIP, currentID, heartbeatPortNext);
-    private TCPReceiver tcpReceiver=null;
     private String baseURL = "http://172.27.0.5:8080/requestName";
     private ObjectMapper objectMapper = new ObjectMapper(); // or any other JSON serializer
     private Map<Integer,String> fileArray = new ConcurrentHashMap<>();
@@ -87,7 +86,6 @@ public class Node implements com.example.systemy.interfaces.Observer {
         previousHeartbeatSender = new HeartbeatSender(previousIP, currentID, heartbeatPortPrevious);
         nextHeartbeatSender = new HeartbeatSender(nextIP, currentID, heartbeatPortNext);
         watchDirectory = new WatchDirectory();
-        tcpReceiver = new TCPReceiver(tcpPort);
 
         this.nodeName = nodeName;
         this.ipAddress = ipAddress;
@@ -99,7 +97,6 @@ public class Node implements com.example.systemy.interfaces.Observer {
         unicastHeartbeatPrevious.setObserver(this);
         unicastHeartbeatNext.setObserver(this);
         watchDirectory.setObserver(this);
-        tcpReceiver.setObserver(this);
 
         if(!(previousID ==0)) {
             countdownTimerPrevious.start();
@@ -125,7 +122,6 @@ public class Node implements com.example.systemy.interfaces.Observer {
         receiverThreadHeartbeatPrevious.start();
         receiverThreadHeartbeatNext.start();
         receiverThread.start();
-        tcpReceiver.start();
 
         String message = nodeName + "," + ipAddress;
         System.out.println("Send multicast message.");
@@ -251,11 +247,6 @@ public class Node implements com.example.systemy.interfaces.Observer {
         }
     }
 
-    public void startTCPReceiver(String otherNodeID){
-        tcpReceiver = new TCPReceiver(tcpPort);
-        tcpReceiver.setFileName(otherNodeID);
-        tcpReceiver.start();
-    }
 
     /*Afblijven Abdel, dit is voor lab 5*/
     private void sendFile(String nodeParameters, int hash) throws IOException {
@@ -302,43 +293,6 @@ public class Node implements com.example.systemy.interfaces.Observer {
             System.out.println("Error sending file: " + e.getMessage());
             e.printStackTrace();
         }
-
-        // Close the receiver if it's open and not currently accepting
-//        if (tcpReceiver.isAlive() && tcpReceiver.isAccepted) {
-////            tcpReceiver.close();
-//            try {
-//                System.out.println("Waiting to finish receiving");
-//                tcpReceiver.join(); // Wait for the receiver thread to complete before proceeding with sending
-//                System.out.println("Finished receiving");
-//                tcpReceiver.close();
-//                tcpReceiver.interrupt();
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        }else{
-//            tcpReceiver.close();
-//            tcpReceiver.interrupt();
-//        }
-//
-//        try  {
-//            Socket socket = new Socket(nodeIP, tcpPort);
-//            FileInputStream fileInputStream = new FileInputStream("/home/Dist/SystemY/nodeFiles/" + fileArray.get(hash));
-//            OutputStream outputStream = socket.getOutputStream();
-//
-//            byte[] buffer = new byte[1024];
-//            int bytesRead;
-//            while ((bytesRead = fileInputStream.read(buffer)) != -1) {
-//                outputStream.write(buffer, 0, bytesRead);
-//            }
-//            outputStream.flush();
-//
-//            System.out.println("File sent successfully.");
-//            socket.close();
-//        } catch (IOException e) {
-//            System.out.println("Error sending file: " + e.getMessage());
-//            e.printStackTrace();
-//        }
-//        tcpReceiver.start();
     }
 
     private void requestRemoveNode(Integer id) throws IOException, InterruptedException {
@@ -557,17 +511,6 @@ public class Node implements com.example.systemy.interfaces.Observer {
                 notifyFiles();
                 filesNotified = true;
             }
-        } else if (position.equals("filename")) {
-//            startTCPReceiver(otherNodeID); // The variable name is not what it says, this is actually the filename.
-            tcpReceiver.setFileName(otherNodeID); // The variable name is not what it says, this is actually the filename.
-            tempMap.put(Integer.valueOf(otherNodeIP), myID); // Here the variable names are not what they say they are, it is first the nodeID and then the nodeIP
-            ownerMap.put(otherNodeID,tempMap);
-            receivingFile = true;
-//            if(!tcpReceiver.isAccepted){
-//                tcpReceiver.open();
-//            }
-//            tcpReceiver.stop();
-//            tcpReceiver = null;
         }else if(position.equals("getPreviousNeighbour")) { //If the other node (if it were woth our next and previous), it tells us to get another previous neighbour
             if(previousID==nextID) { //Dit moet in aparte if-statements gebeuren om errors te voorkomen
                 String packet2 = "";
@@ -729,10 +672,6 @@ public class Node implements com.example.systemy.interfaces.Observer {
             unicastHandlePacket(message);
         }else if("FileEvent".equals(type)){
             FileEventHandler(message);
-        }else if("fileReceived".equals(type)){
-//            tcpReceiver.stop();
-//            tcpReceiver = null;
-//            killSpecificProcess(tcpPort);
         }
     }
 
