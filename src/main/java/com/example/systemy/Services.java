@@ -1,5 +1,6 @@
 package com.example.systemy;
 
+import com.example.systemy.Agents.SyncAgent;
 import com.example.systemy.interfaces.MulticastObserver;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
@@ -16,10 +17,12 @@ public class Services implements MulticastObserver {
 
     @Autowired
     MulticastReceiver multicastReceiver;
+    SyncAgent syncAgent;
 
     @PostConstruct
     public void init() throws Exception {
         node = new Node(InetAddress.getLocalHost().getHostName(), InetAddress.getLocalHost().getHostAddress());
+        new SyncAgent(node);
         multicastReceiver.setObserver(this);
         multicastReceiver.start();
     }

@@ -51,6 +51,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
     private Map<String, Map<Integer,String>> ownerMap = new ConcurrentHashMap<>();
     private Map<Integer,String> tempMap = new ConcurrentHashMap<>();
     private boolean filesNotified = false;
+    private FileLock fileLock;
 
 
 
@@ -704,6 +705,37 @@ public class Node implements com.example.systemy.interfaces.Observer {
 //            tcpReceiver = null;
 //            killSpecificProcess(tcpPort);
         }
+    }
+
+    public boolean hasLockRequest() {
+        // Check if a lock request has been made on this node
+        return fileLock != null;
+    }
+
+    public String getLockedFile() {
+        // Get the name of the file that has been locked on this node
+        if (fileLock != null) {
+            return fileLock.getFileName();
+        } else {
+            return null;
+        }
+    }
+
+    public void setFileList(Map<String, Boolean> fileList) {
+    }
+
+    public Node[] getNeighbors() {
+    }
+
+    public Map<String, Boolean> getFileList() {
+    }
+
+    public void unlockFile(String lockedFile) {
+
+    }
+
+    public boolean lockFile(String lockedFile, long lockWaitTime) {
+
     }
 
 
