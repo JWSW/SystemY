@@ -18,6 +18,9 @@ public class TCPReceiver extends Thread {
     private Observer observer;
     private ServerSocket serverSocket;
     public boolean isAccepted = false;
+    public boolean isRunning = true;
+
+
 
     public TCPReceiver(int port) {
         this.port = port;
@@ -45,7 +48,7 @@ public class TCPReceiver extends Thread {
     public void run() {
         try {
             serverSocket = new ServerSocket(port);
-            while (!Thread.currentThread().isInterrupted()) {
+            while (!Thread.currentThread().isInterrupted() && isRunning) {
                 Socket socket = serverSocket.accept();
 //            System.out.println("Connection accepted");
                 isAccepted = true;
@@ -75,5 +78,6 @@ public class TCPReceiver extends Thread {
                 ex.printStackTrace();
             }
         }
+        System.out.println("isRunning: " + isRunning);
     }
 }

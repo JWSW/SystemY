@@ -273,12 +273,14 @@ public class Node implements com.example.systemy.interfaces.Observer {
                 System.out.println("Finished receiving");
                 tcpReceiver.close();
                 tcpReceiver.interrupt();
+                tcpReceiver.isRunning = false;
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }else{
             tcpReceiver.close();
             tcpReceiver.interrupt();
+            tcpReceiver.isRunning = false;
         }
 
         try  {
@@ -299,6 +301,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
             System.out.println("Error sending file: " + e.getMessage());
             e.printStackTrace();
         }
+        tcpReceiver.isRunning = true;
         tcpReceiver.start();
     }
 
