@@ -15,7 +15,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.h2.util.json.JSONObject;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 @Data
@@ -277,9 +278,14 @@ public class Node implements com.example.systemy.interfaces.Observer {
             String base64Content = Base64.getEncoder().encodeToString(fileContent); //Deze doet niks
             System.out.println("base64: " + base64Content);
             // Convert the JSON object to a string
-            jsonData = objectMapper.writeValueAsString(base64Content);
+//            jsonData = objectMapper.writeValueAsString(base64Content);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("fileData", base64Content);
+
+            // Convert the JSON object to a string
+            jsonData = jsonObject.toString();
             System.out.println("JsonData: " + jsonData);
-        }catch (IOException e) {
+        }catch (IOException | JSONException e) {
         e.printStackTrace();
         }
         try {
@@ -299,41 +305,41 @@ public class Node implements com.example.systemy.interfaces.Observer {
         }
 
         // Close the receiver if it's open and not currently accepting
-        if (tcpReceiver.isAlive() && tcpReceiver.isAccepted) {
+//        if (tcpReceiver.isAlive() && tcpReceiver.isAccepted) {
+////            tcpReceiver.close();
+//            try {
+//                System.out.println("Waiting to finish receiving");
+//                tcpReceiver.join(); // Wait for the receiver thread to complete before proceeding with sending
+//                System.out.println("Finished receiving");
+//                tcpReceiver.close();
+//                tcpReceiver.interrupt();
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }else{
 //            tcpReceiver.close();
-            try {
-                System.out.println("Waiting to finish receiving");
-                tcpReceiver.join(); // Wait for the receiver thread to complete before proceeding with sending
-                System.out.println("Finished receiving");
-                tcpReceiver.close();
-                tcpReceiver.interrupt();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }else{
-            tcpReceiver.close();
-            tcpReceiver.interrupt();
-        }
-
-        try  {
-            Socket socket = new Socket(nodeIP, tcpPort);
-            FileInputStream fileInputStream = new FileInputStream("/home/Dist/SystemY/nodeFiles/" + fileArray.get(hash));
-            OutputStream outputStream = socket.getOutputStream();
-
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = fileInputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, bytesRead);
-            }
-            outputStream.flush();
-
-            System.out.println("File sent successfully.");
-            socket.close();
-        } catch (IOException e) {
-            System.out.println("Error sending file: " + e.getMessage());
-            e.printStackTrace();
-        }
-        tcpReceiver.start();
+//            tcpReceiver.interrupt();
+//        }
+//
+//        try  {
+//            Socket socket = new Socket(nodeIP, tcpPort);
+//            FileInputStream fileInputStream = new FileInputStream("/home/Dist/SystemY/nodeFiles/" + fileArray.get(hash));
+//            OutputStream outputStream = socket.getOutputStream();
+//
+//            byte[] buffer = new byte[1024];
+//            int bytesRead;
+//            while ((bytesRead = fileInputStream.read(buffer)) != -1) {
+//                outputStream.write(buffer, 0, bytesRead);
+//            }
+//            outputStream.flush();
+//
+//            System.out.println("File sent successfully.");
+//            socket.close();
+//        } catch (IOException e) {
+//            System.out.println("Error sending file: " + e.getMessage());
+//            e.printStackTrace();
+//        }
+//        tcpReceiver.start();
     }
 
     private void requestRemoveNode(Integer id) throws IOException, InterruptedException {
