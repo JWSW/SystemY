@@ -11,9 +11,9 @@ public class Controller {
     @Autowired
     private Services services;
 
-    @PostMapping("/{filename}/sendNewFile")
-    public void sendNewFile (@PathVariable String filename, @RequestBody Node ){
-        services.
+    @PostMapping("/{filename}/{nodeID}/{nodeIP}/sendNewFile")
+    public void sendNewFile (@PathVariable String filename, @PathVariable String nodeID, @PathVariable String nodeIP, @RequestBody String base64Content){
+        services.setNewFile(filename, base64Content, Integer.parseInt(nodeID), nodeIP);
     }
 
 

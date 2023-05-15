@@ -749,6 +749,11 @@ public class Node implements com.example.systemy.interfaces.Observer {
         return true;
     }
 
+    public void setOwnerFile(String filename, int nodeID, String nodeIP) {
+        tempMap.put(nodeID, nodeIP);
+        ownerMap.put(filename,tempMap);
+    }
+
 
 
     /*This function is used to see if the neighbouring nodes are still alive, with a countdown timer to take action if a
