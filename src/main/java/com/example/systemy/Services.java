@@ -93,17 +93,18 @@ public class Services implements MulticastObserver{
         Set<Integer> hashSet = nodeMap.keySet();
         System.out.println("De map: " + nodeMap);
         System.out.println("De fileHash: " + fileHash);
-        for(Integer nodeHash : hashSet){
+        for(Integer nodeHash : hashSet) {
             System.out.println("De lijst wordt doorlopen: " + nodeHash);
-            if(nodeHash<kleinste){
+            if (nodeHash < kleinste) {
                 kleinste = nodeHash;
                 System.out.println("Nieuwe kleinste: " + kleinste);
             }
-            if(nodeHash> grootste) {
+            if (nodeHash > grootste) {
                 grootste = nodeHash;
                 System.out.println("Nieuwe grootste: " + grootste);
             }
-        for(Integer nodehash : hashSet){
+        }
+        for(Integer nodeHash : hashSet){
             if(fileHash>kleinste){
                 if(fileHash<grootste) {
                     Hoogste = false;
