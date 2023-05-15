@@ -276,6 +276,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
 
             // Convert the JSON object to a string
             jsonData = objectMapper.writeValueAsString(base64Content);
+            System.out.println("JsonData: " + jsonData);
         }catch (IOException e) {
         e.printStackTrace();
         }
