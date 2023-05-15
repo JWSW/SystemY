@@ -50,7 +50,7 @@ public class Services implements MulticastObserver{
             nodeMap.put(hash, node.getIpAddress());
             System.out.println("Node added: " + node);
         }else{
-            throw new IllegalStateException("Node exists");
+            System.out.println("Node is already added");
         }
     }
 
@@ -156,11 +156,14 @@ public class Services implements MulticastObserver{
         String hostname = parts[0];
         String ipAddress = parts[1];
         Node node = new Node(hostname,ipAddress);
-        if(!nodeMap.containsKey(getHash(node.getNodeName()))) {
-            addNode(node);
-        }else{
-            System.out.println("Node is already added");
-        }
+        addNode(node);
+//        if(!nodeMap.containsKey(getHash(node.getNodeName()))) {
+//            addNode(node);
+//            System.out.println("Node added: " + node);
+//        }else{
+//            System.out.println("Node is already added");
+//        }
+        System.out.println("Number of nodes: " + nodeMap.size());
         unicast(String.valueOf(nodeMap.size()), ipAddress, 55525);
     }
 
