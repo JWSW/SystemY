@@ -238,6 +238,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
             File file = new File(fileArray.get(hash));
             fileMap.put(fileArray.get(hash), file);
             tempMap.put(currentID,ipAddress);
+            System.out.println("tempMap: " + tempMap);
             ownerMap.put(fileArray.get(hash),tempMap);
         }
     }
