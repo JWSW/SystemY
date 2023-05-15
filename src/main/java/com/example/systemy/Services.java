@@ -12,6 +12,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.Base64;
+import java.util.Map;
 
 @Service
 public class Services implements MulticastObserver {
@@ -25,7 +26,9 @@ public class Services implements MulticastObserver {
     @PostConstruct
     public void init() throws Exception {
         node = new Node(InetAddress.getLocalHost().getHostName(), InetAddress.getLocalHost().getHostAddress());
-        new SyncAgent(node);
+        syncAgent = new SyncAgent(node);
+        Thread syncAgent1 = new Thread(syncAgent);
+        syncAgent1.start();
         multicastReceiver.setObserver(this);
         multicastReceiver.start();
     }
@@ -54,5 +57,9 @@ public class Services implements MulticastObserver {
     @Override
     public void onMessageReceived(String message) throws IOException {
         node.multicastHandlePacket(message);
+    }
+
+    public Map<String, Boolean> getAgentFileList() {
+        return syncAgent.getAgentFileList();
     }
 }

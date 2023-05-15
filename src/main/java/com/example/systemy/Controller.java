@@ -11,7 +11,7 @@ public class Controller {
     @Autowired
     private Services services;
 
-    @PostMapping("/{filename}/{nodeID}/{nodeIP}/sendNewFile")
+    @PostMapping("/{filename}/sendNewFile")
     public void sendNewFile (@PathVariable String filename, @PathVariable String nodeID, @PathVariable String nodeIP, @RequestBody String base64Content){
         services.setNewFile(filename, base64Content, Integer.parseInt(nodeID), nodeIP);
     }
@@ -19,6 +19,6 @@ public class Controller {
 
     @GetMapping("/syncWithNeighbor")
     public Map<String,Boolean> syncWithNeighbor(){
-
+        return services.getAgentFileList();
     }
 }
