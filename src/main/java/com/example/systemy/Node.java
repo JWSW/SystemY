@@ -15,6 +15,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.h2.util.json.JSONObject;
 
 
 @Data
@@ -261,9 +262,38 @@ public class Node implements com.example.systemy.interfaces.Observer {
         String nodeHash = parts[0];
         String nodeIP = parts[1];
         System.out.println("nodeIP: " + nodeIP);
-//        while(tcpReceiver.isAccepted)
-//        tcpReceiver.close();
-//        tcpReceiver.stop();
+        try {
+            // Read the file content
+            File file = new File("/home/Dist/SystemY/nodeFiles/" + fileArray.get(hash));
+            byte[] fileContent = new byte[(int) file.length()];
+            FileInputStream fileInputStream = new FileInputStream(file);
+            fileInputStream.read(fileContent);
+            fileInputStream.close();
+
+            // Encode the file content as Base64
+            String base64Content = Base64.getEncoder().encodeToString(fileContent);
+
+            // Convert the JSON object to a string
+            String jsonData = objectMapper.writeValueAsString(base64Content);
+        }catch (IOException e) {
+        e.printStackTrace();
+        }
+        String json;
+        json = objectMapper.writeValueAsString(nextID);
+        try {
+            HttpRequest request2 = HttpRequest.newBuilder()
+                    .uri(URI.create("http://" + nodeIP + ":8081/requestNode" + "/" + fileArray.get(hash) + "/" + currentID + "/" + ipAddress + "/removeNodeByHashId"))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(json))
+                    .build();
+            System.out.println("Sending POST request to owner of file " + fileArray.get(hash));
+            HttpResponse<String> response2 = HttpClient.newHttpClient().send(request2, HttpResponse.BodyHandlers.ofString());
+            System.out.println("Response: " + response2.body());
+            System.out.println("If response empty, file is sent succesfully.");
+        }catch (IOException | InterruptedException e) {
+            System.out.println("Error sending file: " + e.getMessage());
+            e.printStackTrace();
+        }
 
         // Close the receiver if it's open and not currently accepting
         if (tcpReceiver.isAlive() && tcpReceiver.isAccepted) {
@@ -645,20 +675,6 @@ public class Node implements com.example.systemy.interfaces.Observer {
         return hash;
     }
 
-    private static int findFreePort() {
-        int port = 0;
-        // For ServerSocket port number 0 means that the port number is automatically allocated.
-        try (ServerSocket socket = new ServerSocket(0)) {
-            // Disable timeout and reuse address after closing the socket.
-            socket.setReuseAddress(true);
-            port = socket.getLocalPort();
-        } catch (IOException ignored) {}
-        if (port > 0) {
-            return port;
-        }
-        throw new RuntimeException("Could not find a free port");
-    }
-
     public void killSpecificProcess(int port) throws IOException {
         try {
             ServerSocket serverSocket4 = new ServerSocket(port, 0, InetAddress.getByName("localhost"));
@@ -752,6 +768,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
     public void setOwnerFile(String filename, int nodeID, String nodeIP) {
         tempMap.put(nodeID, nodeIP);
         ownerMap.put(filename,tempMap);
+        System.out.println("Ownermap: " + ownerMap);
     }
 
 
