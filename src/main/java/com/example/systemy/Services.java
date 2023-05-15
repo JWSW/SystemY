@@ -40,6 +40,7 @@ public class Services implements MulticastObserver {
     }
 
     public void setNewFile(String filename, String base64Content, int nodeID, String nodeIP) {
+        System.out.println("Base64: " + base64Content + "/");
         byte[] fileContent = Base64.getDecoder().decode(base64Content);
         try {
             FileOutputStream fileOutputStream = new FileOutputStream("/home/Dist/SystemY/nodeFiles" + filename);
