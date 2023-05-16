@@ -443,6 +443,9 @@ public class Node implements com.example.systemy.interfaces.Observer {
                 notifyFiles(true);
                 filesNotified = true;
             }
+            if(amountOfNodes>2){
+                notifyFiles(false);
+            }
 
         } else if (previousID < hash && hash < currentID){// || (previousID>currentID && hash < currentID)) { // Ring topology: if we are the smallest hashID, our previousID is the biggest hashID
             previousID = hash;
@@ -453,6 +456,9 @@ public class Node implements com.example.systemy.interfaces.Observer {
             if(!filesNotified){
                 notifyFiles(true);
                 filesNotified = true;
+            }
+            if(amountOfNodes>2){
+                notifyFiles(false);
             }
 
         }else if(currentID < hash && hash > nextID && currentID>nextID){ // The following 'else if' statements are to be able to close the ring, the first to the last and vice versa
@@ -568,7 +574,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
                     System.out.println("Response was own node: " + packet + ", currentID: " + currentID);
                 }
             }
-        }else if(Integer.parseInt(position)<2) { // If there is only 1 node, set own ID as neighbours.
+        }else if(Integer.parseInt(position)<2) { // If there is only 1 node, set own ID as neighbours (actually, the ID's are 0 for the next and 39999 for the previous).
             amountOfNodes = 3;
             if (!nextTimerStopped) {
                 nextTimerStopped = true;
@@ -584,7 +590,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
             amountOfNodes = 2;
         }else if(Integer.parseInt(position)>2 && Integer.parseInt(position)<maxNodes) { // If there more than 2 nodes, start offline countdownTimers to maybe get connected to highest or lowest node
             amountOfNodes = 3;
-            notifyFiles(false);
+            notifyFiles(true);
             if (nextTimerStopped) {
                 nextTimerStopped = false;
                 countdownTimerNext.start();
