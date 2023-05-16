@@ -37,7 +37,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
     private int maxNodes = 10;
     private int amountOfNodes = 1;
     private static DatagramSocket socket = null;
-    private Map<String,File> fileMap = new ConcurrentHashMap<>();
+    private Map<String,File> fileMap = new ConcurrentHashMap<>(); // This is useless
     private WatchDirectory watchDirectory;
     private String fileTest = "fileTest.txt";
     private String fileTwo = "file2.txt";
@@ -49,8 +49,8 @@ public class Node implements com.example.systemy.interfaces.Observer {
     private HeartbeatSender nextHeartbeatSender;// = new HeartbeatSender(nextIP, currentID, heartbeatPortNext);
     private String baseURL = "http://172.27.0.5:8080/requestName";
     private ObjectMapper objectMapper = new ObjectMapper(); // or any other JSON serializer
-    private Map<Integer,String> fileArray = new ConcurrentHashMap<>();
-    private Map<String, Map<Integer,String>> ownerMap = new ConcurrentHashMap<>();
+    private Map<Integer,String> fileArray = new ConcurrentHashMap<>(); //This map stores the hash of the file with its corresponding filename
+    private Map<String, Map<Integer,String>> ownerMap = new ConcurrentHashMap<>(); // This map stores the filename with the corresponding locations where the file is found (the node's parameters)
     private boolean filesNotified = false;
     private FileLock fileLock;
 
@@ -76,10 +76,6 @@ public class Node implements com.example.systemy.interfaces.Observer {
     }
 
     public Node(String nodeName, String ipAddress) throws Exception { // Constructor
-//        ServerSocket serverSocket = new ServerSocket(uniPort, 0, InetAddress.getByName("localhost"));
-//        if(!serverSocket.isClosed()){
-//            killProcess();
-//        }
         unicastReceiver = new UnicastReceiver(uniPort);
         unicastHeartbeatPrevious = new UnicastReceiver(heartbeatPortPrevious);
         unicastHeartbeatNext = new UnicastReceiver(heartbeatPortNext);
@@ -129,7 +125,6 @@ public class Node implements com.example.systemy.interfaces.Observer {
         System.out.println("Ownermap begin: " + ownerMap);
 
         searchFiles();
-//        notifyFiles();
     }
 
     /* Dit is voor lab 5 ook*/
@@ -154,22 +149,12 @@ public class Node implements com.example.systemy.interfaces.Observer {
     public void notifyFiles(Boolean isOwnFiles) throws IOException {
         if(isOwnFiles) {
             for (Integer fileHash : fileArray.keySet()) {
-                notifyNamingServer(fileHash, isOwnFiles);
+                notifyNamingServer(fileArray.get(fileHash));
             }
         }else{
-            // Get the keys present in map1 but not in map2
-//            Map<Integer, String> fileHashmap = new ConcurrentHashMap<>();
-//            for (String filename : ownerMap.keySet()) {
-//                fileHashmap.put(getHash(filename),filename);
-//            }
-
-            Set<String> keysOnlyInOwnerMap = ownerMap.keySet().stream()
-                    .filter(key -> !fileArray.containsValue(key))
-                    .collect(Collectors.toSet());
-            System.out.println("Keys only in ownerMap: " + keysOnlyInOwnerMap);
-//            for (Integer fileHash : fileArray.keySet()) {
-//                notifyNamingServer(fileHash,isOwnFiles);
-//            }
+            for (String filename : ownerMap.keySet()) {
+                notifyNamingServer(filename);
+            }
         }
     }
 
@@ -223,7 +208,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
 
 
     /*Afblijven Abdel, dit is voor lab 5*/
-    public void notifyNamingServer(Integer hash, Boolean isOwnFiles) throws IOException {
+    public void notifyNamingServer(String filename) throws IOException {
         HttpClient client = HttpClient.newHttpClient();
         Map<Integer,String> tempMap = new ConcurrentHashMap<>();
         String packet;
@@ -231,12 +216,17 @@ public class Node implements com.example.systemy.interfaces.Observer {
         String ownerNode = "";
         Integer nodeHash = 0;
         String nodeIP = "";
+//        if(isOwnFiles){
+//            filename = fileArray.get(hash);
+//        }else{
+//            filename = givenFileName;
+//        }
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(baseURL + "/" + fileArray.get(hash) + "/getFileLocation"))
+                .uri(URI.create(baseURL + "/" + filename + "/getFileLocation"))
                 .GET()
                 .build();
         try {
-            System.out.println("Sending request to get owner node of " + fileArray.get(hash) + " with hash: " + hash);
+            System.out.println("Sending request to get owner node of " + filename + " with hash: " + getHash(filename));
             HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
             System.out.println("Response: " + response.body());
 
@@ -249,19 +239,19 @@ public class Node implements com.example.systemy.interfaces.Observer {
             e.printStackTrace();
         }
         if(nodeHash!=currentID) {
-            sendFile(ownerNode, hash);
+            sendFile(ownerNode, filename);
         }else{
-            System.out.println("Node self is owner of " + fileArray.get(hash));
-            File file = new File(fileArray.get(hash));
-            fileMap.put(fileArray.get(hash), file);
+            System.out.println("Node self is owner of " + filename);
+            File file = new File(filename);
+            //fileMap.put(fileArray.get(hash), file);
             tempMap.put(currentID,ipAddress);
-            ownerMap.put(fileArray.get(hash),tempMap);
+            ownerMap.put(filename,tempMap);
         }
     }
 
 
     /*Afblijven Abdel, dit is voor lab 5*/
-    private void sendFile(String nodeParameters, int hash) throws IOException {
+    private void sendFile(String nodeParameters, String filename) throws IOException {
         String[] parts = nodeParameters.split(",");
         String nodeHash = parts[0];
         String nodeIP = parts[1];
@@ -269,9 +259,9 @@ public class Node implements com.example.systemy.interfaces.Observer {
         String jsonData="";
         try {
             // Read the file content
-            File file = new File("/home/Dist/SystemY/nodeFiles/" + fileArray.get(hash));
+            File file = new File("/home/Dist/SystemY/nodeFiles/" + filename);
 //            byte[] fileContent = new byte[(int) file.length()];
-            byte[] fileContent = Files.readAllBytes(Paths.get("/home/Dist/SystemY/nodeFiles/" + fileArray.get(hash)));
+            byte[] fileContent = Files.readAllBytes(Paths.get("/home/Dist/SystemY/nodeFiles/" + filename));
             FileInputStream fileInputStream = new FileInputStream(file);
             fileInputStream.read(fileContent);
             fileInputStream.close();
@@ -289,11 +279,11 @@ public class Node implements com.example.systemy.interfaces.Observer {
         }
         try {
             HttpRequest request2 = HttpRequest.newBuilder()
-                    .uri(URI.create("http://" + nodeIP + ":8081/requestNode" + "/" + fileArray.get(hash) + "/" + currentID + "/" + ipAddress + "/sendNewFile"))
+                    .uri(URI.create("http://" + nodeIP + ":8081/requestNode" + "/" + filename + "/" + currentID + "/" + ipAddress + "/sendNewFile"))
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(jsonData))
                     .build();
-            System.out.println("Sending POST request to owner of file " + fileArray.get(hash));
+            System.out.println("Sending POST request to owner of file " + filename);
             HttpResponse<String> response2 = HttpClient.newHttpClient().send(request2, HttpResponse.BodyHandlers.ofString());
             if(response2.body().isEmpty()){
                 System.out.println("File is sent succesfully.");
@@ -338,16 +328,8 @@ public class Node implements com.example.systemy.interfaces.Observer {
                 //.header("Content-Type", "application/json")
                 .GET()//HttpRequest.BodyPublishers.noBody())//ofString(json))//"{nodeName:" + node.getNodeName() + "ipAddress:" + node.getIpAddress() + "}"))
                 .build();
-//        HttpRequest request2 = HttpRequest.newBuilder()
-//                .uri(URI.create(baseURL + "/" + id + "/removeNodeByHashId"))
-//                .GET()
-//                .build();
         try{
-//            System.out.println("Sending request to remove offline node.");
-//            HttpResponse<String> response2 = HttpClient.newHttpClient().send(request2, HttpResponse.BodyHandlers.ofString());
-//            System.out.println("Response: " + response2.body());
             requestRemoveNode(id);
-
 
             System.out.println("Sending request to get new neighbour.");
             HttpResponse<String> response = HttpClient.newHttpClient().send(request1, HttpResponse.BodyHandlers.ofString());
@@ -733,8 +715,22 @@ public class Node implements com.example.systemy.interfaces.Observer {
 
     public void setOwnerFile(String filename, int nodeID, String nodeIP) {
         Map<Integer,String> tempMap = new ConcurrentHashMap<>();
-        tempMap.put(nodeID, nodeIP);
-        ownerMap.put(filename,tempMap);
+        if(ownerMap.containsKey(filename)){
+            tempMap = ownerMap.get(filename);
+            if(!tempMap.containsKey(nodeID)) { // To prevent doubles
+                tempMap.put(nodeID, nodeIP);
+            }
+            if(!tempMap.containsKey(currentID)) { // To check if this node is already added.
+                tempMap.put(currentID,ipAddress);
+            }
+            ownerMap.replace(filename,tempMap);
+        }else {
+            tempMap.put(nodeID, nodeIP);
+            if(!tempMap.containsKey(currentID)) { // To check if this node is already added.
+                tempMap.put(currentID,ipAddress);
+            }
+            ownerMap.put(filename, tempMap);
+        }
         System.out.println("Ownermap: " + ownerMap);
     }
 
