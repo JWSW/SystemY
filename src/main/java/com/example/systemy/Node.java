@@ -440,7 +440,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
             response = "Next," + currentID + "," + this.ipAddress + "," + nextID; //The message to send as reply
             unicast(response, ipAddress, uniPort);
             if(!filesNotified){
-                notifyFiles(false);
+                notifyFiles(true);
                 filesNotified = true;
             }
 
@@ -451,7 +451,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
             response = "Previous," + currentID + "," + this.ipAddress + "," + previousID; //The message to send as reply
             unicast(response, ipAddress, uniPort);
             if(!filesNotified){
-                notifyFiles(false);
+                notifyFiles(true);
                 filesNotified = true;
             }
 
@@ -582,8 +582,9 @@ public class Node implements com.example.systemy.interfaces.Observer {
             }
         }else if(Integer.parseInt(position)==2) { // If there are only 2 nodes, set other node as both previous and next node.
             amountOfNodes = 2;
-        }else if(Integer.parseInt(position)>2 && Integer.parseInt(position)<maxNodes) { // If there 4 nodes, start offline countdownTimers to maybe get connected to highest or lowest node
+        }else if(Integer.parseInt(position)>2 && Integer.parseInt(position)<maxNodes) { // If there more than 2 nodes, start offline countdownTimers to maybe get connected to highest or lowest node
             amountOfNodes = 3;
+            notifyFiles(false);
             if (nextTimerStopped) {
                 nextTimerStopped = false;
                 countdownTimerNext.start();
