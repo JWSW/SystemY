@@ -9,6 +9,7 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import com.example.systemy.interfaces.Observer;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -150,9 +151,25 @@ public class Node implements com.example.systemy.interfaces.Observer {
         }
     }
 
-    public void notifyFiles() throws IOException {
-        for(Integer fileHash : fileArray.keySet()){
-            notifyNamingServer(fileHash);
+    public void notifyFiles(Boolean isOwnFiles) throws IOException {
+        if(isOwnFiles) {
+            for (Integer fileHash : fileArray.keySet()) {
+                notifyNamingServer(fileHash, isOwnFiles);
+            }
+        }else{
+            // Get the keys present in map1 but not in map2
+//            Map<Integer, String> fileHashmap = new ConcurrentHashMap<>();
+//            for (String filename : ownerMap.keySet()) {
+//                fileHashmap.put(getHash(filename),filename);
+//            }
+
+            Set<String> keysOnlyInOwnerMap = ownerMap.keySet().stream()
+                    .filter(key -> !fileArray.containsValue(key))
+                    .collect(Collectors.toSet());
+            System.out.println("Keys only in ownerMap: " + keysOnlyInOwnerMap);
+//            for (Integer fileHash : fileArray.keySet()) {
+//                notifyNamingServer(fileHash,isOwnFiles);
+//            }
         }
     }
 
@@ -206,7 +223,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
 
 
     /*Afblijven Abdel, dit is voor lab 5*/
-    public void notifyNamingServer(Integer hash) throws IOException {
+    public void notifyNamingServer(Integer hash, Boolean isOwnFiles) throws IOException {
         HttpClient client = HttpClient.newHttpClient();
         Map<Integer,String> tempMap = new ConcurrentHashMap<>();
         String packet;
@@ -423,7 +440,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
             response = "Next," + currentID + "," + this.ipAddress + "," + nextID; //The message to send as reply
             unicast(response, ipAddress, uniPort);
             if(!filesNotified){
-                notifyFiles();
+                notifyFiles(false);
                 filesNotified = true;
             }
 
@@ -434,7 +451,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
             response = "Previous," + currentID + "," + this.ipAddress + "," + previousID; //The message to send as reply
             unicast(response, ipAddress, uniPort);
             if(!filesNotified){
-                notifyFiles();
+                notifyFiles(false);
                 filesNotified = true;
             }
 
@@ -489,7 +506,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
                 System.out.println("Also set as nextID.");
                 response = "Next," + currentID + "," + this.ipAddress + "," + previousID; //The message to send as reply
                 unicast(response, otherNodeIP, uniPort);
-                notifyFiles();
+                notifyFiles(true);
                 filesNotified = true;
             }
         } else if (Objects.equals(position, "Previous")) { // If we receive a reply that sais we are the other node its previous,
@@ -503,7 +520,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
                 System.out.println("Also set as previousID.");
                 response = "Previous," + currentID + "," + this.ipAddress + "," + previousID; //The message to send as reply
                 unicast(response, otherNodeIP, uniPort);
-                notifyFiles();
+                notifyFiles(true);
                 filesNotified = true;
             }
         }else if(position.equals("getPreviousNeighbour")) { //If the other node (if it were woth our next and previous), it tells us to get another previous neighbour
