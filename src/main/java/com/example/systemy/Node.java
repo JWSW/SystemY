@@ -52,7 +52,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
     private Map<Integer,String> fileArray = new ConcurrentHashMap<>(); //This map stores the hash of the file with its corresponding filename
     private Map<String, Map<Integer,String>> ownerMap = new ConcurrentHashMap<>(); // This map stores the filename with the corresponding locations where the file is found (the node's parameters)
     private boolean filesNotified = false;
-    private FileLock fileLock;
+    private FileLock lockRequest;
 
 
 
@@ -81,7 +81,8 @@ public class Node implements com.example.systemy.interfaces.Observer {
         unicastHeartbeatNext = new UnicastReceiver(heartbeatPortNext);
         previousHeartbeatSender = new HeartbeatSender(previousIP, currentID, heartbeatPortPrevious);
         nextHeartbeatSender = new HeartbeatSender(nextIP, currentID, heartbeatPortNext);
-        watchDirectory = new WatchDirectory();
+        watchDirectory = new WatchDirectory(this);
+
 
         this.nodeName = nodeName;
         this.ipAddress = ipAddress;
@@ -689,19 +690,6 @@ public class Node implements com.example.systemy.interfaces.Observer {
         }
     }
 
-    public boolean hasLockRequest() {
-        // Check if a lock request has been made on this node
-        return fileLock != null;
-    }
-
-    public String getLockedFile() {
-        // Get the name of the file that has been locked on this node
-        if (fileLock != null) {
-            return fileLock.getFileName();
-        } else {
-            return null;
-        }
-    }
 
     public void setFileList(Map<String, Boolean> fileList) {
     }
@@ -717,14 +705,6 @@ public class Node implements com.example.systemy.interfaces.Observer {
 /*    public Map<String, Boolean> getFileList() {
 
     }*/
-
-    public void unlockFile(String lockedFile) {
-
-    }
-
-    public boolean lockFile(String lockedFile, long lockWaitTime) {
-        return true;
-    }
 
     public void setOwnerFile(String filename, int nodeID, String nodeIP) {
         Map<Integer,String> tempMap = new ConcurrentHashMap<>();
@@ -745,6 +725,10 @@ public class Node implements com.example.systemy.interfaces.Observer {
             ownerMap.put(filename, tempMap);
         }
         System.out.println("Ownermap: " + ownerMap);
+    }
+
+    public void FileLockRequest(FileLock fileLock) {
+        this.lockRequest = fileLock;
     }
 
 

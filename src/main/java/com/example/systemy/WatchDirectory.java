@@ -1,5 +1,6 @@
 package com.example.systemy;
 
+import com.example.systemy.Agents.SyncAgent;
 import com.example.systemy.interfaces.Observer;
 
 import java.io.IOException;
@@ -9,6 +10,11 @@ public class WatchDirectory extends Thread {
     private WatchService watchService;
     private FileLock fileLock;
     private com.example.systemy.interfaces.Observer observer;
+    private Node currentNode;
+
+    public WatchDirectory(Node node) {
+        this.currentNode = node;
+    }
 
     public void setObserver(Observer observer) {
         this.observer = observer;
@@ -66,7 +72,8 @@ public class WatchDirectory extends Thread {
                 if (event.kind() == StandardWatchEventKinds.ENTRY_MODIFY) {
                     Path modifiedFile = (Path) event.context();
                     System.out.println("FilelockRequest");
-                    fileLock.FileLockRequest(modifiedFile.toString());
+                    FileLock fileLock = new FileLock(modifiedFile.toString());
+                    currentNode.FileLockRequest(fileLock);
                 }
             }
 
