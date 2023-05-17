@@ -153,7 +153,11 @@ public class Node implements com.example.systemy.interfaces.Observer {
             }
         }else{
             for (String filename : ownerMap.keySet()) {
-                notifyNamingServer(filename, isOwnFiles);
+                if(fileArray.containsValue(filename)) {
+                    notifyNamingServer(filename, true);
+                }else{
+                    notifyNamingServer(filename, false);
+                }
             }
         }
     }
