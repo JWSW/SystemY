@@ -39,6 +39,7 @@ public class EditFiles implements Runnable {
                 System.out.println("hier5");
                 if (kind == StandardWatchEventKinds.ENTRY_MODIFY) {
                     Path modifiedFile = (Path) event.context();
+                    System.out.println("hier6");
                     if (Files.isRegularFile(modifiedFile)) {
                         // A file was modified
                         System.out.println("File modified: " + modifiedFile);
