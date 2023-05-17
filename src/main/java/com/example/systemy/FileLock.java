@@ -26,10 +26,7 @@ public class FileLock implements Serializable {
     }
 
     public boolean lockFile(String filename) {
-        String fileName = filename.replace(".swp", "");
-        if (fileName.startsWith(".")) {
-            fileName = fileName.substring(1);
-        }
+        String fileName = filename.replaceAll("^\\.(.*)\\..*$", "$1");
         System.out.println("File Name: " +fileName);
         Path filePath = Paths.get("/home/Dist/SystemY/replicatedFiles/"+fileName);
         Set<PosixFilePermission> permissions = new HashSet<>();
@@ -47,7 +44,9 @@ public class FileLock implements Serializable {
 
     public void unlockFile(String filename) {
         // Change file permissions to read-write
-        Path filePath = Paths.get(filename);
+        String fileName = filename.replaceAll("^\\.(.*)\\..*$", "$1");
+        System.out.println("File Name: " +fileName);
+        Path filePath = Paths.get("/home/Dist/SystemY/replicatedFiles/"+fileName);
         Set<PosixFilePermission> permissions = PosixFilePermissions.fromString("rw-rw-rw-");
         try {
             Files.setPosixFilePermissions(filePath, permissions);
