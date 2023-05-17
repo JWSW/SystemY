@@ -7,8 +7,10 @@ public class EditFiles implements Runnable {
     private String fileName;
     private boolean isEditingRequested;
     WatchService watchService = FileSystems.getDefault().newWatchService();
+
     public EditFiles(Node node) throws IOException {
-        currentNode = node;}
+        currentNode = node;
+    }
 
     @Override
     public void run() {
@@ -36,21 +38,23 @@ public class EditFiles implements Runnable {
                 WatchEvent.Kind<?> kind = event.kind();
                 System.out.println("hier5");
                 if (kind == StandardWatchEventKinds.ENTRY_MODIFY) {
-                    // A file was modified
                     Path modifiedFile = (Path) event.context();
-                    System.out.println("File modified: " + modifiedFile);
+                    if (Files.isRegularFile(modifiedFile)) {
+                        // A file was modified
+                        System.out.println("File modified: " + modifiedFile);
 
-                    // Check if the modified file matches the file you want to monitor
-                    if (modifiedFile.toString().equals("filename.txt")) {
-                        // Perform actions when the file is modified
-                        // For example, lock the file or update the local file list
-                        // You can call your EditFiles thread or any other relevant logic here
+                        // Check if the modified file matches the file you want to monitor
+                        if (modifiedFile.toString().equals("filename.txt")) {
+                            // Perform actions when the file is modified
+                            // For example, lock the file or update the local file list
+                            // You can call your EditFiles thread or any other relevant logic here
+                        }
                     }
                 }
-            }
 
-            // Reset the key to receive further events
-            key.reset();
+                // Reset the key to receive further events
+                key.reset();
+            }
         }
     }
 }
