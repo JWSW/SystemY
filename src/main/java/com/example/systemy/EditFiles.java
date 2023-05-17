@@ -2,7 +2,7 @@ package com.example.systemy;
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.Scanner;
-public class EditFiles extends Thread {
+public class EditFiles implements Runnable {
     private Node currentNode;
     private String fileName;
     private boolean isEditingRequested;
