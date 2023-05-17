@@ -15,18 +15,22 @@ public class WatchDirectory extends Thread {
 
     public void run() {
         // Get the directory to watch
-        Path path = Paths.get("/home/Dist/SystemY/nodeFiles");
+        Path path1 = Paths.get("/home/Dist/SystemY/nodeFiles");
+        Path path2 = Paths.get("/home/Dist/SystemY/replicatedFiles");
+
 
         // Create a WatchService object
         try {
             watchService = FileSystems.getDefault().newWatchService();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         // Register the directory with the watch service for file creation events
         try {
-            path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
+            path1.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
+            path2.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -57,6 +61,14 @@ public class WatchDirectory extends Thread {
                             e.printStackTrace();
                         }
                     }
+                }
+                if (event.kind() == StandardWatchEventKinds.ENTRY_MODIFY) {
+                    Path modifiedFile = (Path) event.context();
+                   // if (Files.isRegularFile(modifiedFile)) {
+                        // A file was modified
+                        System.out.println("File modified: " + modifiedFile);
+
+                 //   }
                 }
             }
 
