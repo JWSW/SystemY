@@ -54,6 +54,7 @@ public class SyncAgent implements Runnable, Serializable {
                 if (!agentFileList.containsKey(fileName)) {
                     agentFileList.put(fileName, false);
                     updated = true;
+                    System.out.println((agentFileList));
                 }
 
                 // If the agent's list contains a file that the node no longer owns, remove it from the list
@@ -93,7 +94,6 @@ public class SyncAgent implements Runnable, Serializable {
     private void syncWithNeighbors() throws IOException, InterruptedException {
         for (String neighbor : currentNode.getNeighbors()) {
             if (neighbor != null) {
-                System.out.println("tot hier");
                 String baseURL = "http://"+neighbor+":8081/requestNode";
                 HttpRequest request1 = HttpRequest.newBuilder()
                         .uri(URI.create(baseURL + "/syncWithNeighbor"))
