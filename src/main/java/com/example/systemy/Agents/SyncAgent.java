@@ -93,7 +93,7 @@ public class SyncAgent implements Runnable, Serializable {
 
     private void syncWithNeighbors() throws IOException, InterruptedException {
         for (String neighbor : currentNode.getNeighbors()) {
-            if (neighbor != null) {
+            if (neighbor.isEmpty()) {
                 String baseURL = "http://"+neighbor+":8081/requestNode";
                 System.out.println("Sync request");
                 HttpRequest request1 = HttpRequest.newBuilder()
