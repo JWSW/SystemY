@@ -368,7 +368,11 @@ public class Node implements com.example.systemy.interfaces.Observer {
             unicast("Previous," + nextID + "," + nextIP + "," + previousID, previousIP, uniPort); // Send next node parameters to previous node
 
             for(String filename : ownerMap.keySet()){
-                sendFile(previousID + "," + previousIP,filename, false);
+                if(fileArray.containsValue(filename)) {
+                    sendFile(previousID + "," + previousIP, filename, true);
+                }else{
+                    sendFile(previousID + "," + previousIP, filename, false);
+                }
             }
         }
         if (previousID != 0) {
