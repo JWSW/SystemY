@@ -12,9 +12,9 @@ public class EditFiles implements Runnable {
 
     @Override
     public void run() {
-        Path directory = Paths.get("/SystemY/replicatedFiles");
         Path currentDirectory = Paths.get("");
         System.out.println(currentDirectory.toAbsolutePath());
+        Path directory = Paths.get("/home/Dist/SystemY/replicatedFiles");
         try {
             directory.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY);
         } catch (IOException e) {
@@ -22,7 +22,6 @@ public class EditFiles implements Runnable {
         }
         while (true) {
             WatchKey key;
-            System.out.println("test");
             try {
                 key = watchService.take();
             } catch (InterruptedException e) {
