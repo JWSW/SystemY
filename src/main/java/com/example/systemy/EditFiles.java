@@ -1,25 +1,52 @@
 package com.example.systemy;
+import java.io.IOException;
+import java.nio.file.*;
 import java.util.Scanner;
 public class EditFiles extends Thread {
     private Node currentNode;
     private String fileName;
     private boolean isEditingRequested;
-    
-    public EditFiles(Node node) {
+    WatchService watchService = FileSystems.getDefault().newWatchService();
+    public EditFiles(Node node) throws IOException {
         currentNode = node;}
 
     @Override
     public void run() {
-                Scanner scanner = new Scanner(System.in);
-                String command = scanner.nextLine();
+        Path directory = Paths.get("/home/Dist/SystemY/replicatedFiles");
+        try {
+            directory.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        while (true) {
+            WatchKey key;
+            try {
+                key = watchService.take();
+            } catch (InterruptedException e) {
+                // Handle interruption
+                break;
+            }
 
-                if (command.startsWith("nano ")) {
-                    String fileName = command.substring(5); // Extract the file name
-                    System.out.println("Editing file: " + fileName);
-                    // Perform your logic here for editing the file
-                } else {
-                    System.out.println("Invalid command: " + command);
+            for (WatchEvent<?> event : key.pollEvents()) {
+                WatchEvent.Kind<?> kind = event.kind();
+
+                if (kind == StandardWatchEventKinds.ENTRY_MODIFY) {
+                    // A file was modified
+                    Path modifiedFile = (Path) event.context();
+                    System.out.println("File modified: " + modifiedFile);
+
+                    // Check if the modified file matches the file you want to monitor
+                    if (modifiedFile.toString().equals("filename.txt")) {
+                        // Perform actions when the file is modified
+                        // For example, lock the file or update the local file list
+                        // You can call your EditFiles thread or any other relevant logic here
+                    }
                 }
+            }
+
+            // Reset the key to receive further events
+            key.reset();
+        }
     }
 }
 
