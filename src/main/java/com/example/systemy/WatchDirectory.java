@@ -77,6 +77,9 @@ public class WatchDirectory extends Thread {
                     if (fileName.endsWith(".swp")) {
                         System.out.println("FilelockRequest");
                         String strippedfileName = fileName.replace(".swp", "");
+                        if (fileName.startsWith(".")) {
+                            fileName = fileName.substring(1);
+                        }
                         FileLock fileLock = new FileLock(strippedfileName);
                         currentNode.FileLockRequest(fileLock);
                     }

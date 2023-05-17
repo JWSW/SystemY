@@ -26,7 +26,8 @@ public class FileLock implements Serializable {
     }
 
     public boolean lockFile(String filename) {
-        Path filePath = Paths.get("/home/Dist/SystemY/replicatedFiles/"+filename);
+        String strippedfileName = filename.replaceAll("^\\.(.*)\\..*$", "$1");
+        Path filePath = Paths.get("/home/Dist/SystemY/replicatedFiles/"+strippedfileName);
         Set<PosixFilePermission> permissions = new HashSet<>();
         permissions.add(PosixFilePermission.OWNER_READ);
         permissions.add(PosixFilePermission.GROUP_READ);
