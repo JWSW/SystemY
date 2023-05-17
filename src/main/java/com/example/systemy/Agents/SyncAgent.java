@@ -12,6 +12,8 @@ import java.net.http.HttpResponse;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 public class SyncAgent implements Runnable, Serializable {
 
@@ -49,7 +51,6 @@ public class SyncAgent implements Runnable, Serializable {
             }
             for (String fileName : ownerMap.keySet()) {
                 boolean updated = false;
-                System.out.println("hier");
                 // If the agent's list doesn't contain a file that the node owns, add it to the list
                 if (!agentFileList.containsKey(fileName)) {
                     agentFileList.put(fileName, false);
@@ -87,6 +88,7 @@ public class SyncAgent implements Runnable, Serializable {
                     currentNode.setFileList(agentFileList);
                 }
             }
+            System.out.println(agentFileList);
         }
     }
 
@@ -99,9 +101,14 @@ public class SyncAgent implements Runnable, Serializable {
                         .GET()
                         .build();
                 HttpResponse<String> response = HttpClient.newHttpClient().send(request1, HttpResponse.BodyHandlers.ofString());
-                System.out.println("Response: " + response.body());
-             //   Map<String, Boolean> neighborFileList = neighbor.getFileList();
-              //  agentFileList.putAll(neighborFileList);
+                String jsonMap = response.body();
+
+                // Parse the JSON string and convert it into a Map object
+                ObjectMapper objectMapper = new ObjectMapper();
+                Map<String, Object> receivedMap = objectMapper.readValue(jsonMap, new TypeReference<Map<String, Object>>() {});
+
+                // Merge the received map with your existing map
+                receivedMap.putAll(receivedMap);
             }
         }
     }
