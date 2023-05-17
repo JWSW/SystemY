@@ -159,6 +159,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
                     notifyNamingServer(filename, false);
                 }
             }
+            System.out.println(ownerMap);
         }
     }
 
@@ -236,6 +237,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
         }
         if(nodeHash!=currentID) {
             sendFile(ownerNode, filename, isOwnFiles);
+            ownerMap.remove(filename);
         }else{
             System.out.println("Node self is owner of " + filename);
             File file = new File(filename);
