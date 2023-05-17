@@ -7,6 +7,7 @@ import java.nio.file.*;
 
 public class WatchDirectory extends Thread {
     private WatchService watchService;
+    private FileLock fileLock;
     private com.example.systemy.interfaces.Observer observer;
 
     public void setObserver(Observer observer) {
@@ -64,11 +65,8 @@ public class WatchDirectory extends Thread {
                 }
                 if (event.kind() == StandardWatchEventKinds.ENTRY_MODIFY) {
                     Path modifiedFile = (Path) event.context();
-                    if (Files.exists(modifiedFile)) {
-                        // A file was modified
-                        System.out.println("File modified: " + modifiedFile);
-
-                    }
+                    System.out.println("FilelockRequest");
+                    fileLock.FileLockRequest(modifiedFile.toString());
                 }
             }
 
