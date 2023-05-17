@@ -44,12 +44,6 @@ public class EditFiles implements Runnable {
                         // A file was modified
                         System.out.println("File modified: " + modifiedFile);
 
-                        // Check if the modified file matches the file you want to monitor
-                        if (modifiedFile.toString().equals("filename.txt")) {
-                            // Perform actions when the file is modified
-                            // For example, lock the file or update the local file list
-                            // You can call your EditFiles thread or any other relevant logic here
-                        }
                     }
                 }
 
