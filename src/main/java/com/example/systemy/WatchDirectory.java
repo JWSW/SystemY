@@ -71,6 +71,7 @@ public class WatchDirectory extends Thread {
                 }
                 if (event.kind() == StandardWatchEventKinds.ENTRY_MODIFY) {
                     Path modifiedFile = (Path) event.context();
+                    System.out.println(modifiedFile);
                     if (modifiedFile.endsWith(".swp")) {
                         System.out.println("FilelockRequest");
                         System.out.println(modifiedFile);
