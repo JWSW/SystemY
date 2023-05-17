@@ -407,7 +407,6 @@ public class Node implements com.example.systemy.interfaces.Observer {
         String message;
         int hash = getHash(hostname);
         System.out.println("Processing multicast packet: " + hash + ", " + ipAddress);
-        System.out.println("Number of nodes: " + amountOfNodes);
         if (currentID < hash && hash < nextID){// || (nextID<currentID && hash>currentID)) { // Ring topology: if we are the biggest hashID, our nextID is the smallest hashID
             nextID = hash;
             setNextIP(ipAddress); // This function changes everything that needs to be changed when changing neighbours IP
@@ -417,9 +416,6 @@ public class Node implements com.example.systemy.interfaces.Observer {
             if(!filesNotified){
                 notifyFiles(true);
                 filesNotified = true;
-            }
-            if(amountOfNodes>2){
-                notifyFiles(false);
             }
 
         } else if (previousID < hash && hash < currentID){// || (previousID>currentID && hash < currentID)) { // Ring topology: if we are the smallest hashID, our previousID is the biggest hashID
@@ -431,9 +427,6 @@ public class Node implements com.example.systemy.interfaces.Observer {
             if(!filesNotified){
                 notifyFiles(true);
                 filesNotified = true;
-            }
-            if(amountOfNodes>2){
-                notifyFiles(false);
             }
 
         }else if(currentID < hash && hash > nextID && currentID>nextID){ // The following 'else if' statements are to be able to close the ring, the first to the last and vice versa
@@ -461,6 +454,9 @@ public class Node implements com.example.systemy.interfaces.Observer {
             System.out.println("Registered as previousID");
             response = "Previous," + currentID + "," + this.ipAddress + "," + previousID; //The message to send as reply
             unicast(response, ipAddress, uniPort);
+        }
+        if(amountOfNodes>2){
+            notifyFiles(false);
         }
     }
 
@@ -661,7 +657,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
         }catch (IOException e) {
             System.err.println("Could not notify file " + fileName + ": " + e.getMessage());
         }
-        System.out.println("All files: " + fileArray);
+        System.out.println("All owner files: " + ownerMap);
     }
 
     @Override
