@@ -74,7 +74,7 @@ public class WatchDirectory extends Thread {
                     System.out.println(modifiedFile);
                     String fileName = modifiedFile.getFileName().toString();
                     System.out.println(fileName);
-                    if (modifiedFile.endsWith(".swp")) {
+                    if (fileName.endsWith(".swp")) {
                         System.out.println("FilelockRequest");
                         FileLock fileLock = new FileLock(fileName);
                         currentNode.FileLockRequest(fileLock);
