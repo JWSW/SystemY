@@ -27,6 +27,7 @@ public class SyncAgent implements Runnable, Serializable {
     public SyncAgent(Node currentNode) {
         this.currentNode = currentNode;
         agentFileList =  new ConcurrentHashMap<>();
+        ownerMap = currentNode.getOwnerMap();
         updated = false;
     }
 
