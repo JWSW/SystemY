@@ -12,7 +12,9 @@ public class EditFiles extends Thread {
 
     @Override
     public void run() {
-        Path directory = Paths.get("/home/Dist/SystemY/replicatedFiles");
+        Path directory = Paths.get("/SystemY/replicatedFiles");
+        Path currentDirectory = Paths.get("");
+        System.out.println(currentDirectory.toAbsolutePath());
         try {
             directory.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY);
         } catch (IOException e) {
