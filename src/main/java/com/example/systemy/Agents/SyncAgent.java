@@ -111,6 +111,7 @@ public class SyncAgent implements Runnable, Serializable {
 
             }
         }
+        System.out.println(agentFileList);
     }
 
     public Map<String, Boolean> getAgentFileList() {
