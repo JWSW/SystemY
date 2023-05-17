@@ -27,6 +27,7 @@ public class SyncAgent implements Runnable, Serializable {
     public SyncAgent(Node currentNode) {
         this.currentNode = currentNode;
         agentFileList =  new ConcurrentHashMap<>();
+        ownerMap = currentNode.getOwnerMap();
         updated = false;
     }
 
@@ -46,10 +47,9 @@ public class SyncAgent implements Runnable, Serializable {
             } catch (IOException | InterruptedException e) {
                 throw new RuntimeException(e);
             }
-
             for (String fileName : ownerMap.keySet()) {
                 boolean updated = false;
-
+                System.out.println("hier");
                 // If the agent's list doesn't contain a file that the node owns, add it to the list
                 if (!agentFileList.containsKey(fileName)) {
                     agentFileList.put(fileName, false);
