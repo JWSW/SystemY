@@ -77,6 +77,7 @@ public class WatchDirectory extends Thread {
                         FileLock fileLock = new FileLock(modifiedFile.toString());
                         currentNode.FileLockRequest(fileLock);
                     }
+                }
             }
 
             // Reset the key for the next set of events
