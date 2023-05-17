@@ -158,12 +158,9 @@ public class Node implements com.example.systemy.interfaces.Observer {
         }
     }
 
-    public String getNodeName() {
-        return nodeName;
-    }
 
-    public String getIpAddress() {
-        return ipAddress;
+    public void notifyFile(String filename) throws IOException {
+        notifyNamingServer(filename);
     }
 
     public void setNextIP(String nextIP) throws UnknownHostException {
@@ -216,11 +213,6 @@ public class Node implements com.example.systemy.interfaces.Observer {
         String ownerNode = "";
         Integer nodeHash = 0;
         String nodeIP = "";
-//        if(isOwnFiles){
-//            filename = fileArray.get(hash);
-//        }else{
-//            filename = givenFileName;
-//        }
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(baseURL + "/" + filename + "/getFileLocation"))
                 .GET()
@@ -663,7 +655,11 @@ public class Node implements com.example.systemy.interfaces.Observer {
     }
 
     public void FileEventHandler(String fileName){
-        fileArray.put(getHash(fileName),fileName);
+        try {
+            notifyFile(fileName);
+        }catch (IOException e) {
+            System.err.println("Could not notify file " + fileName + ": " + e.getMessage());
+        }
         System.out.println("All files: " + fileArray);
     }
 
