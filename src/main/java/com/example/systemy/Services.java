@@ -6,8 +6,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.io.FileNotFoundException;
+import com.example.systemy.EditFiles;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -22,6 +21,7 @@ public class Services implements MulticastObserver {
     @Autowired
     MulticastReceiver multicastReceiver;
     SyncAgent syncAgent;
+    EditFiles editFiles;
 
     @PostConstruct
     public void init() throws Exception {
@@ -29,6 +29,9 @@ public class Services implements MulticastObserver {
         syncAgent = new SyncAgent(node);
         Thread syncAgent1 = new Thread(syncAgent);
         syncAgent1.start();
+        editFiles = new EditFiles(node);
+        Thread editFiles1 = new Thread(editFiles);
+        editFiles1.start();
         multicastReceiver.setObserver(this);
         multicastReceiver.start();
     }

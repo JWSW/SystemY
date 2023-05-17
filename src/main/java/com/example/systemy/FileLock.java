@@ -13,6 +13,8 @@ public class FileLock implements Serializable {
         this.lockActive = false;
     }
 
+
+
     public String getFileName() {
         return fileName;
     }
