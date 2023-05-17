@@ -22,6 +22,7 @@ public class EditFiles implements Runnable {
         }
         while (true) {
             WatchKey key;
+            System.out.println(currentDirectory.toAbsolutePath());
             try {
                 key = watchService.take();
             } catch (InterruptedException e) {
