@@ -657,7 +657,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
         }catch (IOException e) {
             System.err.println("Could not notify file " + fileName + ": " + e.getMessage());
         }
-        System.out.println("All files: " + fileArray);
+        System.out.println("All owner files: " + ownerMap);
     }
 
     @Override
