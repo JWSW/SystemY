@@ -77,6 +77,7 @@ public class SyncAgent implements Runnable, Serializable {
                     // If the file is not locked on the agent's list, lock it and synchronize the lists
                     if (!agentFileList.containsKey(filename)) {
                         boolean locked = lockRequest.lockFile(filename);
+                        System.out.println(locked);
 
                         if (locked) {
                             agentFileList.replace(filename, true);
