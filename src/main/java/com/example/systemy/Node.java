@@ -149,18 +149,18 @@ public class Node implements com.example.systemy.interfaces.Observer {
     public void notifyFiles(Boolean isOwnFiles) throws IOException {
         if(isOwnFiles) {
             for (Integer fileHash : fileArray.keySet()) {
-                notifyNamingServer(fileArray.get(fileHash));
+                notifyNamingServer(fileArray.get(fileHash), isOwnFiles);
             }
         }else{
             for (String filename : ownerMap.keySet()) {
-                notifyNamingServer(filename);
+                notifyNamingServer(filename, isOwnFiles);
             }
         }
     }
 
 
-    public void notifyFile(String filename) throws IOException {
-        notifyNamingServer(filename);
+    public void notifyFile(String filename, Boolean isOwnFiles) throws IOException {
+        notifyNamingServer(filename, isOwnFiles);
     }
 
     public void setNextIP(String nextIP) throws UnknownHostException {
@@ -251,7 +251,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
         if(isOwnFiles) {
             directory = "/home/Dist/SystemY/nodeFiles/";
         }else{
-            directory = "/home/Dist/SystemY/replicatedFiles/"
+            directory = "/home/Dist/SystemY/replicatedFiles/";
         }
         String jsonData="";
         try {
@@ -661,7 +661,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
 
     public void FileEventHandler(String fileName){
         try {
-            notifyFile(fileName);
+            notifyFile(fileName, true);
         }catch (IOException e) {
             System.err.println("Could not notify file " + fileName + ": " + e.getMessage());
         }
