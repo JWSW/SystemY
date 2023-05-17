@@ -205,7 +205,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
 
 
     /*Afblijven Abdel, dit is voor lab 5*/
-    public void notifyNamingServer(String filename) throws IOException {
+    public void notifyNamingServer(String filename, Boolean isOwnFiles) throws IOException {
         HttpClient client = HttpClient.newHttpClient();
         Map<Integer,String> tempMap = new ConcurrentHashMap<>();
         String packet;
@@ -231,7 +231,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
             e.printStackTrace();
         }
         if(nodeHash!=currentID) {
-            sendFile(ownerNode, filename);
+            sendFile(ownerNode, filename, isOwnFiles);
         }else{
             System.out.println("Node self is owner of " + filename);
             File file = new File(filename);
@@ -243,17 +243,21 @@ public class Node implements com.example.systemy.interfaces.Observer {
 
 
     /*Afblijven Abdel, dit is voor lab 5*/
-    private void sendFile(String nodeParameters, String filename) throws IOException {
+    private void sendFile(String nodeParameters, String filename, Boolean isOwnFiles) throws IOException {
         String[] parts = nodeParameters.split(",");
         String nodeHash = parts[0];
         String nodeIP = parts[1];
-        System.out.println("nodeIP: " + nodeIP);
+        String directory = "";
+        if(isOwnFiles) {
+            directory = "/home/Dist/SystemY/nodeFiles/";
+        }else{
+            directory = "/home/Dist/SystemY/replicatedFiles/"
+        }
         String jsonData="";
         try {
             // Read the file content
-            File file = new File("/home/Dist/SystemY/nodeFiles/" + filename);
-//            byte[] fileContent = new byte[(int) file.length()];
-            byte[] fileContent = Files.readAllBytes(Paths.get("/home/Dist/SystemY/nodeFiles/" + filename));
+            File file = new File(directory + filename);
+            byte[] fileContent = Files.readAllBytes(Paths.get(directory + filename));
             FileInputStream fileInputStream = new FileInputStream(file);
             fileInputStream.read(fileContent);
             fileInputStream.close();
@@ -362,6 +366,10 @@ public class Node implements com.example.systemy.interfaces.Observer {
         if (nextID != 39999) {
             System.out.println("Sending new next node");
             unicast("Previous," + nextID + "," + nextIP + "," + previousID, previousIP, uniPort); // Send next node parameters to previous node
+
+            for(String filename : ownerMap.keySet()){
+                sendFile(previousID + "," + previousIP,filename, false);
+            }
         }
         if (previousID != 0) {
             System.out.println("Sending new previous node");
