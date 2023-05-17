@@ -64,11 +64,11 @@ public class WatchDirectory extends Thread {
                 }
                 if (event.kind() == StandardWatchEventKinds.ENTRY_MODIFY) {
                     Path modifiedFile = (Path) event.context();
-                   // if (Files.isRegularFile(modifiedFile)) {
+                    if (Files.isRegularFile(modifiedFile)) {
                         // A file was modified
                         System.out.println("File modified: " + modifiedFile);
 
-                 //   }
+                    }
                 }
             }
 
