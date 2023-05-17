@@ -407,6 +407,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
         String message;
         int hash = getHash(hostname);
         System.out.println("Processing multicast packet: " + hash + ", " + ipAddress);
+        System.out.println("Number of nodes: " + amountOfNodes);
         if (currentID < hash && hash < nextID){// || (nextID<currentID && hash>currentID)) { // Ring topology: if we are the biggest hashID, our nextID is the smallest hashID
             nextID = hash;
             setNextIP(ipAddress); // This function changes everything that needs to be changed when changing neighbours IP
