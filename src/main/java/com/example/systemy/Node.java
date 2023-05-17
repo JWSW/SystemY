@@ -369,6 +369,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
 
             for(String filename : ownerMap.keySet()){
                 if(fileArray.containsValue(filename)) {
+                    System.out.println(fileArray);
                     sendFile(previousID + "," + previousIP, filename, true);
                 }else{
                     sendFile(previousID + "," + previousIP, filename, false);
@@ -664,6 +665,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
     }
 
     public void FileEventHandler(String fileName){
+        fileArray.put(getHash(fileName),fileName);
         try {
             notifyFile(fileName, true);
         }catch (IOException e) {
