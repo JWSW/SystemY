@@ -417,6 +417,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
                 notifyFiles(true);
                 filesNotified = true;
             }
+            System.out.println("Number of nodes: " + amountOfNodes);
             if(amountOfNodes>2){
                 notifyFiles(false);
             }
