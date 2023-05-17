@@ -81,13 +81,15 @@ public class SyncAgent implements Runnable, Serializable {
                         if (locked) {
                             agentFileList.replace(filename, true);
                             currentNode.setFileList(agentFileList);
+                            lockRequest.setLockActive(true);
                         }
+                    } else {System.out.println("Is Locked");}
+                    if (!lockRequest.isLockActive()) {
+                        // Remove the lock when it is no longer needed
+                        lockRequest.unlockFile(filename);
+                        agentFileList.remove(filename);
+                        currentNode.setFileList(agentFileList);
                     }
-
-                    // Remove the lock when it is not needed anymore
-                    lockRequest.unlockFile(filename);
-                    agentFileList.remove(fileName);
-                    currentNode.setFileList(agentFileList);
                 }
             }
         }

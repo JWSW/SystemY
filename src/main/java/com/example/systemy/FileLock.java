@@ -16,6 +16,9 @@ public class FileLock implements Serializable {
     private static final long serialVersionUID = 1L;
     private String fileName;
 
+
+    private boolean isLockActive;
+
     public FileLock(String fileName) {
         this.fileName = fileName;
     }
@@ -54,4 +57,12 @@ public class FileLock implements Serializable {
             e.printStackTrace();
         }
     }
+    public boolean isLockActive() {
+        return isLockActive;
+    }
+
+    public void setLockActive(boolean active) {
+        isLockActive = active;
+    }
+
 }
