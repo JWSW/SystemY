@@ -46,7 +46,7 @@ public class SyncAgent implements Runnable, Serializable {
             } catch (IOException | InterruptedException e) {
                 throw new RuntimeException(e);
             }
-
+            System.out.println("hier");
             for (String fileName : ownerMap.keySet()) {
                 boolean updated = false;
 
@@ -54,7 +54,7 @@ public class SyncAgent implements Runnable, Serializable {
                 if (!agentFileList.containsKey(fileName)) {
                     agentFileList.put(fileName, false);
                     updated = true;
-                    System.out.println((agentFileList));
+                    System.out.println("hier2");
                 }
 
                 // If the agent's list contains a file that the node no longer owns, remove it from the list
