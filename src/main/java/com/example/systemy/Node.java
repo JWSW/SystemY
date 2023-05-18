@@ -728,6 +728,13 @@ public class Node implements com.example.systemy.interfaces.Observer {
 
     public void setOwnerFile(String filename, int nodeID, String nodeIP) {
         Map<Integer,String> tempMap = new ConcurrentHashMap<>();
+        if(fileArray.containsValue(filename)){
+            try {
+                sendFile(previousID + "," + previousIP, filename, true);
+            }catch (IOException e) {
+                System.err.println("Could not notify file " + filename + ": " + e.getMessage());
+            }
+        }
         if(ownerMap.containsKey(filename)){
             tempMap = ownerMap.get(filename);
             if(!tempMap.containsKey(nodeID)) { // To prevent doubles
