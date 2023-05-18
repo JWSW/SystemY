@@ -728,7 +728,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
 
     public void setOwnerFile(String filename, int nodeID, String nodeIP) {
         Map<Integer,String> tempMap = new ConcurrentHashMap<>();
-        if(fileArray.containsValue(filename) && (nextID!=previousID)){
+        if(fileArray.containsValue(filename) && (nextID!=previousID || currentID == nextID || currentID == previousID)){
             try {
                 sendFile(previousID + "," + previousIP, filename, true);
             }catch (IOException e) {
