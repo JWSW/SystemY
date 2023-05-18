@@ -238,7 +238,9 @@ public class Node implements com.example.systemy.interfaces.Observer {
         }
         if(nodeHash!=currentID) {
             sendFile(ownerNode, filename, isOwnFiles);
-            ownerMap.remove(filename);
+            if(ownerNode.contains(filename)) {
+                ownerMap.remove(filename);
+            }
         }else{
             System.out.println("Node self is owner of " + filename);
             File file = new File(filename);
@@ -257,8 +259,10 @@ public class Node implements com.example.systemy.interfaces.Observer {
         String directory = "";
         if(isOwnFiles) {
             directory = "/home/Dist/SystemY/nodeFiles/";
+            System.out.println(directory);
         }else{
             directory = "/home/Dist/SystemY/replicatedFiles/";
+            System.out.println(directory);
         }
         String jsonData="";
         try {
@@ -373,10 +377,10 @@ public class Node implements com.example.systemy.interfaces.Observer {
         if (nextID != 39999) {
             System.out.println("Sending new next node");
             unicast("Previous," + nextID + "," + nextIP + "," + previousID, previousIP, uniPort); // Send next node parameters to previous node
-
             for(String filename : ownerMap.keySet()){
                 if(fileArray.containsValue(filename)) {
                     System.out.println(fileArray);
+                    System.out.println(filename);
                     sendFile(previousID + "," + previousIP, filename, true);
                 }else{
                     sendFile(previousID + "," + previousIP, filename, false);
@@ -708,7 +712,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
 
     public void setOwnerFile(String filename, int nodeID, String nodeIP) {
         Map<Integer,String> tempMap = new ConcurrentHashMap<>();
-        if(fileArray.containsValue(filename)){
+        if(fileArray.containsValue(filename) && (nextID!=previousID)){
             try {
                 sendFile(previousID + "," + previousIP, filename, true);
             }catch (IOException e) {
