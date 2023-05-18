@@ -291,6 +291,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
                     .POST(HttpRequest.BodyPublishers.ofString(jsonData))
                     .build();
             System.out.println("Sending POST request to owner of file " + filename);
+            System.out.println(request2);
             HttpResponse<String> response2 = HttpClient.newHttpClient().send(request2, HttpResponse.BodyHandlers.ofString());
             if(response2.body().isEmpty()){
                 System.out.println("File is sent succesfully.");
@@ -301,6 +302,20 @@ public class Node implements com.example.systemy.interfaces.Observer {
         }catch (IOException | InterruptedException e) {
             System.out.println("Error sending file: " + e.getMessage());
             e.printStackTrace();
+        }
+    }
+
+    public void deleteFile(String filename, Boolean isOwnFiles){
+        File myObj;
+        if(isOwnFiles) {
+            myObj = new File("/home/Dist/SystemY/nodeFiles/" + filename);
+        }else{
+            myObj = new File("/home/Dist/SystemY/replicatedFiles/" + filename);
+        }
+        if (myObj.delete()) {
+            System.out.println("Deleted the file: " + myObj.getName());
+        } else {
+            System.out.println("Failed to delete the file.");
         }
     }
 
@@ -384,6 +399,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
                     sendFile(previousID + "," + previousIP, filename, true);
                 }else{
                     sendFile(previousID + "," + previousIP, filename, false);
+                    deleteFile(filename,false);
                 }
             }
         }
