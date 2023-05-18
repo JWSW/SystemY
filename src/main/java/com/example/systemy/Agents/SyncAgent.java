@@ -1,5 +1,6 @@
 package com.example.systemy.Agents;
 
+import com.example.systemy.FileLock;
 import com.example.systemy.Node;
 
 import java.io.IOException;
@@ -69,23 +70,27 @@ public class SyncAgent implements Runnable, Serializable {
                 }
 
                 // Check if there is a lock request on the current node
-                if (currentNode.hasLockRequest()) {
-                    String lockedFile = currentNode.getLockedFile();
+                if (currentNode.getLockRequest() != null) {
+                    FileLock lockRequest = currentNode.getLockRequest();
+                    String filename = lockRequest.getFileName();
 
                     // If the file is not locked on the agent's list, lock it and synchronize the lists
-                    if (!agentFileList.containsKey(lockedFile)) {
-                        boolean locked = currentNode.lockFile(lockedFile, LOCK_WAIT_TIME);
+                    if (!agentFileList.containsKey(filename)) {
+                        boolean locked = lockRequest.lockFile(filename);
+                        System.out.println(locked);
 
                         if (locked) {
-                            agentFileList.replace(lockedFile, true);
+                            agentFileList.replace(filename, true);
                             currentNode.setFileList(agentFileList);
+                            lockRequest.setLockActive(true);
                         }
+                    } else {System.out.println("Is Locked");}
+                    if (!lockRequest.isLockActive()) {
+                        // Remove the lock when it is no longer needed
+                        lockRequest.unlockFile(filename);
+                        agentFileList.remove(filename);
+                        currentNode.setFileList(agentFileList);
                     }
-
-                    // Remove the lock when it is not needed anymore
-                    currentNode.unlockFile(lockedFile);
-                    agentFileList.remove(lockedFile);
-                    currentNode.setFileList(agentFileList);
                 }
             }
         }
