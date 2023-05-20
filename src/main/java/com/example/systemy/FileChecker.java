@@ -48,15 +48,12 @@ public class FileChecker extends Thread {
                 // Update the file statuses in the main files map
                 for (Map.Entry<String, Boolean> entry : updatedFiles.entrySet()) {
                     String fileName = entry.getKey();
-                    boolean isBeingEdited = entry.getValue();
-
-                    if (!files.containsKey(fileName)) {
-                        // Add the file to the files map with a status of false
-                        files.put(fileName, false);
-                    } else {
-                        // Update the file status in the files map
-                        files.put(fileName, isBeingEdited);
-                    }
+                        files.put(fileName, true);
+                }
+                for (Map.Entry<String, Boolean> entry : files.entrySet()) {
+                    String fileName = entry.getKey();
+                    if (!updatedFiles.containsKey(fileName))
+                        files.remove(fileName);
                 }
 
                 // Remove files that are no longer being edited from the map
