@@ -16,13 +16,13 @@ public class FileChecker extends Thread {
     @Override
     public void run() {
         try {
-            boolean isBeingEdited = false;
+
             while (true) {
+                boolean isBeingEdited = false;
             for (String directory : directories) {
                  Process process = Runtime.getRuntime().exec("lsof +D " + directory);
                  BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
                  String line;
-                 isBeingEdited = false;
 
                     while ((line = reader.readLine()) != null) {
                         if (line.contains("nano")) {
