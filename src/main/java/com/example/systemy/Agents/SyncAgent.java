@@ -77,7 +77,7 @@ public class SyncAgent implements Runnable, Serializable {
                     System.out.println("agentFileList=  " + agentFileList);
                 }
             }
-         /*   // Check if there is a lock request on the current node
+           // Check if there is a lock request on the current node
             if (!fileChecker.getFileLockRequest().isEmpty()) {
                 System.out.println("LockRequest");
                 Map<String, Boolean> updatedFiles = fileChecker.getFileLockRequest();
@@ -105,7 +105,7 @@ public class SyncAgent implements Runnable, Serializable {
                     agentFileList.replace(filename, false);
                     currentNode.setFileList(agentFileList);
                 }
-            }*/
+            }
 
         }
     }
