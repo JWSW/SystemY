@@ -31,6 +31,7 @@ public class FileChecker extends Thread {
                             fileName = getFileNameFromPid(pid);
 
                         } else {
+                            System.out.println("not active");
                             setLockActive(false);
                         }
                     }
