@@ -21,6 +21,7 @@ public class FileChecker extends Thread {
                  String line;
                  boolean isBeingEdited = false;
                     if ((line = reader.readLine()) != null) {
+                        System.out.println(line);
                         // Check if the line contains the file information
                         if (line.contains("nano") || line.contains("vi") || line.contains("vim")) {
                             String[] tokens = line.split("\\s+");
