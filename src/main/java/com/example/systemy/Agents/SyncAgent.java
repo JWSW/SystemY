@@ -77,30 +77,39 @@ public class SyncAgent implements Runnable, Serializable {
                     System.out.println("agentFileList=  " + agentFileList);
                 }
             }
-           /* // Check if there is a lock request on the current node
-            if (fileChecker.getFileLockRequest() != null) {
-                String filename = fileChecker.getFileLockRequest();
-                    System.out.println(filename);
-                    // If the file is not locked on the agent's list, lock it and synchronize the lists
-                    if (!agentFileList.get(filename)) {
-                        fileChecker.lockFile(filename);
+            // Check if there is a lock request on the current node
+            if (!fileChecker.getFileLockRequest().isEmpty()) {
+                System.out.println("LockRequest");
+                Map<String, Boolean> updatedFiles = fileChecker.getFileLockRequest();
+                String filename = updatedFiles.keySet().iterator().next();
+                System.out.println(filename);
 
-                        if (fileChecker.isLockActive()) {
-                            agentFileList.replace(filename, true);
-                            currentNode.setFileList(agentFileList);
-                        }
-                    } else {
-                        System.out.println("Already being edited by another node");}
-                    if (!fileChecker.isLockActive()) {
-                        // Remove the lock when it is no longer needed
-                        fileChecker.unlockFile(filename);
-                        agentFileList.replace(filename, false);
+                // Get the file status from the files map
+                boolean isBeingEdited = updatedFiles.getOrDefault(filename, false);
+
+                // If the file is not locked on the agent's list, lock it and synchronize the lists
+                if (!isBeingEdited) {
+                    fileChecker.lockFile(filename);
+
+                    if (fileChecker.isLockActive()) {
+                        agentFileList.replace(filename, true);
                         currentNode.setFileList(agentFileList);
                     }
-                }*/
+                } else {
+                    System.out.println("Already being edited by another node");
+                }
+
+                if (!fileChecker.isLockActive()) {
+                    // Remove the lock when it is no longer needed
+                    fileChecker.unlockFile(filename);
+                    agentFileList.replace(filename, false);
+                    currentNode.setFileList(agentFileList);
+                }
+            }
 
         }
     }
+
 
     private void syncWithNeighbors() throws IOException, InterruptedException {
         for (String neighbor : currentNode.getNeighbors()) {

@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class FileChecker extends Thread {
     private final String[] directories;
     Map<String, Boolean> files = new ConcurrentHashMap<>();
+    Map<String, Boolean> updatedFiles = new ConcurrentHashMap<>();
     private boolean isLockActive;
 
     private String fileName;
@@ -20,8 +21,6 @@ public class FileChecker extends Thread {
     public void run() {
         try {
             while (true) {
-                Map<String, Boolean> updatedFiles = new ConcurrentHashMap<>();
-
                 for (String directory : directories) {
                     Process process = Runtime.getRuntime().exec("lsof +D " + directory);
                     BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -54,7 +53,6 @@ public class FileChecker extends Thread {
 
                 // Remove files that are no longer being edited from the map
                 files.entrySet().removeIf(entry -> !entry.getValue());
-                System.out.println("files:"+files);
                 System.out.println("updatedfiles:"+updatedFiles);
             }
 
@@ -111,7 +109,7 @@ public class FileChecker extends Thread {
         isLockActive = active;
     }
 
-    public String getFileLockRequest() {
-        return fileName;
+    public Map<String, Boolean> getFileLockRequest() {
+        return updatedFiles;
     }
 }
