@@ -81,6 +81,7 @@ public class SyncAgent implements Runnable, Serializable {
                 if (fileChecker.getFileLockRequest() != null) {
                     String filename = fileChecker.getFileLockRequest();
                     System.out.println(filename);
+                    System.out.println(agentFileList.get(filename));
                     // If the file is not locked on the agent's list, lock it and synchronize the lists
                     if (!agentFileList.get(filename)) {
                         fileChecker.lockFile(filename);
