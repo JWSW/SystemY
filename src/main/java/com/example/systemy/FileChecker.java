@@ -21,19 +21,16 @@ public class FileChecker extends Thread {
                  Process process = Runtime.getRuntime().exec("lsof +D " + directory);
                  BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
                  String line;
-                boolean isBeingEdited = false;
 
                     while ((line = reader.readLine()) != null) {
                         if (line.contains("nano")) {
                             String[] tokens = line.trim().split("\\s+");
                             String pid = tokens[1];
 
-
                             // Retrieve the filename from the PID
                             fileName = getFileNameFromPid(pid);
                         }
                     }
-
                     reader.close();
 
                 }
@@ -56,17 +53,16 @@ public class FileChecker extends Thread {
         reader.close();
         return fileName;
     }
-    public boolean lockFile(String filename) {
+    public void lockFile(String filename) {
         String fileName = filename.replaceAll("^\\.(.*)\\..*$", "$1");
         System.out.println("File Name: " + fileName);
         String filePath = "/home/Dist/SystemY/replicatedFiles/" + fileName;
         try {
             Runtime.getRuntime().exec("chmod 000 " + filePath);
             System.out.println("File " + filename + " is locked");
-            return true;
+            setLockActive(true);
         } catch (IOException e) {
             System.out.println("File is already being edited by another node");
-            return false;
         }
     }
 
@@ -78,6 +74,7 @@ public class FileChecker extends Thread {
         try {
             Runtime.getRuntime().exec("chmod 666 " + filePath);
             System.out.println("File " + filename + " is unlocked");
+            setLockActive(true);
 
         } catch (IOException e) {
             System.out.println("Failed to unlock " + filename);
