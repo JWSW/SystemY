@@ -38,9 +38,10 @@ public class FileLock implements Serializable {
         permissions.add(PosixFilePermission.OTHERS_READ);
         try {
             Files.setPosixFilePermissions(filePath, permissions);
+            System.out.println("File 'filename' locked");
             return true;
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("File is already being edited by other node");
             return false;
         }
     }
