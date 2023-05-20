@@ -47,7 +47,8 @@ public class FileChecker extends Thread {
     private static String getFileNameFromPid(String pid) throws IOException {
         System.out.println("Getting filename for PID: " + pid);
 
-        Process process = Runtime.getRuntime().exec("ps -p " + pid + " -o cmd= | awk -F ' ' '{print $NF}' | sed 's:^.*/::'");
+        ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", "ps -p " + pid + " -o cmd= | awk -F ' ' '{print $NF}' | sed 's:^.*/::'");
+        Process process = processBuilder.start();
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String line;
         String fileName = "";
