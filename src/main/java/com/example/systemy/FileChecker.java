@@ -27,9 +27,10 @@ public class FileChecker extends Thread {
 
                         // Retrieve the filename from the PID
                         String fileName = getFileNameFromPid(pid);
-
-                        System.out.println("Open file: " + fileName);
+                        System.out.println(line);
+                        //System.out.println("Open file: " + fileName);
                     }
+
                     reader.close();
 
                 }
