@@ -3,9 +3,12 @@ package com.example.systemy;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class FileChecker extends Thread {
     private final String[] directories;
+    Map<String, Boolean> files = new ConcurrentHashMap<>();
     private boolean isLockActive;
 
     private String fileName;
@@ -16,13 +19,11 @@ public class FileChecker extends Thread {
     @Override
     public void run() {
         try {
-
             while (true) {
-                boolean isBeingEdited = false;
-            for (String directory : directories) {
-                 Process process = Runtime.getRuntime().exec("lsof +D " + directory);
-                 BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                 String line;
+                for (String directory : directories) {
+                    Process process = Runtime.getRuntime().exec("lsof +D " + directory);
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    String line;
 
                     while ((line = reader.readLine()) != null) {
                         if (line.contains("nano")) {
@@ -31,18 +32,29 @@ public class FileChecker extends Thread {
 
                             // Retrieve the filename from the PID
                             fileName = getFileNameFromPid(pid);
-                            isBeingEdited = true;
 
+                            // Check if the file is already present in the files map
+                            if (files.containsKey(fileName)) {
+                                files.put(fileName, true); // Update the file status as being edited
+                            } else {
+                                files.put(fileName, false); // Add the file to the map with the status as not being edited
+                            }
                         }
                     }
                     reader.close();
-               
                 }
-            if (!isBeingEdited) {
-                System.out.println("not active");
+
+                // Check if any files are no longer being edited and update their statuses
+                for (Map.Entry<String, Boolean> entry : files.entrySet()) {
+                    String fileName = entry.getKey();
+                    boolean isBeingEdited = entry.getValue();
+
+                    if (!isBeingEdited) {
+                        files.remove(fileName);
+                    }
+                }
+                System.out.println(files);
             }
-            } 
-            
         } catch (IOException e) {
             e.printStackTrace();
         }
