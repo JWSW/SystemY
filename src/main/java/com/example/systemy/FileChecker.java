@@ -21,9 +21,10 @@ public class FileChecker extends Thread {
     @Override
     public void run() {
         try {
-            Map<String, Boolean> updatedFiles = new ConcurrentHashMap<>();
-
             while (true) {
+                // Create a temporary map to store the updated file statuses
+                Map<String, Boolean> updatedFiles = new ConcurrentHashMap<>();
+
                 for (String directory : directories) {
                     Process process = Runtime.getRuntime().exec("lsof +D " + directory);
                     BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -37,29 +38,29 @@ public class FileChecker extends Thread {
                             // Retrieve the filename from the PID
                             String fileName = getFileNameFromPid(pid);
 
-                            // Update the file status in the updatedFiles map
+                            // Update the file status in the temporary map
                             updatedFiles.put(fileName, true);
                         }
                     }
                     reader.close();
                 }
 
-                // Update the file statuses in the files map
+                // Update the file statuses in the main files map
                 for (Map.Entry<String, Boolean> entry : updatedFiles.entrySet()) {
                     String fileName = entry.getKey();
                     boolean isBeingEdited = entry.getValue();
-                    files.put(fileName, isBeingEdited);
+
+                    if (!files.containsKey(fileName)) {
+                        // Add the file to the files map with a status of false
+                        files.put(fileName, false);
+                    } else {
+                        // Update the file status in the files map
+                        files.put(fileName, isBeingEdited);
+                    }
                 }
 
                 // Remove files that are no longer being edited from the map
-                for (Iterator<Map.Entry<String, Boolean>> iterator = files.entrySet().iterator(); iterator.hasNext();) {
-                    Map.Entry<String, Boolean> entry = iterator.next();
-                    String fileName = entry.getKey();
-                    boolean isBeingEdited = entry.getValue();
-                    if (!updatedFiles.containsKey(fileName) && !isBeingEdited) {
-                        iterator.remove();
-                    }
-                }
+                files.entrySet().removeIf(entry -> !entry.getValue());
 
                 // Print the file statuses
                 System.out.println("File Statuses:");
@@ -69,9 +70,6 @@ public class FileChecker extends Thread {
                     System.out.println(fileName + ": " + (isBeingEdited ? "Being Edited" : "Not Being Edited"));
                 }
 
-                // Clear the updatedFiles map for the next iteration
-                updatedFiles.clear();
-
                 // Sleep for a certain interval before checking again
                 Thread.sleep(5000); // Adjust the interval as needed
             }
@@ -79,6 +77,8 @@ public class FileChecker extends Thread {
             e.printStackTrace();
         }
     }
+
+
 
 
 
