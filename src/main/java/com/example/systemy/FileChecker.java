@@ -20,7 +20,7 @@ public class FileChecker extends Thread {
                  BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
                  String line;
                  boolean isBeingEdited = false;
-                    if ((line = reader.readLine()) != null) {
+                    while ((line = reader.readLine()) != null) {
                         System.out.println(line);
                         // Check if the line contains the file information
                         if (line.contains("nano") || line.contains("vi") || line.contains("vim")) {
