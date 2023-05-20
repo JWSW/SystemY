@@ -35,6 +35,7 @@ public class FileChecker extends Thread {
 
                             // Check if the file is already present in the files map
                             if (files.containsKey(fileName)) {
+                                System.out.println("bevat de key");
                                 files.put(fileName, true); // Update the file status as being edited
                             } else {
                                 files.put(fileName, false); // Add the file to the map with the status as not being edited
