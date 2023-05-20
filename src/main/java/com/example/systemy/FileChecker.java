@@ -21,14 +21,18 @@ public class FileChecker extends Thread {
                  String line;
                  boolean isBeingEdited = false;
                     while ((line = reader.readLine()) != null) {
-                        // Check if the line contains the file information
-                        String[] tokens = line.split("\\s+");
-                        String pid = tokens[1];
+                        if (line.contains("nano")) {
+                            String[] tokens = line.trim().split("\\s+");
+                            String pid = tokens[1];
+                            System.out.println("PID of file being edited: " + pid);
 
-                        // Retrieve the filename from the PID
-                        String fileName = getFileNameFromPid(pid);
-                        System.out.println(line);
-                        //System.out.println("Open file: " + fileName);
+
+                            // Retrieve the filename from the PID
+                            String fileName = getFileNameFromPid(pid);
+                            System.out.println(fileName + " is being edited");
+
+                            // Implement your lock or unlock logic here based on the PID
+                        }
                     }
 
                     reader.close();
@@ -41,18 +45,15 @@ public class FileChecker extends Thread {
     }
 
     private static String getFileNameFromPid(String pid) throws IOException {
-        Process process = Runtime.getRuntime().exec("ls -l /proc/" + pid + "/fd");
+        Process process = Runtime.getRuntime().exec("ps -p " + pid + " -o cmd= | awk -F ' ' '{print $NF}' | sed 's/^.*\\///'");
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String line;
         String fileName = "";
 
         while ((line = reader.readLine()) != null) {
-            if (line.contains("->")) {
-                String[] tokens = line.split("->");
-                fileName = tokens[1].trim();
-                break;
+            fileName = line;
             }
-        }
+
 
         reader.close();
 
