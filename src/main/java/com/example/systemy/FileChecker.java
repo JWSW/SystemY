@@ -20,6 +20,8 @@ public class FileChecker extends Thread {
     public void run() {
         try {
             while (true) {
+                Map<String, Boolean> updatedFiles = new ConcurrentHashMap<>(); // Create a new map to store the updated file statuses
+
                 for (String directory : directories) {
                     Process process = Runtime.getRuntime().exec("lsof +D " + directory);
                     BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -33,29 +35,24 @@ public class FileChecker extends Thread {
                             // Retrieve the filename from the PID
                             fileName = getFileNameFromPid(pid);
 
-                            // Check if the file is already present in the files map
-                            if (files.containsKey(fileName)) {
-                                System.out.println("bevat de key");
-                                files.put(fileName, true); // Update the file status as being edited
-                            } else {
-                                files.put(fileName, false); // Add the file to the map with the status as not being edited
-                            }
-                            System.out.println("files: "+ files);
+                            // Update the file status in the updatedFiles map
+                            updatedFiles.put(fileName, true);
                         }
                     }
                     reader.close();
                 }
 
-                // Check if any files are no longer being edited and update their statuses
-                for (Map.Entry<String, Boolean> entry : files.entrySet()) {
-                    String fileName = entry.getKey();
-                    boolean isBeingEdited = entry.getValue();
-
-                    if (!isBeingEdited) {
-                        files.remove(fileName);
+                // Iterate over the existing files in the files map
+                for (String fileName : files.keySet()) {
+                    if (!updatedFiles.containsKey(fileName)) {
+                        // If the file is not present in the updatedFiles map, it is no longer being edited
+                        files.put(fileName, false);
+                    } else {
+                        // If the file is present in the updatedFiles map, update its status to being edited
+                        files.put(fileName, true);
                     }
                 }
-
+                System.out.println("files:" +files);
             }
         } catch (IOException e) {
             e.printStackTrace();
