@@ -21,6 +21,9 @@ public class FileChecker extends Thread {
     public void run() {
         try {
             while (true) {
+                // Create a temporary map to store the updated file statuses
+                Map<String, Boolean> updatedFiles = new ConcurrentHashMap<>();
+
                 for (String directory : directories) {
                     Process process = Runtime.getRuntime().exec("lsof +D " + directory);
                     BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -41,26 +44,24 @@ public class FileChecker extends Thread {
                     reader.close();
                 }
 
-                for (String fileName : files.keySet()) {
-                    if (updatedFiles.containsKey(fileName)) {
-                        // If the file is found in the updatedFiles map, it is still being edited
-                        files.put(fileName, true);
-                    } else {
-                        // If the file is not found, it is no longer being edited
-                        files.put(fileName, false);
-                    }
+                for (Map.Entry<String, Boolean> entry : updatedFiles.entrySet()) {
+                    String fileName = entry.getKey();
+                    boolean isBeingEdited = entry.getValue();
+
+                    // Update the file status in the files map
+                    files.put(fileName, isBeingEdited);
                 }
 
                 // Remove files that are no longer being edited from the map
                 files.entrySet().removeIf(entry -> !entry.getValue());
-                System.out.println("updatedfiles:"+files);
+                System.out.println("updatedfiles: " + files);
             }
-
-
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+
 
     private static String getFileNameFromPid(String pid) throws IOException {
         ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", "ps -p " + pid + " -o cmd= | awk -F ' ' '{print $NF}' | sed 's:^.*/::'");
