@@ -4,13 +4,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class FileChecker extends Thread {
     private final String[] directories;
     Map<String, Boolean> files = new ConcurrentHashMap<>();
-    Map<String, Boolean> updatedFiles = new ConcurrentHashMap<>();
+    List <String> removeList;
     private boolean isLockActive;
 
     private String fileName;
@@ -52,8 +53,11 @@ public class FileChecker extends Thread {
                 }
                 for (Map.Entry<String, Boolean> entry : files.entrySet()) {
                     String fileName = entry.getKey();
-                    if (!updatedFiles.containsKey(fileName))
+                    if (!updatedFiles.containsKey(fileName)) {
                         files.remove(fileName);
+                        removeList.add(fileName);
+                        //////////////////// NOTIFY SYNCAGENTTTTTT
+                    }
                 }
 
                 // Remove files that are no longer being edited from the map
@@ -120,5 +124,13 @@ public class FileChecker extends Thread {
 
     public Map<String, Boolean> getFileLockRequest() {
         return files;
+    }
+
+    public List<String> getRemoveList() {
+        return removeList;
+    }
+
+    public void clearRemoveList() {
+        removeList.clear();
     }
 }

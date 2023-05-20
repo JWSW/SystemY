@@ -10,6 +10,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -89,28 +90,39 @@ public class SyncAgent implements Runnable, Serializable {
 
                     // If the file is not locked on the agent's list, lock it and synchronize the lists
                     if (currentStatus != isBeingEdited) {
-                        System.out.println("LockRequest "+entry.getKey());
+                        System.out.println("LockRequest " + entry.getKey());
                         if (isBeingEdited) {
                             fileChecker.lockFile(filename);
                             if (fileChecker.isLockActive()) {
                                 agentFileList.replace(filename, true);
                                 currentNode.setFileList(agentFileList);
                             }
+
                         } else {
-                            fileChecker.unlockFile(filename);
-                            agentFileList.replace(filename, false);
-                            currentNode.setFileList(agentFileList);
+                            System.out.println(filename + " is already being edited");
                         }
-                    } else {
-                        System.out.println("Already being edited");
                     }
                 }
             }
+            if (!fileChecker.getRemoveList().isEmpty()) {
+                List<String> removeList = fileChecker.getRemoveList();
 
+                for (String filename : removeList) {
+                    // Remove the file from the files map
+                    removeList.remove(filename);
+                    // Update the agentList
+                    agentFileList.replace(filename, false);
+                    currentNode.setFileList(agentFileList);
 
-
+                    // Unlock the file
+                    fileChecker.unlockFile(filename);
+                }
+                // Clear the removeList after processing
+                fileChecker.clearRemoveList();
+            }
         }
     }
+
 
 
     private void syncWithNeighbors() throws IOException, InterruptedException {
