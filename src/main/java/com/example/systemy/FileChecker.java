@@ -23,7 +23,7 @@ public class FileChecker extends Thread {
                     while ((line = reader.readLine()) != null) {
                         System.out.println(line);
                         // Check if the line contains the file information
-                        if (line.contains("nano") || line.contains("vi") || line.contains("vim")) {
+                        if (line.contains("nano")) {
                             String[] tokens = line.split("\\s+");
                             String fileName = tokens[tokens.length - 1];
 
