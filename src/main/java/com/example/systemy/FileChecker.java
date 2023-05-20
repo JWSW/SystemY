@@ -21,29 +21,40 @@ public class FileChecker extends Thread {
                  String line;
                  boolean isBeingEdited = false;
                     while ((line = reader.readLine()) != null) {
-                        System.out.println(line);
                         // Check if the line contains the file information
-                        if (line.contains("nano")) {
-                            String[] tokens = line.split("\\s+");
-                            String fileName = tokens[tokens.length - 1];
+                        String[] tokens = line.split("\\s+");
+                        String pid = tokens[1];
 
-                            System.out.println("Open file: " + fileName);
-                            // Implement your lock or unlock logic here based on the file name
+                        // Retrieve the filename from the PID
+                        String fileName = getFileNameFromPid(pid);
 
-                            isBeingEdited = true;
-                        }
+                        System.out.println("Open file: " + fileName);
                     }
                     reader.close();
 
-                    if (isBeingEdited) {
-                        System.out.println("The file is being edited.");
-                    } else {
-                        System.out.println("The file is not being edited.");
-                    }
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static String getFileNameFromPid(String pid) throws IOException {
+        Process process = Runtime.getRuntime().exec("ls -l /proc/" + pid + "/fd");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        String line;
+        String fileName = "";
+
+        while ((line = reader.readLine()) != null) {
+            if (line.contains("->")) {
+                String[] tokens = line.split("->");
+                fileName = tokens[1].trim();
+                break;
+            }
+        }
+
+        reader.close();
+
+        return fileName;
     }
 }
