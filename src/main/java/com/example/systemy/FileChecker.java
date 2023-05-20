@@ -55,7 +55,6 @@ public class FileChecker extends Thread {
         return fileName;
     }
     public void lockFile(String filename) {
-        String fileName = filename.replaceAll("^\\.(.*)\\..*$", "$1");
         System.out.println("File Name: " + fileName);
         String filePath = "/home/Dist/SystemY/replicatedFiles/" + fileName;
         try {
@@ -69,7 +68,6 @@ public class FileChecker extends Thread {
 
     public void unlockFile(String filename) {
         // Change file permissions to read-write
-        String fileName = filename.replaceAll("^\\.(.*)\\..*$", "$1");
         System.out.println("File Name: " + fileName);
         String filePath = "/home/Dist/SystemY/replicatedFiles/" + fileName;
         try {
