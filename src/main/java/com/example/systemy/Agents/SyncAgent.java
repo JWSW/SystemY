@@ -77,35 +77,40 @@ public class SyncAgent implements Runnable, Serializable {
                     System.out.println("agentFileList=  " + agentFileList);
                 }
             }
-           // Check if there is a lock request on the current node
+            // Check if there is a lock request on the current node
             if (!fileChecker.getFileLockRequest().isEmpty()) {
                 System.out.println("LockRequest");
                 Map<String, Boolean> updatedFiles = fileChecker.getFileLockRequest();
-                String filename = updatedFiles.keySet().iterator().next();
-                System.out.println(filename);
 
-                // Get the file status from the files map
-                boolean isBeingEdited = updatedFiles.getOrDefault(filename, false);
+                for (Map.Entry<String, Boolean> entry : updatedFiles.entrySet()) {
+                    String filename = entry.getKey();
+                    boolean isBeingEdited = entry.getValue();
 
-                // If the file is not locked on the agent's list, lock it and synchronize the lists
-                if (!isBeingEdited) {
-                    fileChecker.lockFile(filename);
+                    System.out.println(filename);
 
-                    if (fileChecker.isLockActive()) {
-                        agentFileList.replace(filename, true);
-                        currentNode.setFileList(agentFileList);
+                    // Get the file status from the agent's file list
+                    boolean currentStatus = agentFileList.getOrDefault(filename, false);
+
+                    // If the file is not locked on the agent's list, lock it and synchronize the lists
+                    if (currentStatus != isBeingEdited) {
+                        if (isBeingEdited) {
+                            fileChecker.lockFile(filename);
+                            if (fileChecker.isLockActive()) {
+                                agentFileList.replace(filename, true);
+                                currentNode.setFileList(agentFileList);
+                            }
+                        } else {
+                            fileChecker.unlockFile(filename);
+                            agentFileList.replace(filename, false);
+                            currentNode.setFileList(agentFileList);
+                        }
+                    } else {
+                        System.out.println("Already being edited");
                     }
-                } else {
-                    System.out.println("Already being edited");
-                }
-
-                if (!fileChecker.isLockActive()) {
-                    // Remove the lock when it is no longer needed
-                    fileChecker.unlockFile(filename);
-                    agentFileList.replace(filename, false);
-                    currentNode.setFileList(agentFileList);
                 }
             }
+
+
 
         }
     }
