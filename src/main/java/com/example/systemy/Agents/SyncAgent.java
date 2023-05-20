@@ -74,12 +74,12 @@ public class SyncAgent implements Runnable, Serializable {
                 // If the local file list was updated, synchronize with the node's file list
                 if (updated) {
                     currentNode.setFileList(agentFileList);
-                    System.out.println("agentFileList=  "+ agentFileList);
+                    System.out.println("agentFileList=  " + agentFileList);
                 }
-
-                // Check if there is a lock request on the current node
-                if (fileChecker.getFileLockRequest() != null) {
-                    String filename = fileChecker.getFileLockRequest();
+            }
+            // Check if there is a lock request on the current node
+            if (fileChecker.getFileLockRequest() != null) {
+                String filename = fileChecker.getFileLockRequest();
                     System.out.println(filename);
                     // If the file is not locked on the agent's list, lock it and synchronize the lists
                     if (!agentFileList.get(filename)) {
@@ -97,7 +97,7 @@ public class SyncAgent implements Runnable, Serializable {
                         currentNode.setFileList(agentFileList);
                     }
                 }
-            }
+
         }
     }
 
