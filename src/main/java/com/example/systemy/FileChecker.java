@@ -3,7 +3,6 @@ package com.example.systemy;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -22,9 +21,6 @@ public class FileChecker extends Thread {
     public void run() {
         try {
             while (true) {
-                // Create a temporary map to store the updated file statuses
-                Map<String, Boolean> updatedFiles = new ConcurrentHashMap<>();
-
                 for (String directory : directories) {
                     Process process = Runtime.getRuntime().exec("lsof +D " + directory);
                     BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -45,35 +41,26 @@ public class FileChecker extends Thread {
                     reader.close();
                 }
 
-                // Remove files from the updatedFiles map that are no longer being edited
-                updatedFiles.keySet().retainAll(files.keySet());
-
-                // Iterate over the files map and check if each file is still being edited
-                for (Iterator<Map.Entry<String, Boolean>> iterator = files.entrySet().iterator(); iterator.hasNext();) {
-                    Map.Entry<String, Boolean> entry = iterator.next();
-                    String fileName = entry.getKey();
-                    boolean isBeingEdited = updatedFiles.containsKey(fileName);
-
-                    // Update the file status in the files map
-                    files.put(fileName, isBeingEdited);
-
-                    // Remove files that are no longer being edited from the map
-                    if (!isBeingEdited) {
-                        iterator.remove();
+                for (String fileName : files.keySet()) {
+                    if (updatedFiles.containsKey(fileName)) {
+                        // If the file is found in the updatedFiles map, it is still being edited
+                        files.put(fileName, true);
+                    } else {
+                        // If the file is not found, it is no longer being edited
+                        files.put(fileName, false);
                     }
-                    System.out.println(files);
                 }
 
-                System.out.println("updatedfiles: " + files);
+                // Remove files that are no longer being edited from the map
+                files.entrySet().removeIf(entry -> !entry.getValue());
+                System.out.println("updatedfiles:"+updatedFiles);
             }
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-
-
-
 
     private static String getFileNameFromPid(String pid) throws IOException {
         ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", "ps -p " + pid + " -o cmd= | awk -F ' ' '{print $NF}' | sed 's:^.*/::'");
