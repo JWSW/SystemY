@@ -39,6 +39,7 @@ public class FileChecker extends Thread {
                             } else {
                                 files.put(fileName, false); // Add the file to the map with the status as not being edited
                             }
+                            System.out.println("files: "+ files);
                         }
                     }
                     reader.close();
@@ -53,7 +54,7 @@ public class FileChecker extends Thread {
                         files.remove(fileName);
                     }
                 }
-                System.out.println(files);
+
             }
         } catch (IOException e) {
             e.printStackTrace();
