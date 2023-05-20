@@ -59,18 +59,9 @@ public class FileChecker extends Thread {
                 // Remove files that are no longer being edited from the map
                 files.entrySet().removeIf(entry -> !entry.getValue());
 
-                // Print the file statuses
-                System.out.println("File Statuses:");
-                for (Map.Entry<String, Boolean> entry : files.entrySet()) {
-                    String fileName = entry.getKey();
-                    boolean isBeingEdited = entry.getValue();
-                    System.out.println(fileName + ": " + (isBeingEdited ? "Being Edited" : "Not Being Edited"));
-                }
 
-                // Sleep for a certain interval before checking again
-                Thread.sleep(5000); // Adjust the interval as needed
             }
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -96,20 +87,18 @@ public class FileChecker extends Thread {
         return fileName;
     }
     public void lockFile(String filename) {
-        System.out.println("File Name: " + fileName);
         String filePath = "/home/Dist/SystemY/replicatedFiles/" + fileName;
         try {
             Runtime.getRuntime().exec("chmod 000 " + filePath);
             System.out.println("File " + filename + " is locked");
             setLockActive(true);
         } catch (IOException e) {
-            System.out.println("File is already being edited by another node");
+            System.out.println("Failed to lock "+filename);
         }
     }
 
     public void unlockFile(String filename) {
         // Change file permissions to read-write
-        System.out.println("File Name: " + fileName);
         String filePath = "/home/Dist/SystemY/replicatedFiles/" + fileName;
         try {
             Runtime.getRuntime().exec("chmod 666 " + filePath);

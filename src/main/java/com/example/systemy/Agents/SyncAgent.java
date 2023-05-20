@@ -1,10 +1,8 @@
 package com.example.systemy.Agents;
 
 import com.example.systemy.FileChecker;
-import com.example.systemy.FileLock;
 import com.example.systemy.Node;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.Serial;
 import java.io.Serializable;
@@ -79,20 +77,19 @@ public class SyncAgent implements Runnable, Serializable {
             }
             // Check if there is a lock request on the current node
             if (!fileChecker.getFileLockRequest().isEmpty()) {
-                System.out.println("LockRequest");
                 Map<String, Boolean> updatedFiles = fileChecker.getFileLockRequest();
 
                 for (Map.Entry<String, Boolean> entry : updatedFiles.entrySet()) {
                     String filename = entry.getKey();
-                    boolean isBeingEdited = entry.getValue();
 
-                    System.out.println(filename);
+                    boolean isBeingEdited = entry.getValue();
 
                     // Get the file status from the agent's file list
                     boolean currentStatus = agentFileList.getOrDefault(filename, false);
 
                     // If the file is not locked on the agent's list, lock it and synchronize the lists
                     if (currentStatus != isBeingEdited) {
+                        System.out.println("LockRequest "+entry.getKey());
                         if (isBeingEdited) {
                             fileChecker.lockFile(filename);
                             if (fileChecker.isLockActive()) {
