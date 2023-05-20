@@ -20,7 +20,7 @@ public class FileChecker extends Thread {
     public void run() {
         try {
             while (true) {
-                Map<String, Boolean> updatedFiles = new ConcurrentHashMap<>(); // Create a new map to store the updated file statuses
+                Map<String, Boolean> updatedFiles = new ConcurrentHashMap<>();
 
                 for (String directory : directories) {
                     Process process = Runtime.getRuntime().exec("lsof +D " + directory);
@@ -42,18 +42,21 @@ public class FileChecker extends Thread {
                     reader.close();
                 }
 
-                // Iterate over the existing files in the files map
                 for (String fileName : files.keySet()) {
-                    if (!updatedFiles.containsKey(fileName)) {
-                        // If the file is not present in the updatedFiles map, it is no longer being edited
-                        files.put(fileName, false);
-                    } else {
-                        // If the file is present in the updatedFiles map, update its status to being edited
+                    if (updatedFiles.containsKey(fileName)) {
+                        // If the file is found in the updatedFiles map, it is still being edited
                         files.put(fileName, true);
+                    } else {
+                        // If the file is not found, it is no longer being edited
+                        files.put(fileName, false);
                     }
                 }
-                System.out.println("files:" +files);
+
+                // Remove files that are no longer being edited from the map
+                files.entrySet().removeIf(entry -> !entry.getValue());
             }
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }
