@@ -8,7 +8,7 @@ import java.nio.file.*;
 
 public class WatchDirectory extends Thread {
     private WatchService watchService;
-    private FileLock fileLock;
+    //private FileLock fileLock;
     private com.example.systemy.interfaces.Observer observer;
     private Node currentNode;
 

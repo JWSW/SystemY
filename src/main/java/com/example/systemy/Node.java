@@ -52,7 +52,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
     private Map<Integer,String> fileArray = new ConcurrentHashMap<>(); //This map stores the hash of the file with its corresponding filename
     private Map<String, Map<Integer,String>> ownerMap = new ConcurrentHashMap<>(); // This map stores the filename with the corresponding locations where the file is found (the node's parameters)
     private boolean filesNotified = false;
-    private FileLock lockRequest;
+
 
 
 
@@ -756,9 +756,6 @@ public class Node implements com.example.systemy.interfaces.Observer {
         System.out.println("Ownermap: " + ownerMap);
     }
 
-    public void FileLockRequest(FileLock fileLock) {
-        this.lockRequest = fileLock;
-    }
 
 
 
