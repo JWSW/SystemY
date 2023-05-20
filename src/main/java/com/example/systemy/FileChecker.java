@@ -6,7 +6,9 @@ import java.io.InputStreamReader;
 
 public class FileChecker extends Thread {
     private final String[] directories;
+    private boolean isLockActive;
 
+    private String fileName;
     public FileChecker(String... directories) {
         this.directories = directories;
     }
@@ -19,19 +21,16 @@ public class FileChecker extends Thread {
                  Process process = Runtime.getRuntime().exec("lsof +D " + directory);
                  BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
                  String line;
-                 boolean isBeingEdited = false;
+                boolean isBeingEdited = false;
+
                     while ((line = reader.readLine()) != null) {
                         if (line.contains("nano")) {
                             String[] tokens = line.trim().split("\\s+");
                             String pid = tokens[1];
-                            System.out.println("PID of file being edited: " + pid);
 
 
                             // Retrieve the filename from the PID
-                            String fileName = getFileNameFromPid(pid);
-                            System.out.println(fileName + " is being edited");
-
-                            // Implement your lock or unlock logic here based on the PID
+                            fileName = getFileNameFromPid(pid);
                         }
                     }
 
@@ -45,8 +44,6 @@ public class FileChecker extends Thread {
     }
 
     private static String getFileNameFromPid(String pid) throws IOException {
-        System.out.println("Getting filename for PID: " + pid);
-
         ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", "ps -p " + pid + " -o cmd= | awk -F ' ' '{print $NF}' | sed 's:^.*/::'");
         Process process = processBuilder.start();
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -56,13 +53,46 @@ public class FileChecker extends Thread {
         while ((line = reader.readLine()) != null) {
             fileName = line;
         }
-
         reader.close();
-
-        System.out.println("Retrieved filename: " + fileName);
-
         return fileName;
     }
+    public boolean lockFile(String filename) {
+        String fileName = filename.replaceAll("^\\.(.*)\\..*$", "$1");
+        System.out.println("File Name: " + fileName);
+        String filePath = "/home/Dist/SystemY/replicatedFiles/" + fileName;
+        try {
+            Runtime.getRuntime().exec("chmod 000 " + filePath);
+            System.out.println("File " + filename + " is locked");
+            return true;
+        } catch (IOException e) {
+            System.out.println("File is already being edited by another node");
+            return false;
+        }
+    }
 
+    public void unlockFile(String filename) {
+        // Change file permissions to read-write
+        String fileName = filename.replaceAll("^\\.(.*)\\..*$", "$1");
+        System.out.println("File Name: " + fileName);
+        String filePath = "/home/Dist/SystemY/replicatedFiles/" + fileName;
+        try {
+            Runtime.getRuntime().exec("chmod 666 " + filePath);
+            System.out.println("File " + filename + " is unlocked");
 
+        } catch (IOException e) {
+            System.out.println("Failed to unlock " + filename);
+        }
+    }
+
+    public boolean isLockActive() {
+        return isLockActive;
+    }
+
+    public void setLockActive(boolean active) {
+        isLockActive = active;
+    }
+
+    public String getFileLockRequest() {
+        return fileName;
+    }
 }

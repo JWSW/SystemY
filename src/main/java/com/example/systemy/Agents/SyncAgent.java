@@ -41,9 +41,6 @@ public class SyncAgent implements Runnable, Serializable {
     }
 
 
-
-
-
     @Override
     public void run() {
         fileChecker.start();
@@ -80,24 +77,24 @@ public class SyncAgent implements Runnable, Serializable {
                 }
 
                 // Check if there is a lock request on the current node
-                if (currentNode.getLockRequest() != null) {
-                    FileLock lockRequest = currentNode.getLockRequest();
-                    String filename = lockRequest.getFileName();
+                if (fileChecker.getFileLockRequest() != null) {
+                    String filename = fileChecker.getFileLockRequest();
 
                     // If the file is not locked on the agent's list, lock it and synchronize the lists
                     if (!agentFileList.containsKey(filename)) {
-                        boolean locked = lockRequest.lockFile(filename);
+                        boolean locked = fileChecker.lockFile(filename);
                         System.out.println(locked);
 
                         if (locked) {
                             agentFileList.replace(filename, true);
                             currentNode.setFileList(agentFileList);
-                            lockRequest.setLockActive(true);
+                            fileChecker.setLockActive(true);
+                            System.out.println(fileName + " is being edited");
                         }
-                    } else {System.out.println("Is Locked");}
-                    if (!lockRequest.isLockActive()) {
+                    } else {System.out.println("Is already being edited");}
+                    if (!fileChecker.isLockActive()) {
                         // Remove the lock when it is no longer needed
-                        lockRequest.unlockFile(filename);
+                        fileChecker.unlockFile(filename);
                         agentFileList.remove(filename);
                         currentNode.setFileList(agentFileList);
                     }
