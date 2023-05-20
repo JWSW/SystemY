@@ -20,10 +20,9 @@ public class FileChecker extends Thread {
     @Override
     public void run() {
         try {
-            while (true) {
-                // Create a temporary map to store the updated file statuses
-                Map<String, Boolean> updatedFiles = new ConcurrentHashMap<>();
+            Map<String, Boolean> updatedFiles = new ConcurrentHashMap<>();
 
+            while (true) {
                 for (String directory : directories) {
                     Process process = Runtime.getRuntime().exec("lsof +D " + directory);
                     BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -45,8 +44,9 @@ public class FileChecker extends Thread {
                 }
 
                 // Update the file statuses in the files map
-                for (String fileName : files.keySet()) {
-                    boolean isBeingEdited = updatedFiles.containsKey(fileName);
+                for (Map.Entry<String, Boolean> entry : updatedFiles.entrySet()) {
+                    String fileName = entry.getKey();
+                    boolean isBeingEdited = entry.getValue();
                     files.put(fileName, isBeingEdited);
                 }
 
@@ -66,6 +66,7 @@ public class FileChecker extends Thread {
             e.printStackTrace();
         }
     }
+
 
 
     private static String getFileNameFromPid(String pid) throws IOException {
