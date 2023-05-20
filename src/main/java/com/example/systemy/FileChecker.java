@@ -55,6 +55,7 @@ public class FileChecker extends Thread {
                 // Remove files that are no longer being edited from the map
                 files.entrySet().removeIf(entry -> !entry.getValue());
                 System.out.println("files:"+files);
+                System.out.println("updatedfiles:"+updatedFiles);
             }
 
 
