@@ -96,7 +96,7 @@ public class SyncAgent implements Runnable, Serializable {
                         currentNode.setFileList(agentFileList);
                     }
                 } else {
-                    System.out.println("Already being edited by another node");
+                    System.out.println("Already being edited");
                 }
 
                 if (!fileChecker.isLockActive()) {
