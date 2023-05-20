@@ -89,7 +89,7 @@ public class SyncAgent implements Runnable, Serializable {
                             agentFileList.replace(filename, true);
                             currentNode.setFileList(agentFileList);
                         }
-                    }
+                    } else {System.out.println("Already being edited by another node");}
                     if (!fileChecker.isLockActive()) {
                         // Remove the lock when it is no longer needed
                         fileChecker.unlockFile(filename);
