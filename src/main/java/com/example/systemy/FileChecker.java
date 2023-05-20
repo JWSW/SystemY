@@ -21,6 +21,9 @@ public class FileChecker extends Thread {
     public void run() {
         try {
             while (true) {
+                // Create a temporary map to store the updated file statuses
+                Map<String, Boolean> updatedFiles = new ConcurrentHashMap<>();
+
                 for (String directory : directories) {
                     Process process = Runtime.getRuntime().exec("lsof +D " + directory);
                     BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -32,7 +35,7 @@ public class FileChecker extends Thread {
                             String pid = tokens[1];
 
                             // Retrieve the filename from the PID
-                            fileName = getFileNameFromPid(pid);
+                            String fileName = getFileNameFromPid(pid);
 
                             // Update the file status in the updatedFiles map
                             updatedFiles.put(fileName, true);
@@ -41,26 +44,29 @@ public class FileChecker extends Thread {
                     reader.close();
                 }
 
+                // Update the file statuses in the files map
                 for (String fileName : files.keySet()) {
-                    if (updatedFiles.containsKey(fileName)) {
-                        // If the file is found in the updatedFiles map, it is still being edited
-                        files.put(fileName, true);
-                    } else {
-                        // If the file is not found, it is no longer being edited
-                        files.put(fileName, false);
-                    }
+                    boolean isBeingEdited = updatedFiles.containsKey(fileName);
+                    files.put(fileName, isBeingEdited);
                 }
 
                 // Remove files that are no longer being edited from the map
                 files.entrySet().removeIf(entry -> !entry.getValue());
-                System.out.println("updatedfiles:"+updatedFiles);
+
+                // Print the file statuses
+                System.out.println("File Statuses:");
+                for (Map.Entry<String, Boolean> entry : files.entrySet()) {
+                    String fileName = entry.getKey();
+                    boolean isBeingEdited = entry.getValue();
+                    System.out.println(fileName + ": " + (isBeingEdited ? "Being Edited" : "Not Being Edited"));
+                }
+
             }
-
-
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 
     private static String getFileNameFromPid(String pid) throws IOException {
         ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", "ps -p " + pid + " -o cmd= | awk -F ' ' '{print $NF}' | sed 's:^.*/::'");
