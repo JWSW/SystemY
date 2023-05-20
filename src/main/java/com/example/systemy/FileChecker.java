@@ -130,6 +130,6 @@ public class FileChecker extends Thread {
     }
 
     public Map<String, Boolean> getFileLockRequest() {
-        return updatedFiles;
+        return files;
     }
 }
