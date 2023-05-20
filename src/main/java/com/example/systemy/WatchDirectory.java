@@ -69,7 +69,7 @@ public class WatchDirectory extends Thread {
                         }
                     }
                 }
-                if (event.kind() == StandardWatchEventKinds.ENTRY_MODIFY) {
+               /* if (event.kind() == StandardWatchEventKinds.ENTRY_MODIFY) {
                     Path modifiedFile = (Path) event.context();
                     //System.out.println(modifiedFile);
                     String fileName = modifiedFile.getFileName().toString();
@@ -79,7 +79,7 @@ public class WatchDirectory extends Thread {
                         FileLock fileLock = new FileLock(fileName);
                         currentNode.FileLockRequest(fileLock);
                     }
-                }
+                }*/
             }
 
             // Reset the key for the next set of events

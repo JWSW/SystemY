@@ -56,6 +56,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
 
 
 
+
     TimerCallback callback = new TimerCallback() {
         @Override
         public void onTimerFinished(String position) throws JsonProcessingException {
@@ -119,6 +120,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
         receiverThreadHeartbeatPrevious.start();
         receiverThreadHeartbeatNext.start();
         receiverThread.start();
+
 
         String message = nodeName + "," + ipAddress;
         System.out.println("Send multicast message.");

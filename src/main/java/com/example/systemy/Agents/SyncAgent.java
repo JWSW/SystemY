@@ -1,8 +1,10 @@
 package com.example.systemy.Agents;
 
+import com.example.systemy.FileChecker;
 import com.example.systemy.FileLock;
 import com.example.systemy.Node;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Serial;
 import java.io.Serializable;
@@ -20,11 +22,14 @@ public class SyncAgent implements Runnable, Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
-    private static final long SYNC_INTERVAL = 10; // in seconds
-    private static final long LOCK_WAIT_TIME = 2; // in seconds
+    private static final long SYNC_INTERVAL = 5; // in seconds
+
     private final Map<String, Boolean> agentFileList;
     Map<String, Map<Integer, String>> ownerMap = new ConcurrentHashMap<>();
     boolean updated;
+    private final FileChecker fileChecker;
+    String directory1 = "/home/Dist/SystemY/replicatedFiles/";
+    String directory2 = "/home/Dist/SystemY/nodeFiles/";
     private final Node currentNode;
 
     public SyncAgent(Node currentNode) {
@@ -32,11 +37,16 @@ public class SyncAgent implements Runnable, Serializable {
         agentFileList =  new ConcurrentHashMap<>();
         ownerMap = currentNode.getOwnerMap();
         updated = false;
+        fileChecker = new FileChecker(directory1, directory2);
     }
+
+
+
 
 
     @Override
     public void run() {
+        fileChecker.start();
         // Periodically synchronize with neighboring nodes
         while (true) {
             try {

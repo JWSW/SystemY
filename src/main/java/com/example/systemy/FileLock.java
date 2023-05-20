@@ -30,18 +30,14 @@ public class FileLock implements Serializable {
 
     public boolean lockFile(String filename) {
         String fileName = filename.replaceAll("^\\.(.*)\\..*$", "$1");
-        System.out.println("File Name: " +fileName);
-        Path filePath = Paths.get("/home/Dist/SystemY/replicatedFiles/"+fileName);
-        Set<PosixFilePermission> permissions = new HashSet<>();
-        permissions.add(PosixFilePermission.OWNER_READ);
-        permissions.add(PosixFilePermission.GROUP_READ);
-        permissions.add(PosixFilePermission.OTHERS_READ);
+        System.out.println("File Name: " + fileName);
+        String filePath = "/home/Dist/SystemY/replicatedFiles/" + fileName;
         try {
-            Files.setPosixFilePermissions(filePath, permissions);
-            System.out.println("File 'filename' locked");
+            Runtime.getRuntime().exec("chmod 000 " + filePath);
+            System.out.println("File " + filename + " is locked");
             return true;
         } catch (IOException e) {
-            System.out.println("File is already being edited by other node");
+            System.out.println("File is already being edited by another node");
             return false;
         }
     }
@@ -49,15 +45,17 @@ public class FileLock implements Serializable {
     public void unlockFile(String filename) {
         // Change file permissions to read-write
         String fileName = filename.replaceAll("^\\.(.*)\\..*$", "$1");
-        System.out.println("File Name: " +fileName);
-        Path filePath = Paths.get("/home/Dist/SystemY/replicatedFiles/"+fileName);
-        Set<PosixFilePermission> permissions = PosixFilePermissions.fromString("rw-rw-rw-");
+        System.out.println("File Name: " + fileName);
+        String filePath = "/home/Dist/SystemY/replicatedFiles/" + fileName;
         try {
-            Files.setPosixFilePermissions(filePath, permissions);
+            Runtime.getRuntime().exec("chmod 666 " + filePath);
+            System.out.println("File " + filename + " is unlocked");
+
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Failed to unlock " + filename);
         }
     }
+
     public boolean isLockActive() {
         return isLockActive;
     }
