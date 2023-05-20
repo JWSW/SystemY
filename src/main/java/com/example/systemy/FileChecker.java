@@ -23,13 +23,8 @@ public class FileChecker extends Thread {
                 while ((line = reader.readLine()) != null) {
                     // Check if the line contains the file information
                     if (line.contains("nano") || line.contains("vi") || line.contains("vim")) {
-                        String[] tokens = line.split("\\s+");
-                        String fileName = tokens[tokens.length - 1];
-
-                        System.out.println("Open file: " + fileName);
-                        // Implement your lock or unlock logic here based on the file name
-
                         isBeingEdited = true;
+                        break; // Exit the loop once the file is found being edited
                     }
                 }
                 reader.close();
