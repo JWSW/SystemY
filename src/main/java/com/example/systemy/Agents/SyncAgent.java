@@ -105,14 +105,14 @@ public class SyncAgent implements Runnable, Serializable {
         for (String neighbor : currentNode.getNeighbors()) {
             if (!neighbor.isEmpty()) {
                 String baseURL = "http://"+neighbor+":8081/requestNode";
-                System.out.println("Sync request");
+                //System.out.println("Sync request");
                 HttpRequest request1 = HttpRequest.newBuilder()
                         .uri(URI.create(baseURL + "/syncWithNeighbor"))
                         .GET()
                         .build();
                 HttpResponse<String> response = HttpClient.newHttpClient().send(request1, HttpResponse.BodyHandlers.ofString());
                 String jsonMap = response.body();
-                System.out.println("Sync response: " + jsonMap);
+                //System.out.println("Sync response: " + jsonMap);
 
                 // Parse the JSON string and convert it into a Map object
                 ObjectMapper objectMapper = new ObjectMapper();
