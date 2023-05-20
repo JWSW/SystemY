@@ -3,6 +3,7 @@ package com.example.systemy;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -44,22 +45,33 @@ public class FileChecker extends Thread {
                     reader.close();
                 }
 
-                for (Map.Entry<String, Boolean> entry : updatedFiles.entrySet()) {
+                // Remove files from the updatedFiles map that are no longer being edited
+                updatedFiles.keySet().retainAll(files.keySet());
+
+                // Iterate over the files map and check if each file is still being edited
+                for (Iterator<Map.Entry<String, Boolean>> iterator = files.entrySet().iterator(); iterator.hasNext();) {
+                    Map.Entry<String, Boolean> entry = iterator.next();
                     String fileName = entry.getKey();
-                    boolean isBeingEdited = entry.getValue();
+                    boolean isBeingEdited = updatedFiles.containsKey(fileName);
 
                     // Update the file status in the files map
                     files.put(fileName, isBeingEdited);
+
+                    // Remove files that are no longer being edited from the map
+                    if (!isBeingEdited) {
+                        iterator.remove();
+                    }
+                    System.out.println(files);
                 }
 
-                // Remove files that are no longer being edited from the map
-                files.entrySet().removeIf(entry -> !entry.getValue());
                 System.out.println("updatedfiles: " + files);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+}
 
 
 
