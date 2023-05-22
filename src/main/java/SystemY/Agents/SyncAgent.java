@@ -30,7 +30,7 @@ public class SyncAgent implements Runnable, Serializable {
     private final FileChecker fileChecker;
     String directory1 = "/home/Dist/SystemY/replicatedFiles/";
     String directory2 = "/home/Dist/SystemY/nodeFiles/";
-    private final Node currentNode;
+    public final Node currentNode;
 
     public SyncAgent(Node currentNode) {
         this.currentNode = currentNode;

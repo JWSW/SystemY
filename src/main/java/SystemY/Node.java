@@ -444,8 +444,8 @@ public class Node implements Observer {
             unicast("Previous," + nextID + "," + nextIP + "," + previousID, previousIP, uniPort); // Send next node parameters to previous node
             for(String filename : ownerMap.keySet()){
                 if(fileArray.containsValue(filename)) {
-                    System.out.println(fileArray);
-                    System.out.println(filename);
+                    //System.out.println(fileArray);
+                    //System.out.println(filename);
                     sendFile(previousID + "," + previousIP, filename, true);
                 }else{
                     sendFile(previousID + "," + previousIP, filename, false);

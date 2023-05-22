@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class Services implements MulticastObserver {
-    private Node node;
+    public Node node;
 
     @Autowired
     MulticastReceiver multicastReceiver;
