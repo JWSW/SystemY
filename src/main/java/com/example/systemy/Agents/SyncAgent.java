@@ -101,9 +101,9 @@ public class SyncAgent implements Runnable, Serializable {
                                 currentNode.setFileList(agentFileList);
                             }
 
-                        } else {
-                            System.out.println(filename + " is already being edited");
                         }
+                        } else {
+                        System.out.println(filename + " is already being edited");
                     }
                 }
             }
