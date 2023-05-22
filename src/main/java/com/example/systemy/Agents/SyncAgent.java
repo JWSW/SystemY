@@ -26,7 +26,6 @@ public class SyncAgent implements Runnable, Serializable {
     private static final long SYNC_INTERVAL = 5; // in seconds
 
     private final Map<String, Boolean> agentFileList;
-    List<String> removeList = new ArrayList<>();
     Map<String, Map<Integer, String>> ownerMap = new ConcurrentHashMap<>();
     boolean updated;
     private final FileChecker fileChecker;

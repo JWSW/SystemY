@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import com.example.systemy.Agents.FailureAgent;
 import com.example.systemy.interfaces.Observer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -53,6 +54,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
     private Map<Integer,String> fileArray = new ConcurrentHashMap<>(); //This map stores the hash of the file with its corresponding filename
     private Map<String, Map<Integer,String>> ownerMap = new ConcurrentHashMap<>(); // This map stores the filename with the corresponding locations where the file is found (the node's parameters)
     private boolean filesNotified = false;
+    private FailureAgent failureAgent;
 
 
 
@@ -63,6 +65,14 @@ public class Node implements com.example.systemy.interfaces.Observer {
         public void onTimerFinished(String position) throws JsonProcessingException {
             System.out.println(position + " node offline.");
             Nodefailure(position);
+            if (position.equals("Previous")) {
+                failureAgent = new FailureAgent(previousID,currentID);
+            } else {
+                failureAgent = new FailureAgent(nextID,currentID);
+            }
+            Thread FailureAgent1 = new Thread(failureAgent);
+            FailureAgent1.start();
+
         }
     };
 
@@ -911,6 +921,8 @@ public class Node implements com.example.systemy.interfaces.Observer {
     }
 
 
-
+    public int getCurrentID() {
+        return currentID;
+    }
 }
 
