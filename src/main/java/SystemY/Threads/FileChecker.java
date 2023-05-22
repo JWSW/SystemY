@@ -86,7 +86,7 @@ public class FileChecker extends Thread {
 
         while ((line = reader.readLine()) != null) {
             fileName = line;
-            System.out.println(fileName);
+            //System.out.println(fileName);
         }
         reader.close();
         return fileName;

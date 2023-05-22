@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class FailureAgent implements Runnable, Serializable {
     private int failingID;
     private int currentID;
-    private Node currentNode;
+    private Node node;
     private String baseURL = "http://172.27.0.5:8080/requestName";
 
     public FailureAgent(int failingID, int currentID) {
@@ -27,7 +27,7 @@ public class FailureAgent implements Runnable, Serializable {
     @Override
     public void run() {
         // Read the file list of the current node
-        Map<String, Map<Integer, String>> fileList = currentNode.getOwnerMap(); //moet agentlist zijn
+        /*Map<String, Map<Integer, String>> fileList = currentNode.getOwnerMap(); //moet agentlist zijn
 
         // Check if the failing node is the owner of any files
         for (String filename: fileList.keySet()) {
@@ -45,7 +45,7 @@ public class FailureAgent implements Runnable, Serializable {
 
             }*/
 
-        }
+
 
         // Pass the Failure Agent to the next node in the ring topology
         passFailureAgentToNextNode();
@@ -68,7 +68,7 @@ public class FailureAgent implements Runnable, Serializable {
                 .GET()
                 .build();
         try {
-            System.out.println("Sending request to get owner node of " + filename + " with hash: " + currentNode.getHash(filename));
+            //System.out.println("Sending request to get owner node of " + filename + " with hash: " + currentNode.getHash(filename));
             HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
             System.out.println("Response: " + response.body());
 
