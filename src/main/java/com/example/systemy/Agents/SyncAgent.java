@@ -114,7 +114,9 @@ public class SyncAgent implements Runnable, Serializable {
                 Iterator<String> iterator = removeList.iterator();
 
                 while (iterator.hasNext()) {
+
                     String filename = iterator.next();
+                    if (!agentFileList.getOrDefault(filename, false)) {
                     // Remove the file from the files map
                     iterator.remove();
                     // Update the agentList
@@ -127,7 +129,7 @@ public class SyncAgent implements Runnable, Serializable {
                 }
                 // Clear the removeList after processing
                 fileChecker.clearRemoveList();
-            }
+            } }
             for (Map.Entry<String, Boolean> entry : agentFileList.entrySet()) {
                 String filename = entry.getKey();
                 boolean isBeingEdited = entry.getValue();
