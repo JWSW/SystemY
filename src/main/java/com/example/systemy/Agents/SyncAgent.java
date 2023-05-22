@@ -11,6 +11,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -109,10 +110,12 @@ public class SyncAgent implements Runnable, Serializable {
 
             if (!fileChecker.getRemoveList().isEmpty()) {
                 List<String> removeList = fileChecker.getRemoveList();
+                Iterator<String> iterator = removeList.iterator();
 
-                for (String filename : removeList) {
+                while (iterator.hasNext()) {
+                    String filename = iterator.next();
                     // Remove the file from the files map
-                    removeList.remove(filename);
+                    iterator.remove();
                     // Update the agentList
                     agentFileList.replace(filename, false);
                     currentNode.setFileList(agentFileList);
@@ -128,7 +131,8 @@ public class SyncAgent implements Runnable, Serializable {
 
 
 
-    private void syncWithNeighbors() throws IOException, InterruptedException {
+
+            private void syncWithNeighbors() throws IOException, InterruptedException {
         for (String neighbor : currentNode.getNeighbors()) {
             if (!neighbor.isEmpty()) {
                 String baseURL = "http://"+neighbor+":8081/requestNode";
