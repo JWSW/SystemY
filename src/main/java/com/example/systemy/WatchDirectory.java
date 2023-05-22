@@ -8,7 +8,7 @@ import java.nio.file.*;
 
 public class WatchDirectory extends Thread {
     private WatchService watchService;
-    private FileLock fileLock;
+    //private FileLock fileLock;
     private com.example.systemy.interfaces.Observer observer;
     private Node currentNode;
 
@@ -67,17 +67,6 @@ public class WatchDirectory extends Thread {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                    }
-                }
-                if (event.kind() == StandardWatchEventKinds.ENTRY_MODIFY) {
-                    Path modifiedFile = (Path) event.context();
-                    //System.out.println(modifiedFile);
-                    String fileName = modifiedFile.getFileName().toString();
-                    //System.out.println(fileName);
-                    if (fileName.endsWith(".swp")) {
-                        System.out.println("FilelockRequest");
-                        FileLock fileLock = new FileLock(fileName);
-                        currentNode.FileLockRequest(fileLock);
                     }
                 }
             }
