@@ -91,17 +91,12 @@ public class Services implements MulticastObserver{
         boolean Hoogste = false;
         String nodeData = "";
         Set<Integer> hashSet = nodeMap.keySet();
-        System.out.println("De map: " + nodeMap);
-        System.out.println("De fileHash: " + fileHash);
         for(Integer nodeHash : hashSet) {
-            System.out.println("De lijst wordt doorlopen: " + nodeHash);
             if (nodeHash < kleinste) {
                 kleinste = nodeHash;
-                System.out.println("Nieuwe kleinste: " + kleinste);
             }
             if (nodeHash > grootste) {
                 grootste = nodeHash;
-                System.out.println("Nieuwe grootste: " + grootste);
             }
         }
         for(Integer nodeHash : hashSet){
@@ -110,12 +105,10 @@ public class Services implements MulticastObserver{
                     Hoogste = false;
                     if (fileHash > nodeHash) {
                         if (nodeHash > kleinerDanFile) {
-                            System.out.println("Ja groter dan kleinere: " + nodeHash);
                             kleinerDanFile = nodeHash;
                         }
                     }else if(fileHash<nodeHash){
                         if(nodeHash<groterDanFile){
-                            System.out.println("Ja kleiner dan grotere: " + nodeHash);
                             groterDanFile = nodeHash;
                         }
                     }
