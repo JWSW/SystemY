@@ -10,6 +10,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,6 +25,7 @@ public class SyncAgent implements Runnable, Serializable {
     private static final long SYNC_INTERVAL = 5; // in seconds
 
     private final Map<String, Boolean> agentFileList;
+    List<String> removeList = new ArrayList<>();
     Map<String, Map<Integer, String>> ownerMap = new ConcurrentHashMap<>();
     boolean updated;
     private final FileChecker fileChecker;
