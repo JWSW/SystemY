@@ -96,6 +96,7 @@ public class SyncAgent implements Runnable, Serializable {
                         System.out.println("LockRequest " + entry.getKey());
                         if (isBeingEdited) {
                             fileChecker.lockFile(filename);
+                            System.out.println("File " + filename + " is locked");
                             if (fileChecker.isLockActive()) {
                                 agentFileList.replace(filename, true);
                                 currentNode.setFileList(agentFileList);
@@ -122,6 +123,7 @@ public class SyncAgent implements Runnable, Serializable {
 
                     // Unlock the file
                     fileChecker.unlockFile(filename);
+                    System.out.println("File " + filename + " is unlocked");
                 }
                 // Clear the removeList after processing
                 fileChecker.clearRemoveList();

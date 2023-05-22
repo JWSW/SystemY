@@ -94,7 +94,6 @@ public class FileChecker extends Thread {
         String filePath = "/home/Dist/SystemY/replicatedFiles/" + fileName;
         try {
             Runtime.getRuntime().exec("chmod 000 " + filePath);
-            System.out.println("File " + filename + " is locked");
             setLockActive(true);
         } catch (IOException e) {
             System.out.println("Failed to lock "+filename);
@@ -106,7 +105,6 @@ public class FileChecker extends Thread {
         String filePath = "/home/Dist/SystemY/replicatedFiles/" + fileName;
         try {
             Runtime.getRuntime().exec("chmod 666 " + filePath);
-            System.out.println("File " + filename + " is unlocked");
             setLockActive(true);
 
         } catch (IOException e) {
