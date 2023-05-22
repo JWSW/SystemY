@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import com.example.systemy.interfaces.Observer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.json.JSONException;
@@ -265,6 +266,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
             System.out.println(directory);
         }
         String jsonData="";
+
         try {
             // Read the file content
             File file = new File(directory + filename);
@@ -274,7 +276,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
             fileInputStream.close();
 
             // Encode the file content as Base64
-            String base64Content = Base64.getEncoder().encodeToString(fileContent); //Deze doet niks
+            String base64Content = Base64.getEncoder().encodeToString(fileContent);
 
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("fileData", base64Content);
@@ -282,7 +284,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
             // Convert the JSON object to a string
             jsonData = jsonObject.toString();
         }catch (IOException | JSONException e) {
-        e.printStackTrace();
+            e.printStackTrace();
         }
         try {
             HttpRequest request2 = HttpRequest.newBuilder()
@@ -298,10 +300,41 @@ public class Node implements com.example.systemy.interfaces.Observer {
             }else {
                 System.out.println("Response: " + response2.body());
             }
-
         }catch (IOException | InterruptedException e) {
             System.out.println("Error sending file: " + e.getMessage());
             e.printStackTrace();
+        }
+
+        if(ownerMap.containsKey(filename)) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            String jsonMap = objectMapper.writeValueAsString(ownerMap.get(filename));
+            try {
+                HttpRequest request2 = HttpRequest.newBuilder()
+                        .uri(URI.create("http://" + nodeIP + ":8081/requestNode" + "/" + filename + "/sendFileLocations"))
+                        .header("Content-Type", "application/json")
+                        .POST(HttpRequest.BodyPublishers.ofString(jsonMap))
+                        .build();
+                System.out.println("Sending POST request to owner of file with all file locations: " + jsonMap);
+                System.out.println(request2);
+                HttpResponse<String> response2 = HttpClient.newHttpClient().send(request2, HttpResponse.BodyHandlers.ofString());
+                if (response2.body().isEmpty()) {
+                    System.out.println("Map is sent succesfully.");
+                } else {
+                    System.out.println("Response: " + response2.body());
+                }
+            } catch (IOException | InterruptedException e) {
+                System.out.println("Error sending Map: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void setFileLocations(String filename, ConcurrentHashMap<Integer, String> locationsMap){
+        if(ownerMap.containsKey(filename)){
+            for(Integer nodeID : locationsMap.keySet()) {
+                ownerMap.get(filename).put(nodeID, locationsMap.get(nodeID));
+            }
+            System.out.println("Ownermap new locations added: " + filename + " with " + locationsMap);
         }
     }
 

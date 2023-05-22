@@ -11,11 +11,11 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.util.Base64;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class Services implements MulticastObserver {
     private Node node;
-
 
     @Autowired
     MulticastReceiver multicastReceiver;
@@ -52,6 +52,9 @@ public class Services implements MulticastObserver {
         }
     }
 
+    public void setFileNeighbors(String filename, ConcurrentHashMap<Integer,String> fileNodeLocationsMap){
+        node.
+    }
 
     @Override
     public void onMessageReceived(String message) throws IOException {
