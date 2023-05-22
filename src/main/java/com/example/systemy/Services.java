@@ -53,8 +53,8 @@ public class Services implements MulticastObserver {
         }
     }
 
-    public void setFileNeighbors(String filename, ConcurrentHashMap<Integer,String> fileNodeLocationsMap){
-        node.setFileLocations(filename,fileNodeLocationsMap);
+    public void setFileNeighbors(String filename, Integer nodeID, ConcurrentHashMap<Integer,String> fileNodeLocationsMap){
+        node.setFileLocations(filename, nodeID,fileNodeLocationsMap);
     }
 
     @Override

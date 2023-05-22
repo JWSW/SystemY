@@ -34,13 +34,13 @@ public class Controller {
         services.setNewFile(filename, base64Content, Integer.parseInt(nodeID), nodeIP);
     }
 
-    @PostMapping("/{filename}/sendFileLocations")
-    public void sendNewFile (@PathVariable String filename, @RequestBody String jsonData){
+    @PostMapping("/{filename}/{nodeID}/sendFileLocations")
+    public void sendNewFile (@PathVariable String filename,@PathVariable String nodeID, @RequestBody String jsonData){
         String base64Content="";
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             ConcurrentHashMap<Integer, String> fileNodeLocations = objectMapper.readValue(jsonData, new TypeReference<ConcurrentHashMap<Integer, String>>() {});
-            services.setFileNeighbors(filename,fileNodeLocations);
+            services.setFileNeighbors(filename, Integer.valueOf(nodeID),fileNodeLocations);
         }catch (JsonMappingException e) {
             System.out.println("Error receiving file: " + e.getMessage());
         } catch (JsonProcessingException e) {

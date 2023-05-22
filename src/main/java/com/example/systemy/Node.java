@@ -312,7 +312,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
             String jsonMap = objectMapper.writeValueAsString(ownerMap.get(filename));
             try {
                 HttpRequest request2 = HttpRequest.newBuilder()
-                        .uri(URI.create("http://" + nodeIP + ":8081/requestNode" + "/" + filename + "/sendFileLocations"))
+                        .uri(URI.create("http://" + nodeIP + ":8081/requestNode" + "/" + filename + "/" + currentID + "/sendFileLocations"))
                         .header("Content-Type", "application/json")
                         .POST(HttpRequest.BodyPublishers.ofString(jsonMap))
                         .build();
@@ -331,12 +331,14 @@ public class Node implements com.example.systemy.interfaces.Observer {
         }
     }
 
-    public void setFileLocations(String filename, ConcurrentHashMap<Integer, String> locationsMap){
+    public void setFileLocations(String filename, Integer nodeID, ConcurrentHashMap<Integer, String> locationsMap){
         if(ownerMap.containsKey(filename)){
-            for(Integer nodeID : locationsMap.keySet()) {
-                ownerMap.get(filename).put(nodeID, locationsMap.get(nodeID));
+            for(Integer id : locationsMap.keySet()) {
+                if(nodeID!=id) {
+                    ownerMap.get(filename).put(id, locationsMap.get(id));
+                }
             }
-            System.out.println("Ownermap new locations added: " + filename + " with " + locationsMap);
+            System.out.println("Ownermap new locations (if there were more than node that shut down): " + filename + " with " + ownerMap.get(filename));
         }
     }
 
