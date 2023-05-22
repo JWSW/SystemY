@@ -255,8 +255,6 @@ public class Node implements Observer {
             }
         }else{
             System.out.println("Node self is owner of " + filename);
-            File file = new File(filename);
-            //fileMap.put(fileArray.get(hash), file);
             tempMap.put(currentID,ipAddress);
             ownerMap.put(filename,tempMap);
         }
@@ -316,6 +314,7 @@ public class Node implements Observer {
             e.printStackTrace();
         }
 
+        /* Here we send the locations where the file is stored to the new owner*/
         if(ownerMap.containsKey(filename)) {
             ObjectMapper objectMapper = new ObjectMapper();
             String jsonMap = objectMapper.writeValueAsString(ownerMap.get(filename));

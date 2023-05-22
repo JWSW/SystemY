@@ -48,7 +48,7 @@ public class Services implements MulticastObserver {
             fileOutputStream.close();
 
             System.out.println("File saved successfully.");
-            node.setOwnerFile(filename, nodeID,nodeIP);
+//            node.setOwnerFile(filename, nodeID,nodeIP);
         }catch (IOException e) {
             System.out.println("Error receiving file: " + e.getMessage());
         }
