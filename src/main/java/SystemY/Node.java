@@ -347,6 +347,7 @@ public class Node implements Observer {
                 }else{
                     if(ownerMap.get(filename).containsKey(nodeID)){
                         ownerMap.get(filename).remove(nodeID);
+                        System.out.println("Previous nodID is removed from file locations.");
                     }
                 }
             }
@@ -921,9 +922,5 @@ public class Node implements Observer {
             }
         }
     }
-
-
-
-
 }
 
