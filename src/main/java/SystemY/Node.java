@@ -342,7 +342,7 @@ public class Node implements Observer {
     public void setFileLocations(String filename, Integer nodeID, ConcurrentHashMap<Integer, String> locationsMap){
         if(ownerMap.containsKey(filename)){
             for(Integer id : locationsMap.keySet()) {
-                if(nodeID!=id) {
+                if(!Objects.equals(nodeID, id)) {
                     System.out.println("New file location: " + id);
                     System.out.println("The nodeID: " + nodeID);
                     ownerMap.get(filename).put(id, locationsMap.get(id));
