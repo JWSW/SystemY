@@ -1,4 +1,4 @@
-package com.example.systemy.interfaces;
+package SystemY.interfaces;
 
 import java.io.IOException;
 

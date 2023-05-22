@@ -1,4 +1,4 @@
-package com.example.systemy.Threads;
+package SystemY.Threads;
 
 import java.io.IOException;
 import java.net.*;

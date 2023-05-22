@@ -1,8 +1,8 @@
-package com.example.systemy;
+package SystemY;
 
-import com.example.systemy.Agents.SyncAgent;
-import com.example.systemy.Threads.MulticastReceiver;
-import com.example.systemy.interfaces.MulticastObserver;
+import SystemY.Threads.MulticastReceiver;
+import SystemY.interfaces.MulticastObserver;
+import SystemY.Agents.SyncAgent;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Autowired;

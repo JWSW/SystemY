@@ -1,4 +1,4 @@
-package com.example.systemy;
+package SystemY;
 
 import java.io.*;
 import java.net.*;
@@ -9,9 +9,10 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.example.systemy.Agents.FailureAgent;
-import com.example.systemy.Threads.HeartbeatSender;
-import com.example.systemy.Threads.WatchDirectory;
+import SystemY.interfaces.Observer;
+import SystemY.Agents.FailureAgent;
+import SystemY.Threads.HeartbeatSender;
+import SystemY.Threads.WatchDirectory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
@@ -22,7 +23,7 @@ import org.json.JSONObject;
 
 @Data
 @AllArgsConstructor
-public class Node implements com.example.systemy.interfaces.Observer {
+public class Node implements Observer {
 
     private String nodeName;
     private String ipAddress;
@@ -878,9 +879,9 @@ public class Node implements com.example.systemy.interfaces.Observer {
             }
         }
 
-        private com.example.systemy.interfaces.Observer observer;
+        private Observer observer;
 
-        public void setObserver(com.example.systemy.interfaces.Observer observer) {
+        public void setObserver(Observer observer) {
             this.observer = observer;
         }
 

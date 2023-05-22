@@ -1,7 +1,7 @@
-package com.example.systemy.Agents;
+package SystemY.Agents;
 
-import com.example.systemy.Threads.FileChecker;
-import com.example.systemy.Node;
+import SystemY.Node;
+import SystemY.Threads.FileChecker;
 
 import java.io.IOException;
 import java.io.Serial;
