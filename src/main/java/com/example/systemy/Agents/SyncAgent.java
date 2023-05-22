@@ -126,6 +126,19 @@ public class SyncAgent implements Runnable, Serializable {
                 // Clear the removeList after processing
                 fileChecker.clearRemoveList();
             }
+            for (Map.Entry<String, Boolean> entry : agentFileList.entrySet()) {
+                String filename = entry.getKey();
+                boolean isBeingEdited = entry.getValue();
+
+                if (isBeingEdited) {
+                    // Lock the file if it's being edited
+                    fileChecker.lockFile(filename);
+                } else {
+                    // Unlock the file if it's not being edited
+                    fileChecker.unlockFile(filename);
+                }
+            }
+        }
         }
     }
 
