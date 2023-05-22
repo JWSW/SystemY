@@ -50,13 +50,13 @@ public class FileChecker extends Thread {
                 for (Map.Entry<String, Boolean> entry : updatedFiles.entrySet()) {
                     String fileName = entry.getKey();
                         files.put(fileName, true);
-                        System.out.println(files);
                 }
                 for (Map.Entry<String, Boolean> entry : files.entrySet()) {
                     String fileName = entry.getKey();
                     if (!updatedFiles.containsKey(fileName)) {
                         files.remove(fileName);
                         removeList.add(fileName);
+
                         //////////////////// NOTIFY SYNCAGENTTTTTT
                     }
                 }

@@ -104,6 +104,7 @@ public class SyncAgent implements Runnable, Serializable {
                     }
                 }
             }
+            /*
             if (!fileChecker.getRemoveList().isEmpty()) {
                 List<String> removeList = fileChecker.getRemoveList();
 
@@ -119,7 +120,7 @@ public class SyncAgent implements Runnable, Serializable {
                 }
                 // Clear the removeList after processing
                 fileChecker.clearRemoveList();
-            }
+            }*/
         }
     }
 
