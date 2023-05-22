@@ -111,28 +111,24 @@ public class SyncAgent implements Runnable, Serializable {
 
             if (!fileChecker.getRemoveList().isEmpty()) {
                 List<String> removeList = fileChecker.getRemoveList();
-                List<String> filesToRemove = new ArrayList<>();
+                Iterator<String> iterator = removeList.iterator();
 
-                // Collect the filenames that need to be removed
-                for (String filename : removeList) {
-                    if (!agentFileList.getOrDefault(filename, false)) {
-                        filesToRemove.add(filename);
-                    }
-                }
+                while (iterator.hasNext()) {
 
-                // Remove the files, update agentList, unlock the files, and clear removeList after processing
-                for (String filename : filesToRemove) {
-                    removeList.remove(filename);
+                    String filename = iterator.next();
+                    // Remove the file from the files map
+                    iterator.remove();
+                    // Update the agentList
                     agentFileList.replace(filename, false);
                     currentNode.setFileList(agentFileList);
+
+                    // Unlock the file
                     fileChecker.unlockFile(filename);
                     System.out.println("File " + filename + " is unlocked");
                 }
-
                 // Clear the removeList after processing
                 fileChecker.clearRemoveList();
             }
-            //keep checking agentfileList to lock/unlock the files
             for (Map.Entry<String, Boolean> entry : agentFileList.entrySet()) {
                 String filename = entry.getKey();
                 boolean isBeingEdited = entry.getValue();
