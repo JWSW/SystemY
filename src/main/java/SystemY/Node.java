@@ -640,12 +640,12 @@ public class Node implements Observer {
             if (!nextTimerStopped) {
                 nextTimerStopped = true;
                 countdownTimerNext.stop();
-                System.out.println("next timer stopped");
+                //System.out.println("next timer stopped");
             }
             if (!previousTimerStopped) {
                 previousTimerStopped = true;
                 countdownTimerPrevious.stop();
-                System.out.println("previous timer stopped");
+                //System.out.println("previous timer stopped");
             }
         }else if(Integer.parseInt(position)==2) { // If there are only 2 nodes, set other node as both previous and next node.
             amountOfNodes = 2;
@@ -655,27 +655,27 @@ public class Node implements Observer {
             if (nextTimerStopped) {
                 nextTimerStopped = false;
                 countdownTimerNext.start();
-                System.out.println("Next timer has started.");
+                //System.out.println("Next timer has started.");
             }
             if (previousTimerStopped) {
                 previousTimerStopped = false;
                 countdownTimerPrevious.start();
-                System.out.println("Previous timer has started.");
+                //System.out.println("Previous timer has started.");
             }
         }else{
             if((Integer.parseInt(position)==previousID) && countdownTimerPrevious.isRunning){ // If we receive a packet containing the previousID, it is pinging
                 countdownTimerPrevious.reset();
-                System.out.println("Previous timer reset because of ping.");
+                //System.out.println("Previous timer reset because of ping.");
                 if(previousID==nextID){
                     countdownTimerNext.reset();               // to say it is still alive
-                    System.out.println("Next timer also reset because of ping.");
+                    //System.out.println("Next timer also reset because of ping.");
                 }
             }else if(Integer.parseInt(position)==nextID && countdownTimerNext.isRunning) { // If we receive a packet containing the nextID, it is pinging
                 countdownTimerNext.reset();               // to say it is still alive
-                System.out.println("Next timer reset because of ping.");
+                //System.out.println("Next timer reset because of ping.");
                 if(previousID==nextID){
                     countdownTimerPrevious.reset();
-                    System.out.println("Previous timer also reset because of ping.");
+                    //System.out.println("Previous timer also reset because of ping.");
                 }
             }
         }
