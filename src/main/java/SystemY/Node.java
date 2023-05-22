@@ -172,7 +172,7 @@ public class Node implements Observer {
                     notifyNamingServer(filename, false);
                 }
             }
-            System.out.println(ownerMap);
+            //System.out.println(ownerMap);
         }
     }
 

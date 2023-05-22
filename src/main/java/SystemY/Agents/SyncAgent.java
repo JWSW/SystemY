@@ -74,7 +74,7 @@ public class SyncAgent implements Runnable, Serializable {
                 // If the local file list was updated, synchronize with the node's file list
                 if (updated) {
                     currentNode.setFileList(agentFileList);
-                    System.out.println("agentFileList=  " + agentFileList);
+                    //System.out.println("agentFileList=  " + agentFileList);
                 }
             }
             // Check if there is a lock request on the current node
