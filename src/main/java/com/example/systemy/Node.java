@@ -344,6 +344,10 @@ public class Node implements com.example.systemy.interfaces.Observer {
             for(Integer id : locationsMap.keySet()) {
                 if(nodeID!=id) {
                     ownerMap.get(filename).put(id, locationsMap.get(id));
+                }else{
+                    if(ownerMap.get(filename).containsKey(nodeID)){
+                        ownerMap.get(filename).remove(nodeID);
+                    }
                 }
             }
             System.out.println("Ownermap new locations (if there were more than node that shut down): " + filename + " with " + ownerMap.get(filename));
