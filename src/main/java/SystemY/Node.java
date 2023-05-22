@@ -343,8 +343,6 @@ public class Node implements Observer {
         if(ownerMap.containsKey(filename)){
             for(Integer id : locationsMap.keySet()) {
                 if(!Objects.equals(nodeID, id)) {
-                    System.out.println("New file location: " + id);
-                    System.out.println("The nodeID: " + nodeID);
                     ownerMap.get(filename).put(id, locationsMap.get(id));
                 }else{
                     if(ownerMap.get(filename).containsKey(nodeID)){
