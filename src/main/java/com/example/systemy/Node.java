@@ -8,14 +8,12 @@ import java.net.http.HttpResponse;
 import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import com.example.systemy.Agents.FailureAgent;
-import com.example.systemy.interfaces.Observer;
+import com.example.systemy.Threads.HeartbeatSender;
+import com.example.systemy.Threads.WatchDirectory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.json.JSONException;
@@ -921,8 +919,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
     }
 
 
-    public int getCurrentID() {
-        return currentID;
-    }
+
+
 }
 

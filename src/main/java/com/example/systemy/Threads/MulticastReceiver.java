@@ -1,4 +1,4 @@
-package com.example.systemy;
+package com.example.systemy.Threads;
 import com.example.systemy.interfaces.MulticastObserver;
 import org.springframework.stereotype.Component;
 

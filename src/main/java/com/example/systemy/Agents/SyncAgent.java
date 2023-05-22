@@ -1,6 +1,6 @@
 package com.example.systemy.Agents;
 
-import com.example.systemy.FileChecker;
+import com.example.systemy.Threads.FileChecker;
 import com.example.systemy.Node;
 
 import java.io.IOException;
@@ -10,7 +10,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;

@@ -1,6 +1,7 @@
 package com.example.systemy;
 
 import com.example.systemy.Agents.SyncAgent;
+import com.example.systemy.Threads.MulticastReceiver;
 import com.example.systemy.interfaces.MulticastObserver;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;

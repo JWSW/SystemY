@@ -1,6 +1,7 @@
-package com.example.systemy;
+package com.example.systemy.Threads;
 
 import com.example.systemy.Agents.SyncAgent;
+import com.example.systemy.Node;
 import com.example.systemy.interfaces.Observer;
 
 import java.io.IOException;
