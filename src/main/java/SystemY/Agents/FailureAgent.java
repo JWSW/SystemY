@@ -1,6 +1,6 @@
-package com.example.systemy.Agents;
+package SystemY.Agents;
 
-import com.example.systemy.Node;
+import SystemY.Node;
 
 import java.io.IOException;
 import java.io.Serializable;

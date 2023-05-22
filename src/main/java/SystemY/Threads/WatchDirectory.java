@@ -1,8 +1,7 @@
-package com.example.systemy.Threads;
+package SystemY.Threads;
 
-import com.example.systemy.Agents.SyncAgent;
-import com.example.systemy.Node;
-import com.example.systemy.interfaces.Observer;
+import SystemY.Node;
+import SystemY.interfaces.Observer;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -10,7 +9,7 @@ import java.nio.file.*;
 public class WatchDirectory extends Thread {
     private WatchService watchService;
     //private FileLock fileLock;
-    private com.example.systemy.interfaces.Observer observer;
+    private Observer observer;
     private Node currentNode;
 
     public WatchDirectory(Node node) {

@@ -1,7 +1,7 @@
-package com.example.systemy.Agents;
+package SystemY.Agents;
 
-import com.example.systemy.Threads.FileChecker;
-import com.example.systemy.Node;
+import SystemY.Node;
+import SystemY.Threads.FileChecker;
 
 import java.io.IOException;
 import java.io.Serial;
@@ -74,7 +74,7 @@ public class SyncAgent implements Runnable, Serializable {
                 // If the local file list was updated, synchronize with the node's file list
                 if (updated) {
                     currentNode.setFileList(agentFileList);
-                    System.out.println("agentFileList=  " + agentFileList);
+                    //System.out.println("agentFileList=  " + agentFileList);
                 }
             }
             // Check if there is a lock request on the current node
@@ -166,7 +166,7 @@ public class SyncAgent implements Runnable, Serializable {
 
             }
         }
-        System.out.println(agentFileList);
+        //System.out.println(agentFileList);
     }
 
     public Map<String, Boolean> getAgentFileList() {

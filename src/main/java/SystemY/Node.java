@@ -1,4 +1,4 @@
-package com.example.systemy;
+package SystemY;
 
 import java.io.*;
 import java.net.*;
@@ -9,9 +9,10 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.example.systemy.Agents.FailureAgent;
-import com.example.systemy.Threads.HeartbeatSender;
-import com.example.systemy.Threads.WatchDirectory;
+import SystemY.interfaces.Observer;
+import SystemY.Agents.FailureAgent;
+import SystemY.Threads.HeartbeatSender;
+import SystemY.Threads.WatchDirectory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
@@ -22,7 +23,7 @@ import org.json.JSONObject;
 
 @Data
 @AllArgsConstructor
-public class Node implements com.example.systemy.interfaces.Observer {
+public class Node implements Observer {
 
     private String nodeName;
     private String ipAddress;
@@ -171,7 +172,7 @@ public class Node implements com.example.systemy.interfaces.Observer {
                     notifyNamingServer(filename, false);
                 }
             }
-            System.out.println(ownerMap);
+            //System.out.println(ownerMap);
         }
     }
 
@@ -185,17 +186,17 @@ public class Node implements com.example.systemy.interfaces.Observer {
         nextHeartbeatSender.stop();
         if(!nextTimerStopped) {
             countdownTimerNext.reset();     // We reset the countdown timer that checks if the node is down
-            System.out.println("Next timer has been reset.");
+            //System.out.println("Next timer has been reset.");
             if(!nextHeartbeatSender.isAlive()){
                 nextHeartbeatSender = new HeartbeatSender(nextIP, currentID, heartbeatPortNext);
                 nextHeartbeatSender.start();
             }
         }else{
             countdownTimerNext.start();
-            System.out.println("Next timer has been started.");
+            //System.out.println("Next timer has been started.");
             nextHeartbeatSender = new HeartbeatSender(nextIP, currentID, heartbeatPortNext);
             nextHeartbeatSender.start();
-            System.out.println("heartbeatSender has been started.");
+            //System.out.println("heartbeatSender has been started.");
             nextTimerStopped = false;
         }
     }
@@ -205,17 +206,17 @@ public class Node implements com.example.systemy.interfaces.Observer {
         previousHeartbeatSender.stop();
         if(!previousTimerStopped) {
             countdownTimerPrevious.reset();     // We reset the countdown timer that checks if the node is down
-            System.out.println("Previous timer has been reset.");
+            //System.out.println("Previous timer has been reset.");
             if(!previousHeartbeatSender.isAlive()){
                 previousHeartbeatSender = new HeartbeatSender(previousIP, currentID, heartbeatPortPrevious);
                 previousHeartbeatSender.start();
             }
         }else{
             countdownTimerPrevious.start();
-            System.out.println("Previous timer has been started.");
+           // System.out.println("Previous timer has been started.");
             previousHeartbeatSender = new HeartbeatSender(previousIP, currentID, heartbeatPortPrevious);
             previousHeartbeatSender.start();
-            System.out.println("HeartbeatSender has been started.");
+            //System.out.println("HeartbeatSender has been started.");
             previousTimerStopped = false;
         }
     }
@@ -268,10 +269,10 @@ public class Node implements com.example.systemy.interfaces.Observer {
         String directory = "";
         if(isOwnFiles) {
             directory = "/home/Dist/SystemY/nodeFiles/";
-            System.out.println(directory);
+            //System.out.println(directory);
         }else{
             directory = "/home/Dist/SystemY/replicatedFiles/";
-            System.out.println(directory);
+            //System.out.println(directory);
         }
         String jsonData="";
 
@@ -638,12 +639,12 @@ public class Node implements com.example.systemy.interfaces.Observer {
             if (!nextTimerStopped) {
                 nextTimerStopped = true;
                 countdownTimerNext.stop();
-                System.out.println("next timer stopped");
+                //System.out.println("next timer stopped");
             }
             if (!previousTimerStopped) {
                 previousTimerStopped = true;
                 countdownTimerPrevious.stop();
-                System.out.println("previous timer stopped");
+                //System.out.println("previous timer stopped");
             }
         }else if(Integer.parseInt(position)==2) { // If there are only 2 nodes, set other node as both previous and next node.
             amountOfNodes = 2;
@@ -653,27 +654,27 @@ public class Node implements com.example.systemy.interfaces.Observer {
             if (nextTimerStopped) {
                 nextTimerStopped = false;
                 countdownTimerNext.start();
-                System.out.println("Next timer has started.");
+                //System.out.println("Next timer has started.");
             }
             if (previousTimerStopped) {
                 previousTimerStopped = false;
                 countdownTimerPrevious.start();
-                System.out.println("Previous timer has started.");
+                //System.out.println("Previous timer has started.");
             }
         }else{
             if((Integer.parseInt(position)==previousID) && countdownTimerPrevious.isRunning){ // If we receive a packet containing the previousID, it is pinging
                 countdownTimerPrevious.reset();
-                System.out.println("Previous timer reset because of ping.");
+                //System.out.println("Previous timer reset because of ping.");
                 if(previousID==nextID){
                     countdownTimerNext.reset();               // to say it is still alive
-                    System.out.println("Next timer also reset because of ping.");
+                    //System.out.println("Next timer also reset because of ping.");
                 }
             }else if(Integer.parseInt(position)==nextID && countdownTimerNext.isRunning) { // If we receive a packet containing the nextID, it is pinging
                 countdownTimerNext.reset();               // to say it is still alive
-                System.out.println("Next timer reset because of ping.");
+                //System.out.println("Next timer reset because of ping.");
                 if(previousID==nextID){
                     countdownTimerPrevious.reset();
-                    System.out.println("Previous timer also reset because of ping.");
+                    //System.out.println("Previous timer also reset because of ping.");
                 }
             }
         }
@@ -877,9 +878,9 @@ public class Node implements com.example.systemy.interfaces.Observer {
             }
         }
 
-        private com.example.systemy.interfaces.Observer observer;
+        private Observer observer;
 
-        public void setObserver(com.example.systemy.interfaces.Observer observer) {
+        public void setObserver(Observer observer) {
             this.observer = observer;
         }
 

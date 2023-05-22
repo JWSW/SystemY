@@ -1,5 +1,5 @@
-package com.example.systemy.Threads;
-import com.example.systemy.interfaces.MulticastObserver;
+package SystemY.Threads;
+import SystemY.interfaces.MulticastObserver;
 import org.springframework.stereotype.Component;
 
 import java.net.*;
