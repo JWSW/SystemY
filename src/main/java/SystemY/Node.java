@@ -186,17 +186,17 @@ public class Node implements Observer {
         nextHeartbeatSender.stop();
         if(!nextTimerStopped) {
             countdownTimerNext.reset();     // We reset the countdown timer that checks if the node is down
-            System.out.println("Next timer has been reset.");
+            //System.out.println("Next timer has been reset.");
             if(!nextHeartbeatSender.isAlive()){
                 nextHeartbeatSender = new HeartbeatSender(nextIP, currentID, heartbeatPortNext);
                 nextHeartbeatSender.start();
             }
         }else{
             countdownTimerNext.start();
-            System.out.println("Next timer has been started.");
+            //System.out.println("Next timer has been started.");
             nextHeartbeatSender = new HeartbeatSender(nextIP, currentID, heartbeatPortNext);
             nextHeartbeatSender.start();
-            System.out.println("heartbeatSender has been started.");
+            //System.out.println("heartbeatSender has been started.");
             nextTimerStopped = false;
         }
     }
@@ -206,17 +206,17 @@ public class Node implements Observer {
         previousHeartbeatSender.stop();
         if(!previousTimerStopped) {
             countdownTimerPrevious.reset();     // We reset the countdown timer that checks if the node is down
-            System.out.println("Previous timer has been reset.");
+            //System.out.println("Previous timer has been reset.");
             if(!previousHeartbeatSender.isAlive()){
                 previousHeartbeatSender = new HeartbeatSender(previousIP, currentID, heartbeatPortPrevious);
                 previousHeartbeatSender.start();
             }
         }else{
             countdownTimerPrevious.start();
-            System.out.println("Previous timer has been started.");
+           // System.out.println("Previous timer has been started.");
             previousHeartbeatSender = new HeartbeatSender(previousIP, currentID, heartbeatPortPrevious);
             previousHeartbeatSender.start();
-            System.out.println("HeartbeatSender has been started.");
+            //System.out.println("HeartbeatSender has been started.");
             previousTimerStopped = false;
         }
     }
@@ -271,10 +271,10 @@ public class Node implements Observer {
         String directory = "";
         if(isOwnFiles) {
             directory = "/home/Dist/SystemY/nodeFiles/";
-            System.out.println(directory);
+            //System.out.println(directory);
         }else{
             directory = "/home/Dist/SystemY/replicatedFiles/";
-            System.out.println(directory);
+            //System.out.println(directory);
         }
         String jsonData="";
 
