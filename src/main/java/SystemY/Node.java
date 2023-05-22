@@ -50,7 +50,7 @@ public class Node implements Observer {
     private HeartbeatSender nextHeartbeatSender;// = new HeartbeatSender(nextIP, currentID, heartbeatPortNext);
     private String baseURL = "http://172.27.0.5:8080/requestName";
     private ObjectMapper objectMapper = new ObjectMapper(); // or any other JSON serializer
-    private Map<Integer,String> fileArray = new ConcurrentHashMap<>(); //This map stores the hash of the file with its corresponding filename
+    private Map<Integer,String> fileArray = new ConcurrentHashMap<>(); //This map stores the hash of the file with its corresponding filename. It stores all local files.
     private Map<String, Map<Integer,String>> ownerMap = new ConcurrentHashMap<>(); // This map stores the filename with the corresponding locations where the file is found (the node's parameters)
     private boolean filesNotified = false;
     private FailureAgent failureAgent;
@@ -355,6 +355,70 @@ public class Node implements Observer {
         }
     }
 
+    public void notifyLocalFiles(){
+        for(Integer fileHash : fileArray.keySet()) {
+            String filename = fileArray.get(fileHash);
+            String packet;
+            String[] parts;
+            String ownerNode = "";
+            Integer nodeHash = 0;
+            String nodeIP = "";
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(baseURL + "/" + filename + "/getFileLocation"))
+                    .GET()
+                    .build();
+            try {
+                System.out.println("Sending request to get owner node of " + filename + " with hash: " + getHash(filename));
+                HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+                System.out.println("Response: " + response.body());
+
+                packet = response.body();
+                parts = packet.split(",");
+                nodeHash = Integer.valueOf(parts[0]);
+                nodeIP = parts[1];
+                ownerNode = packet;
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
+            if (nodeHash != currentID) {
+                // Doe hier iets dat de owner laat weten dat de local file verdwijnt van het netwerk.
+                HttpRequest request2 = HttpRequest.newBuilder()
+                        .uri(URI.create("http://" + nodeIP + ":8081/requestNode" + "/" + filename + "/notifyTermination"))
+                        .GET()
+                        .build();
+                try {
+                    System.out.println("Sending request to owner node of " + filename + " to notify termination.");
+                    HttpResponse<String> response = HttpClient.newHttpClient().send(request2, HttpResponse.BodyHandlers.ofString());
+                    System.out.println("Response: " + response.body());
+
+                    packet = response.body();
+                    parts = packet.split(",");
+                    nodeHash = Integer.valueOf(parts[0]);
+                    nodeIP = parts[1];
+                    ownerNode = packet;
+                } catch (IOException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (ownerNode.contains(filename)) {
+                    ownerMap.remove(filename);
+                }
+            } else {
+                System.out.println("Node self is owner of " + filename + ", so no actions are taken.");
+                //Doe niets denk ik
+            }
+        }
+    }
+
+    public void isTerminated(String filename, Integer nodeID){
+        if(ownerMap.get(filename).keySet().size()>2) { // If the node is located at more than 2 nodes (other than the node itself and the original node).
+            if(ownerMap.get(filename).containsKey(nodeID)) {
+                ownerMap.get(filename).remove(nodeID);
+            }
+        }else{
+            ownerMap.remove(filename);
+        }
+    }
+
     public void deleteFile(String filename, Boolean isOwnFiles){
         File myObj;
         if(isOwnFiles) {
@@ -442,6 +506,7 @@ public class Node implements Observer {
         if (nextID != 39999) {
             System.out.println("Sending new next node");
             unicast("Previous," + nextID + "," + nextIP + "," + previousID, previousIP, uniPort); // Send next node parameters to previous node
+            notifyLocalFiles();
             for(String filename : ownerMap.keySet()){
                 if(fileArray.containsValue(filename)) {
                     //System.out.println(fileArray);

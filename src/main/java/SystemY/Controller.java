@@ -47,6 +47,10 @@ public class Controller {
         }
     }
 
+    @PostMapping("/{filename}/{nodeID}/notifyTermination")
+    public void sendNewFile (@PathVariable String filename,@PathVariable String nodeID){
+        services.notifyTerminated(filename, Integer.valueOf(nodeID));
+    }
 
     @GetMapping("/syncWithNeighbor")
     public Map<String,Boolean> syncWithNeighbor(){

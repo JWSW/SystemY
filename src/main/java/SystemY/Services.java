@@ -58,6 +58,10 @@ public class Services implements MulticastObserver {
         node.setFileLocations(filename, nodeID,fileNodeLocationsMap);
     }
 
+    public void notifyTerminated(String filename, Integer nodeID){
+        node.isTerminated(filename,nodeID);
+    }
+
     @Override
     public void onMessageReceived(String message) throws IOException {
         node.multicastHandlePacket(message);
