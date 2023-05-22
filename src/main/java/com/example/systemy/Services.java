@@ -120,7 +120,6 @@ public class Services implements MulticastObserver{
                 Hoogste = true;
             }
         }
-        System.out.println(Hoogste);
         if(Hoogste){
             nodeData = grootste + "," + nodeMap.get(grootste);
         }else{
