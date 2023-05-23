@@ -384,10 +384,10 @@ public class Node implements Observer {
                 // Doe hier iets dat de owner laat weten dat de local file verdwijnt van het netwerk.
                 HttpRequest request2 = HttpRequest.newBuilder()
                         .uri(URI.create("http://" + nodeIP + ":8081/requestNode" + "/" + filename + "/" + currentID + "/notifyTermination"))
-                        .GET()
+                        .POST(HttpRequest.BodyPublishers.noBody())
                         .build();
                 try {
-                    System.out.println("Sending request to owner node of " + filename + " to notify termination.");
+                    System.out.println("Sending POST to owner node of " + filename + " to notify termination.");
                     HttpResponse<String> response = HttpClient.newHttpClient().send(request2, HttpResponse.BodyHandlers.ofString());
                     System.out.println("Response: " + response.body());
 
