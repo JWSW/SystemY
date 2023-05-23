@@ -383,7 +383,7 @@ public class Node implements Observer {
             if (nodeHash != currentID) {
                 // Doe hier iets dat de owner laat weten dat de local file verdwijnt van het netwerk.
                 HttpRequest request2 = HttpRequest.newBuilder()
-                        .uri(URI.create("http://" + nodeIP + ":8081/requestNode" + "/" + filename + "/notifyTermination"))
+                        .uri(URI.create("http://" + nodeIP + ":8081/requestNode" + "/" + filename + "/" + currentID + "/notifyTermination"))
                         .GET()
                         .build();
                 try {
