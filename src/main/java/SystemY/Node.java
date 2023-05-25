@@ -273,7 +273,7 @@ public class Node implements Observer {
     }
 
 
-    /*Afblijven Abdel, dit is voor lab 5*/
+    /*This function sends a file via REST to the owner of the file, after requesting the namingserver who the owner is*/
     private void sendFile(String nodeParameters, String filename, Boolean isOwnFiles) throws IOException {
         String[] parts = nodeParameters.split(",");
         String nodeHash = parts[0];
@@ -281,10 +281,8 @@ public class Node implements Observer {
         String directory = "";
         if(isOwnFiles) {
             directory = "/home/Dist/SystemY/nodeFiles/";
-            //System.out.println(directory);
         }else{
             directory = "/home/Dist/SystemY/replicatedFiles/";
-            //System.out.println(directory);
         }
         String jsonData="";
 
@@ -308,7 +306,7 @@ public class Node implements Observer {
             e.printStackTrace();
         }
         try {
-            TimeUnit.MILLISECONDS.sleep(500);
+            TimeUnit.MILLISECONDS.sleep(500); // Delay to prevent overloading the receiving node with requests
             HttpRequest request2 = HttpRequest.newBuilder()
                     .uri(URI.create("http://" + nodeIP + ":8081/requestNode" + "/" + filename + "/" + currentID + "/" + ipAddress + "/sendNewFile"))
                     .header("Content-Type", "application/json")
@@ -368,6 +366,8 @@ public class Node implements Observer {
         }
     }
 
+    /* This function is used to loop through the node its own files when shutting down and let the owner of a local file know that we are terminating.
+    * Then the owner node can take actions accordingly.*/
     public void notifyLocalFiles(){
         for(Integer fileHash : fileArray.keySet()) {
             String filename = fileArray.get(fileHash);
@@ -394,7 +394,7 @@ public class Node implements Observer {
                 e.printStackTrace();
             }
             if (nodeHash != currentID) {
-                // Doe hier iets dat de owner laat weten dat de local file verdwijnt van het netwerk.
+                // Send a terminate request to the owner of the file to let it know the original node of the file is terminating.
                 HttpRequest request2 = HttpRequest.newBuilder()
                         .uri(URI.create("http://" + nodeIP + ":8081/requestNode" + "/" + filename + "/" + currentID + "/notifyTermination"))
                         .POST(HttpRequest.BodyPublishers.noBody())
@@ -417,11 +417,14 @@ public class Node implements Observer {
                 }
             } else {
                 System.out.println("Node self is owner of " + filename + ", so no actions are taken.");
-                //Doe niets denk ik
+                //Don't do anything when the node is the owner of the file.
             }
         }
     }
 
+    /* This function is called when a node has let us know it is terminating and he is the original node of a file of which we
+    * are the owner. If the file is located on more nodes than just the original node and this node, we remove the
+    * original node from the locations. If otherwise, we remove the file from the network*/
     public void isTerminated(String filename, Integer nodeID){
         if(ownerMap.get(filename).keySet().size()>2) { // If the node is located at more than 2 nodes (other than the node itself and the original node).
             if(ownerMap.get(filename).containsKey(nodeID)) {
@@ -430,10 +433,12 @@ public class Node implements Observer {
             }
         }else{
             ownerMap.remove(filename);
+            deleteFile(filename, true);
             System.out.println("Removed file " + filename + " from network.");
         }
     }
 
+    /* Here we remove a file, depedning on which directory the file is located, local or replicated.*/
     public void deleteFile(String filename, Boolean isOwnFiles){
         File myObj;
         if(isOwnFiles) {
@@ -448,6 +453,7 @@ public class Node implements Observer {
         }
     }
 
+    /* Here we send a request to the naming server to remove a certain node.*/
     private void requestRemoveNode(Integer id) throws IOException, InterruptedException {
         HttpRequest request2 = HttpRequest.newBuilder()
                 .uri(URI.create(baseURL + "/" + id + "/removeNodeByHashId"))
@@ -458,26 +464,21 @@ public class Node implements Observer {
         System.out.println("Response: " + response2.body());
     }
 
-        private void Nodefailure(String position) throws JsonProcessingException {
+    /* This function is called when one of the neighbors has failed*/
+    private void Nodefailure(String position) throws JsonProcessingException {
         HttpClient client = HttpClient.newHttpClient();
         String json;
         Integer id;
         if(position.equals("Next")){
-            //json = objectMapper.writeValueAsString(nextID);
             id = nextID;
             countdownTimerNext.stop();
-//            nextHeartbeatSender.stop();
-//            nextTimerStopped = true;
         }else{
             id = previousID;
             countdownTimerPrevious.stop();
-//            previousHeartbeatSender.stop();
-//            previousTimerStopped = true;
         }
         HttpRequest request1 = HttpRequest.newBuilder()
                 .uri(URI.create(baseURL + "/" + id + "/get" + position))
-                //.header("Content-Type", "application/json")
-                .GET()//HttpRequest.BodyPublishers.noBody())//ofString(json))//"{nodeName:" + node.getNodeName() + "ipAddress:" + node.getIpAddress() + "}"))
+                .GET()
                 .build();
         try{
             requestRemoveNode(id);
@@ -504,6 +505,7 @@ public class Node implements Observer {
         }
     }
 
+    /* This function is used to send a multicast message to the multicast group*/
     public void multicast(String multicastMessage) throws IOException {
         DatagramSocket socket;
         InetAddress group;
@@ -516,6 +518,7 @@ public class Node implements Observer {
         socket.close();
     }
 
+    /* This function is called when the node is shutting down. It is called in Services class*/
     public void shutDown() throws IOException, InterruptedException {
         System.out.println("Shutting down");
         if (nextID != 39999) {
@@ -524,8 +527,6 @@ public class Node implements Observer {
             notifyLocalFiles();
             for(String filename : ownerMap.keySet()){
                 if(fileArray.containsValue(filename)) {
-                    //System.out.println(fileArray);
-                    //System.out.println(filename);
                     sendFile(previousID + "," + previousIP, filename, true);
                 }else{
                     sendFile(previousID + "," + previousIP, filename, false);
@@ -539,25 +540,18 @@ public class Node implements Observer {
         }
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(baseURL + "/" + currentID + "/removeNodeByHashId"))
-                //.header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.noBody())//ofString(json))//"{nodeName:" + node.getNodeName() + "ipAddress:" + node.getIpAddress() + "}"))
+                .POST(HttpRequest.BodyPublishers.noBody())
                 .build();
         System.out.println("Sending request to remove node");
         HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
         System.out.println("Response: " + response.body());
     }
 
-//    public void addFile(String fileName, String owner) {
-//        files.put(fileName, owner);
-//    }
 
     public String getFileOwner(String fileName) {
         return fileName;
     }
 
-//    public void removeFile(String fileName) {
-//        files.remove(fileName);
-//    }
 
     @Override
     public String toString() {
@@ -569,6 +563,8 @@ public class Node implements Observer {
                 '}';
     }
 
+    /* This function is called when a multicast message is received with the multicast receiver thread. This function is
+    * called using the observer that is implemented.*/
     public synchronized void multicastHandlePacket(String packet) throws IOException {
         String[] parts = packet.split(","); // split the string at the space character
         String hostname = parts[0];
@@ -625,11 +621,13 @@ public class Node implements Observer {
             response = "Previous," + currentID + "," + this.ipAddress + "," + previousID; //The message to send as reply
             unicast(response, ipAddress, uniPort);
         }
-        if(amountOfNodes>2){
+        if(amountOfNodes>2){ // If there are more than 2 nodes, we have to check the new owner of every file.
             notifyFiles(false);
         }
     }
 
+    /* This function is called when a UDP unicast is received at one of the unicastReceiver threads. This is called
+    * by the observer that we implemented.*/
     public synchronized void unicastHandlePacket(String packet) throws IOException {
         String otherNodeID = "";
         String otherNodeIP = "";
@@ -720,12 +718,10 @@ public class Node implements Observer {
             if (!nextTimerStopped) {
                 nextTimerStopped = true;
                 countdownTimerNext.stop();
-                //System.out.println("next timer stopped");
             }
             if (!previousTimerStopped) {
                 previousTimerStopped = true;
                 countdownTimerPrevious.stop();
-                //System.out.println("previous timer stopped");
             }
         }else if(Integer.parseInt(position)==2) { // If there are only 2 nodes, set other node as both previous and next node.
             amountOfNodes = 2;
@@ -735,27 +731,21 @@ public class Node implements Observer {
             if (nextTimerStopped) {
                 nextTimerStopped = false;
                 countdownTimerNext.start();
-                //System.out.println("Next timer has started.");
             }
             if (previousTimerStopped) {
                 previousTimerStopped = false;
                 countdownTimerPrevious.start();
-                //System.out.println("Previous timer has started.");
             }
         }else{
             if((Integer.parseInt(position)==previousID) && countdownTimerPrevious.isRunning){ // If we receive a packet containing the previousID, it is pinging
                 countdownTimerPrevious.reset();
-                //System.out.println("Previous timer reset because of ping.");
-                if(previousID==nextID){
-                    countdownTimerNext.reset();               // to say it is still alive
-                    //System.out.println("Next timer also reset because of ping.");
+                if(previousID==nextID){                       // If there are only 2 nodes, we reset both timers
+                    countdownTimerNext.reset();               // We reset the timer because we received a ping
                 }
             }else if(Integer.parseInt(position)==nextID && countdownTimerNext.isRunning) { // If we receive a packet containing the nextID, it is pinging
-                countdownTimerNext.reset();               // to say it is still alive
-                //System.out.println("Next timer reset because of ping.");
-                if(previousID==nextID){
+                countdownTimerNext.reset();               // We reset the timer because we received a ping
+                if(previousID==nextID){                   // If there are only 2 nodes, we reset both timers
                     countdownTimerPrevious.reset();
-                    //System.out.println("Previous timer also reset because of ping.");
                 }
             }
         }
@@ -763,6 +753,7 @@ public class Node implements Observer {
 
 
 
+    /* This function is used to send a UDP unicast message to a certain IP address using a specific port.*/
     public void unicast(String unicastMessage, String ipAddress, int port) throws IOException {
         DatagramSocket socket;
         InetAddress address;
@@ -775,7 +766,7 @@ public class Node implements Observer {
         socket.close();
     }
 
-
+    /* This calculates the hash of the incoming parameter.*/
     public int getHash(String name) {
         int max = Integer.MAX_VALUE;
         int min = Integer.MIN_VALUE + 1; // add 1 to avoid overflow when calculating the absolute value
@@ -786,17 +777,7 @@ public class Node implements Observer {
         return hash;
     }
 
-    public void killSpecificProcess(int port) throws IOException {
-        try {
-            ServerSocket serverSocket4 = new ServerSocket(port, 0, InetAddress.getByName("localhost"));
-            serverSocket4.close();
-            System.out.println("Process on port " + port + " has been killed.");
-        }catch (IOException e) {
-            // An exception is thrown if the port is already in use
-            System.err.println("Unable to kill process on port " + port + ": " + e.getMessage());
-        }
-    }
-
+    /* This function is called when we terminate, to make sure that all the ports we used are killed and freed.*/
     public void killProcess(){
         try {
             // Try to create a server socket on the specified port
@@ -821,6 +802,8 @@ public class Node implements Observer {
         }
     }
 
+    /* This function is called when the REST controller has received a POST request that tells us we are the owner of the file.
+    * We handle the file accordingly.*/
     public void FileEventHandler(String fileName){
         fileArray.put(getHash(fileName),fileName);
         try {
@@ -831,6 +814,8 @@ public class Node implements Observer {
         System.out.println("All owner files: " + ownerMap);
     }
 
+    /* This function is called when and observer in unicastReceiver has received a message. We identify what kind of message
+     * it is and handle it accordingly*/
     @Override
     public void onMessageReceived(String type, String message) throws IOException {
         if("Unicast".equals(type)) {
@@ -885,12 +870,8 @@ public class Node implements Observer {
 
 
 
-
     /*This function is used to see if the neighbouring nodes are still alive, with a countdown timer to take action if a
-    it takes to long for the nodes to give sign of life.
-     */
-
-
+    * it takes to long for the nodes to give sign of life.*/
     public class CountdownTimer {
         private Timer timer;
         private int seconds;
@@ -941,8 +922,6 @@ public class Node implements Observer {
     public interface TimerCallback {
         void onTimerFinished(String position) throws JsonProcessingException;
     }
-
-
 
     public Map<String, Integer> getOwnerLocalFiles() {
         return OwnerLocalFiles;
