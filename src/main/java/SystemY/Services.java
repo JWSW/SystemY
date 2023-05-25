@@ -82,19 +82,6 @@ public class Services implements MulticastObserver {
         return node;
     }
 
-    public void passFailureAgentToNextNode(FailureAgent failureAgent, String nextNodeIP) throws IOException, InterruptedException {
-        String baseURL = "http://"+nextNodeIP+":8081/requestNode";
-        ObjectMapper objectMapper = new ObjectMapper();
-        String jsonFailureAgent = objectMapper.writeValueAsString(failureAgent);
-        HttpClient httpClient = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(baseURL + "/sendFailureAgentToNode/{nodeID}"))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(jsonFailureAgent))
-                .build();
-        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        String responseBody = response.body();
-    }
 
     public void processFailureAgent(String jsonFailureAgent) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();

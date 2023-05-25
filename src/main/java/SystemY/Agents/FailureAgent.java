@@ -2,6 +2,7 @@ package SystemY.Agents;
 
 import SystemY.Node;
 import SystemY.Services;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
@@ -26,20 +27,20 @@ public class FailureAgent implements Runnable, Serializable {
     private Node currentNode;
     private String baseURL = "http://172.27.0.5:8080/requestName";
     private int initiatingNodeID;
-    private int nodeHash;
 
 
-    public FailureAgent(int failingID, int currentID,int initiatingNodeId) {
+
+    public FailureAgent(int failingID, int currentID,int initiatingNodeId, Node node) {
         this.failingID = failingID;
         this.currentID = currentID;
-        this.currentNode = services.getNode();
+        this.currentNode = node;
         this.initiatingNodeID = initiatingNodeId;
     }
 
     @Override
     public void run() {
         // Read the file list of the current node
-        Map<String, Integer> fileList = services.getNode().getOwnerLocalFiles();
+        Map<String, Integer> fileList = currentNode.getOwnerLocalFiles();
 
         // Check if the failing node is the owner of any files
         for (String filename: fileList.keySet()) {
@@ -99,10 +100,21 @@ public class FailureAgent implements Runnable, Serializable {
         int nextNodeId = currentNode.getNextID();
 
         // Send the Failure Agent to the next node
-        services.passFailureAgentToNextNode(this, String.valueOf(nextNodeId));
-
-
-    }
+        String baseURL = "http://"+nextNodeId+":8081/requestNode";
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonFailureAgent = objectMapper.writeValueAsString(this);
+        HttpClient httpClient = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(baseURL + "/sendFailureAgentToNode/{nodeID}"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(jsonFailureAgent))
+                .build();
+        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+        String responseBody = response.body();
+        }
 
 
 }
+
+
+
