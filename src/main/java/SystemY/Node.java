@@ -413,6 +413,7 @@ public class Node implements Observer {
         if(ownerMap.get(filename).keySet().size()>2) { // If the node is located at more than 2 nodes (other than the node itself and the original node).
             if(ownerMap.get(filename).containsKey(nodeID)) {
                 ownerMap.get(filename).remove(nodeID);
+                System.out.println("Removed original location of " + filename + " from ownerMap.");
             }
         }else{
             ownerMap.remove(filename);
