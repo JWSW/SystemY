@@ -3,6 +3,7 @@ package SystemY.Threads;
 import java.io.IOException;
 import java.net.*;
 
+/* This class is used to send pings at a certain rate to one of the neighboring nodes to let it know we are still alive.*/
 public class HeartbeatSender extends Thread{
     private final int port;
     private int currentID;
@@ -23,15 +24,17 @@ public class HeartbeatSender extends Thread{
     @Override
     public void run() {
         try {
+            // Create a datagram socket with a certain port
             DatagramSocket socket;
             InetAddress sendAddress = InetAddress.getByName(sendIP);
             socket = new DatagramSocket();
 
+            //We send the id of this node as a message
             String message = String.valueOf(currentID);
             buf = message.getBytes();
-
             sendPacket = new DatagramPacket(buf, buf.length, sendAddress, port);
 
+            // We will continue sending pings at certain time intervals unless we are interrupted
             while (!Thread.currentThread().isInterrupted()) {
                 System.out.println("Sending ping to " + sendAddress + " or " + sendIP + " with port " + port);
                 socket.send(sendPacket);

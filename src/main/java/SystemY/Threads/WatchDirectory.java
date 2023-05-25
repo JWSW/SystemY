@@ -6,9 +6,10 @@ import SystemY.interfaces.Observer;
 import java.io.IOException;
 import java.nio.file.*;
 
+/* This class is used to check for newly added documents, or if a file is being modified. If a new document is added to
+* the directory, we print that there is a new file added and add it to our map with local files.*/
 public class WatchDirectory extends Thread {
     private WatchService watchService;
-    //private FileLock fileLock;
     private Observer observer;
     private Node currentNode;
 
@@ -20,6 +21,7 @@ public class WatchDirectory extends Thread {
         this.observer = observer;
     }
 
+    /* Here we run the thread to run in an infinite loop to check for events.*/
     public void run() {
         // Get the directory to watch
         Path path1 = Paths.get("/home/Dist/SystemY/nodeFiles");
