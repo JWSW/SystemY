@@ -48,7 +48,7 @@ public class FailureAgent implements Runnable, Serializable {
             if (fileList.get(filename) == failingID) {
                 transferOwnership(String.valueOf(fileList.get(filename)));
                 }
-            }
+        }
 
 
         // Terminate the Failure Agent if it passed all nodes in the ring topology
@@ -116,6 +116,7 @@ public class FailureAgent implements Runnable, Serializable {
         String responseBody = response.body();
         System.out.println("response: "+responseBody);
         }
+
 
 
 }
