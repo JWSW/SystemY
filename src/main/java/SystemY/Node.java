@@ -303,7 +303,7 @@ public class Node implements Observer {
             e.printStackTrace();
         }
         try {
-            TimeUnit.MILLISECONDS.sleep(300);
+            TimeUnit.MILLISECONDS.sleep(500);
             HttpRequest request2 = HttpRequest.newBuilder()
                     .uri(URI.create("http://" + nodeIP + ":8081/requestNode" + "/" + filename + "/" + currentID + "/" + ipAddress + "/sendNewFile"))
                     .header("Content-Type", "application/json")
