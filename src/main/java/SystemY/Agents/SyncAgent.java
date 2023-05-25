@@ -150,7 +150,7 @@ public class SyncAgent implements Runnable, Serializable {
         for (String neighbor : currentNode.getNeighbors()) {
             if (!neighbor.isEmpty()) {
                 String baseURL = "http://"+neighbor+":8081/requestNode";
-                //System.out.println("Sync request");
+                TimeUnit.MILLISECONDS.sleep(500);
                 HttpRequest request1 = HttpRequest.newBuilder()
                         .uri(URI.create(baseURL + "/syncWithNeighbor"))
                         .GET()

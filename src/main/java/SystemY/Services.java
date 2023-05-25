@@ -84,9 +84,10 @@ public class Services implements MulticastObserver {
 
 
     public void processFailureAgent(String jsonFailureAgent) throws IOException {
+        System.out.println("processFailureAgent");
         ObjectMapper objectMapper = new ObjectMapper();
         FailureAgent failureAgent = objectMapper.readValue(jsonFailureAgent, FailureAgent.class);
-        System.out.println(failureAgent); ///test
+        System.out.println("failureagent: "+failureAgent); ///test
 
 
         /*Thread FailureAgent1 = new Thread(failureAgent);

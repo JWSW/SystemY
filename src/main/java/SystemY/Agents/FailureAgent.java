@@ -39,6 +39,7 @@ public class FailureAgent implements Runnable, Serializable {
 
     @Override
     public void run() {
+        System.out.println("FailureAgent has started");
         // Read the file list of the current node
         Map<String, Integer> fileList = currentNode.getOwnerLocalFiles();
 
@@ -51,7 +52,7 @@ public class FailureAgent implements Runnable, Serializable {
 
 
         // Terminate the Failure Agent if it passed all nodes in the ring topology
-        if (currentID == initiatingNodeID) {
+        if (currentID == initiatingNodeID && !currentNode.isFirstNode) {
             System.out.println("Failure Agent terminated");
             return;
         }
@@ -66,7 +67,7 @@ public class FailureAgent implements Runnable, Serializable {
     }
 
     private void transferOwnership(String filename) {
-
+        System.out.println("transferOwnership");
         // Check if the new owner already has a copy of the file and update logs accordingly
         HttpClient client = HttpClient.newHttpClient();
         Map<Integer,String> tempMap = new ConcurrentHashMap<>();
@@ -92,10 +93,12 @@ public class FailureAgent implements Runnable, Serializable {
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
-        currentNode.setOwnerFile(filename, Integer.parseInt(ownerNode),nodeIP);
+        System.out.println("transferOwnership completed");
+        //currentNode.setOwnerFile(filename, Integer.parseInt(ownerNode),nodeIP);
     }
 
     private void passFailureAgentToNextNode() throws IOException, InterruptedException {
+        System.out.println("PassfailureAgentToNextNode");
         // Determine the identifier or address of the next node
         int nextNodeId = currentNode.getNextID();
 
@@ -105,12 +108,13 @@ public class FailureAgent implements Runnable, Serializable {
         String jsonFailureAgent = objectMapper.writeValueAsString(this);
         HttpClient httpClient = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(baseURL + "/sendFailureAgentToNode/{nodeID}"))
+                .uri(URI.create(baseURL +"/"+ nextNodeId+"/sendFailureAgentToNode"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonFailureAgent))
                 .build();
         HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
         String responseBody = response.body();
+        System.out.println("response: "+responseBody);
         }
 
 
