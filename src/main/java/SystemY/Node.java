@@ -57,8 +57,9 @@ public class Node implements Observer {
     private Map<String, Integer> OwnerLocalFiles = new ConcurrentHashMap<>();
 
 
-
-
+    public Node getNode() {
+        return this;
+    }
 
     TimerCallback callback = new TimerCallback() {
         @Override
@@ -66,9 +67,9 @@ public class Node implements Observer {
             System.out.println(position + " node offline.");
             Nodefailure(position);
             if (position.equals("Previous")) {
-                failureAgent = new FailureAgent(previousID,currentID,currentID);  //failingID, currentID
+                failureAgent = new FailureAgent(previousID,currentID,currentID,getNode());  //failingID, currentID
             } else {
-                failureAgent = new FailureAgent(nextID,currentID,currentID);
+                failureAgent = new FailureAgent(nextID,currentID,currentID,getNode());
             }
             Thread FailureAgent1 = new Thread(failureAgent);
             FailureAgent1.start();
@@ -837,6 +838,7 @@ public class Node implements Observer {
 
 
     public void setFileList(Map<String, Boolean> fileList) {
+        //fileArray = fileList;
     }
 
     public String[] getNeighbors() {

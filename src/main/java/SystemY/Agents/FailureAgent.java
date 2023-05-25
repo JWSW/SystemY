@@ -30,17 +30,17 @@ public class FailureAgent implements Runnable, Serializable {
 
 
 
-    public FailureAgent(int failingID, int currentID,int initiatingNodeId) {
+    public FailureAgent(int failingID, int currentID,int initiatingNodeId, Node node) {
         this.failingID = failingID;
         this.currentID = currentID;
-        this.currentNode = services.getNode();
+        this.currentNode = node;
         this.initiatingNodeID = initiatingNodeId;
     }
 
     @Override
     public void run() {
         // Read the file list of the current node
-        Map<String, Integer> fileList = services.getNode().getOwnerLocalFiles();
+        Map<String, Integer> fileList = currentNode.getOwnerLocalFiles();
 
         // Check if the failing node is the owner of any files
         for (String filename: fileList.keySet()) {
