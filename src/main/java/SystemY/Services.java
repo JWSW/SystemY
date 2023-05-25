@@ -1,22 +1,29 @@
 package SystemY;
 
+import SystemY.Agents.FailureAgent;
 import SystemY.Threads.MulticastReceiver;
 import SystemY.interfaces.MulticastObserver;
 import SystemY.Agents.SyncAgent;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.Base64;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class Services implements MulticastObserver {
-    public Node node;
+    private Node node;
 
     @Autowired
     MulticastReceiver multicastReceiver;
@@ -70,4 +77,49 @@ public class Services implements MulticastObserver {
     public Map<String, Boolean> getAgentFileList() {
         return syncAgent.getAgentFileList();
     }
+
+    public Node getNode() {
+        return node;
+    }
+
+    public void passFailureAgentToNextNode(FailureAgent failureAgent, String nextNodeIP) throws IOException, InterruptedException {
+        String baseURL = "http://"+nextNodeIP+":8081/requestNode";
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonFailureAgent = objectMapper.writeValueAsString(failureAgent);
+        HttpClient httpClient = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(baseURL + "/sendFailureAgentToNode/{nodeID}"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(jsonFailureAgent))
+                .build();
+        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+        String responseBody = response.body();
+    }
+
+    public void processFailureAgent(String jsonFailureAgent) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        FailureAgent failureAgent = objectMapper.readValue(jsonFailureAgent, FailureAgent.class);
+        System.out.println(failureAgent); ///test
+
+
+        /*Thread FailureAgent1 = new Thread(failureAgent);
+        FailureAgent1.start();
+        Thread thread = new Thread(() -> {
+            FailureAgent failureAgent = new FailureAgent(failureAgent.getInitiatedNodeId());
+            // Perform actions with the newFailureAgent
+            newFailureAgent.start(); // Replace with your own method name or logic
+
+            // Access the properties of the newFailureAgent object
+            String property = newFailureAgent.getProperty(); // Replace with your own property name
+
+            // Perform any necessary operations with the newFailureAgent
+            // ...
+        });
+        thread.start();
+
+         */
+    }
+
+
+
 }

@@ -1,5 +1,6 @@
 package SystemY;
 
+import SystemY.Agents.FailureAgent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -9,6 +10,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -56,4 +58,13 @@ public class Controller {
     public Map<String,Boolean> syncWithNeighbor(){
         return services.getAgentFileList();
     }
+
+    @PostMapping("/sendFailureAgentToNode/{nodeID}")
+    public void sendFailureAgentToNode(@RequestBody String failureAgent) throws IOException {
+        // Pass the Failure Agent to the specified node
+        services.processFailureAgent(failureAgent);
+    }
+
+
+
 }

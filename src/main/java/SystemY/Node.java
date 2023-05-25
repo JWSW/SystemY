@@ -39,7 +39,6 @@ public class Node implements Observer {
     private int maxNodes = 10;
     private int amountOfNodes = 1;
     private static DatagramSocket socket = null;
-    private Map<String,File> fileMap = new ConcurrentHashMap<>(); // This is useless
     private WatchDirectory watchDirectory;
     private String fileTest = "fileTest.txt";
     private String fileTwo = "file2.txt";
@@ -54,7 +53,8 @@ public class Node implements Observer {
     private Map<Integer,String> fileArray = new ConcurrentHashMap<>(); //This map stores the hash of the file with its corresponding filename. It stores all local files.
     private Map<String, Map<Integer,String>> ownerMap = new ConcurrentHashMap<>(); // This map stores the filename with the corresponding locations where the file is found (the node's parameters)
     private boolean filesNotified = false;
-    private FailureAgent failureAgent;
+    private FailureAgent failureAgent =null;
+    private Map<String, Integer> OwnerLocalFiles = new ConcurrentHashMap<>();
 
 
 
@@ -66,9 +66,9 @@ public class Node implements Observer {
             System.out.println(position + " node offline.");
             Nodefailure(position);
             if (position.equals("Previous")) {
-                failureAgent = new FailureAgent(previousID,currentID);
+                failureAgent = new FailureAgent(previousID,currentID,currentID);  //failingID, currentID
             } else {
-                failureAgent = new FailureAgent(nextID,currentID);
+                failureAgent = new FailureAgent(nextID,currentID,currentID);
             }
             Thread FailureAgent1 = new Thread(failureAgent);
             FailureAgent1.start();
@@ -251,8 +251,14 @@ public class Node implements Observer {
         }
         if(nodeHash!=currentID) {
             sendFile(ownerNode, filename, isOwnFiles);
+            if (!OwnerLocalFiles.containsKey(filename)) {
+                OwnerLocalFiles.put(filename, nodeHash);
+            } else {
+                OwnerLocalFiles.replace(filename,nodeHash);
+            }
             if(ownerNode.contains(filename)) {
                 ownerMap.remove(filename);
+
             }
         }else{
             System.out.println("Node self is owner of " + filename);
@@ -866,7 +872,7 @@ public class Node implements Observer {
             ownerMap.replace(filename,tempMap);
         }else {
             tempMap.put(nodeID, nodeIP);
-            if(!tempMap.containsKey(currentID)) { // To check if this node is already added.
+            if(!tempMap.containsKey(currentID)) { // To check if this node is already added. ????
                 tempMap.put(currentID,ipAddress);
             }
             ownerMap.put(filename, tempMap);
@@ -991,6 +997,10 @@ public class Node implements Observer {
                 }
             }
         }
+    }
+
+    public Map<String, Integer> getOwnerLocalFiles() {
+        return OwnerLocalFiles;
     }
 }
 
