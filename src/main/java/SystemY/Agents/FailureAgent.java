@@ -105,7 +105,7 @@ public class FailureAgent implements Runnable, Serializable {
         String jsonFailureAgent = objectMapper.writeValueAsString(this);
         HttpClient httpClient = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(baseURL + "/sendFailureAgentToNode/{nodeID}"))
+                .uri(URI.create(baseURL +"/"+ nextNodeId+"/sendFailureAgentToNode"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonFailureAgent))
                 .build();
