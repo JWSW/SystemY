@@ -416,6 +416,7 @@ public class Node implements Observer {
             }
         }else{
             ownerMap.remove(filename);
+            System.out.println("Removed file " + filename + " from network.");
         }
     }
 
