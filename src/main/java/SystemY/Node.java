@@ -63,6 +63,8 @@ public class Node implements Observer {
         return this;
     }
 
+    /* This is the callback function that is called when one of the countdownTimers is finished and it starts the nodeFailure
+    * procedure to ask for new neighbors creates a new failure agent and */
     TimerCallback callback = new TimerCallback() {
         @Override
         public void onTimerFinished(String position) throws JsonProcessingException {
@@ -92,6 +94,8 @@ public class Node implements Observer {
     public Node() {
     }
 
+    /* This is the constructor. Here we define all the threads and start them. We send a multicast message to let the
+    * network know we are a new node on the network. Then we call a function to search for local files.*/
     public Node(String nodeName, String ipAddress) throws Exception { // Constructor
         unicastReceiver = new UnicastReceiver(uniPort);
         unicastHeartbeatPrevious = new UnicastReceiver(heartbeatPortPrevious);
@@ -146,8 +150,8 @@ public class Node implements Observer {
         searchFiles();
     }
 
-    /* Dit is voor lab 5 ook*/
-    public void searchFiles() throws IOException {
+    /* We search in the directory '/home/Dist/SystemY/nodeFiles' for local files and add it to the filearray map.*/
+    public void searchFiles() {
         // Get the directory to search
         File directory = new File("/home/Dist/SystemY/nodeFiles");
 //
@@ -165,6 +169,8 @@ public class Node implements Observer {
         }
     }
 
+    /* This function is used to loop through all the local files or the replicated files, and call the 'notifyNamingServer()'
+    * function for every file.*/
     public void notifyFiles(Boolean isOwnFiles) throws IOException {
         if(isOwnFiles) {
             for (Integer fileHash : fileArray.keySet()) {
@@ -182,11 +188,8 @@ public class Node implements Observer {
         }
     }
 
-
-    public void notifyFile(String filename, Boolean isOwnFiles) throws IOException {
-        notifyNamingServer(filename, isOwnFiles);
-    }
-
+    /* When a new neighbor IP is set, we have to restart the heartbeatSender which sends pings to the neighboring node
+     * to let it know we are still alive, and reset the countdownTimer that detects if this neighboring node fails.*/
     public void setNextIP(String nextIP) throws UnknownHostException {
         this.nextIP = nextIP;
         nextHeartbeatSender.stop();
@@ -207,28 +210,28 @@ public class Node implements Observer {
         }
     }
 
+    /* When a new neighbor IP is set, we have to restart the heartbeatSender which sends pings to the neighboring node
+    * to let it know we are still alive, and reset the countdownTimer that detects if this neighboring node fails.*/
     public void setPreviousIP(String previousIP) throws UnknownHostException {
         this.previousIP = previousIP;
         previousHeartbeatSender.stop();
         if(!previousTimerStopped) {
             countdownTimerPrevious.reset();     // We reset the countdown timer that checks if the node is down
-            //System.out.println("Previous timer has been reset.");
             if(!previousHeartbeatSender.isAlive()){
                 previousHeartbeatSender = new HeartbeatSender(previousIP, currentID, heartbeatPortPrevious);
                 previousHeartbeatSender.start();
             }
         }else{
             countdownTimerPrevious.start();
-           // System.out.println("Previous timer has been started.");
             previousHeartbeatSender = new HeartbeatSender(previousIP, currentID, heartbeatPortPrevious);
             previousHeartbeatSender.start();
-            //System.out.println("HeartbeatSender has been started.");
             previousTimerStopped = false;
         }
     }
 
 
-    /*Afblijven Abdel, dit is voor lab 5*/
+    /* This function is used to send a request to the naming server to get the owner of a file, and then send the file
+    * to that owner node using the function 'sendFile()'.*/
     public void notifyNamingServer(String filename, Boolean isOwnFiles) throws IOException {
         HttpClient client = HttpClient.newHttpClient();
         Map<Integer,String> tempMap = new ConcurrentHashMap<>();
@@ -807,7 +810,7 @@ public class Node implements Observer {
     public void FileEventHandler(String fileName){
         fileArray.put(getHash(fileName),fileName);
         try {
-            notifyFile(fileName, true);
+            notifyNamingServer(fileName, true);
         }catch (IOException e) {
             System.err.println("Could not notify file " + fileName + ": " + e.getMessage());
         }
