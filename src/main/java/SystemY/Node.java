@@ -8,6 +8,7 @@ import java.net.http.HttpResponse;
 import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 import SystemY.interfaces.Observer;
 import SystemY.Agents.FailureAgent;
@@ -296,6 +297,7 @@ public class Node implements Observer {
             e.printStackTrace();
         }
         try {
+            TimeUnit.SECONDS.sleep(100);
             HttpRequest request2 = HttpRequest.newBuilder()
                     .uri(URI.create("http://" + nodeIP + ":8081/requestNode" + "/" + filename + "/" + currentID + "/" + ipAddress + "/sendNewFile"))
                     .header("Content-Type", "application/json")
