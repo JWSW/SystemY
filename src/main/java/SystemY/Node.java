@@ -849,6 +849,7 @@ public class Node implements Observer {
         Map<Integer,String> tempMap = new ConcurrentHashMap<>();
         if(fileArray.containsValue(filename) && (nextID!=previousID || currentID == nextID || currentID == previousID)){
             try {
+                System.out.println(previousID + "," + previousIP);
                 sendFile(previousID + "," + previousIP, filename, true);
             }catch (IOException e) {
                 System.err.println("Could not notify file " + filename + ": " + e.getMessage());
