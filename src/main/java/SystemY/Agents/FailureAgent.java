@@ -39,6 +39,7 @@ public class FailureAgent implements Runnable, Serializable {
 
     @Override
     public void run() {
+        System.out.println("FailureAgent has started");
         // Read the file list of the current node
         Map<String, Integer> fileList = currentNode.getOwnerLocalFiles();
 
@@ -66,7 +67,7 @@ public class FailureAgent implements Runnable, Serializable {
     }
 
     private void transferOwnership(String filename) {
-
+        System.out.println("transferOwnership");
         // Check if the new owner already has a copy of the file and update logs accordingly
         HttpClient client = HttpClient.newHttpClient();
         Map<Integer,String> tempMap = new ConcurrentHashMap<>();
@@ -92,10 +93,12 @@ public class FailureAgent implements Runnable, Serializable {
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
+        System.out.println("transferOwnership completed");
         //currentNode.setOwnerFile(filename, Integer.parseInt(ownerNode),nodeIP);
     }
 
     private void passFailureAgentToNextNode() throws IOException, InterruptedException {
+        System.out.println("PassfailureAgentToNextNode");
         // Determine the identifier or address of the next node
         int nextNodeId = currentNode.getNextID();
 
@@ -111,6 +114,7 @@ public class FailureAgent implements Runnable, Serializable {
                 .build();
         HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
         String responseBody = response.body();
+        System.out.println("response: "+responseBody);
         }
 
 
