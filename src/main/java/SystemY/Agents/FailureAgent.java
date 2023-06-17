@@ -101,19 +101,29 @@ public class FailureAgent implements Runnable, Serializable {
 
 
         // Send the Failure Agent to the next node
-        String baseURL = "http://"+nextNodeIP+":8081/requestNode";
+        String baseURL = "http://" + nextNodeIP + ":8081/requestNode";
         ObjectMapper objectMapper = new ObjectMapper();
-        String jsonFailureAgent = objectMapper.writeValueAsString(this);
-        HttpClient httpClient = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(baseURL +"/sendFailureAgentToNode"))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(jsonFailureAgent))
-                .build();
-        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        String responseBody = response.body();
-        System.out.println("response: "+responseBody);
+        try {
+            String jsonFailureAgent = objectMapper.writeValueAsString(this);
+            System.out.println("jsonFailureAgent:" +jsonFailureAgent);
+            HttpClient httpClient = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(baseURL + "/sendFailureAgentToNextNode"))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(jsonFailureAgent))
+                    .build();
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.body().isEmpty()) {
+                System.out.println("File is sent succesfully.");
+            } else {
+                System.out.println("Response: " + response.body());
+            }
+        } catch (IOException | InterruptedException e) {
+            System.out.println("Error sending failureAgent: " + e.getMessage());
+            e.printStackTrace();
+
         }
+    }
 
 
 
