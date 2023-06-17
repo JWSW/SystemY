@@ -91,7 +91,7 @@ public class FailureAgent implements Runnable, Serializable {
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
-        currentNode.setOwnerFile(filename, Integer.parseInt(ownerNode),nodeIP);
+        //currentNode.setOwnerFile(filename, Integer.parseInt(ownerNode),nodeIP);
         System.out.println("transferOwnership completed");
 
     }
