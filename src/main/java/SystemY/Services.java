@@ -91,9 +91,13 @@ public class Services implements MulticastObserver {
             FailureAgent failureAgent = new FailureAgent(failingID, node.getCurrentID(), initiatingNodeID, node);
             Thread FailureAgent1 = new Thread(failureAgent);
             FailureAgent1.start();
+        } else {
+            // Terminate the Failure Agent if it passed all nodes in the ring topology
+                System.out.println("Failure Agent terminated");
+            }
         }
-    }
-
-
-
 }
+
+
+
+
