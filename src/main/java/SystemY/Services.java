@@ -86,6 +86,7 @@ public class Services implements MulticastObserver {
         int failingID = failureAgentParams.get("failingID");
         int initiatingNodeID = failureAgentParams.get("initiatingNodeID");
         if (node.getCurrentID() != initiatingNodeID) {
+            System.out.println("Received FailureAgent");
             System.out.println("processFailureAgent");
             // Create a new FailureAgent instance with the extracted parameters
             FailureAgent failureAgent = new FailureAgent(failingID, node.getCurrentID(), initiatingNodeID, node);

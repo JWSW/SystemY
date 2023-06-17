@@ -62,7 +62,6 @@ public class FailureAgent implements Runnable, Serializable {
         System.out.println("transferOwnership");
         // Check if the new owner already has a copy of the file and update logs accordingly
         HttpClient client = HttpClient.newHttpClient();
-        Map<Integer,String> tempMap = new ConcurrentHashMap<>();
         String packet;
         String[] parts;
         String ownerNode = "";
@@ -73,7 +72,7 @@ public class FailureAgent implements Runnable, Serializable {
                 .GET()
                 .build();
         try {
-            //System.out.println("Sending request to get owner node of " + filename + " with hash: " + currentNode.getHash(filename));
+            System.out.println("Sending request to get owner node of " + filename + " with hash: " + currentNode.getHash(filename));
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             System.out.println("Response: " + response.body());
 
@@ -85,7 +84,7 @@ public class FailureAgent implements Runnable, Serializable {
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
-        //currentNode.setOwnerFile(filename, Integer.parseInt(ownerNode),nodeIP);
+        currentNode.setOwnerFile(filename, Integer.parseInt(ownerNode),nodeIP);
         System.out.println("transferOwnership completed");
 
     }

@@ -843,7 +843,7 @@ public class Node implements Observer {
 
     public void setOwnerFile(String filename, int nodeID, String nodeIP) {
         Map<Integer,String> tempMap = new ConcurrentHashMap<>();
-        if(fileArray.containsValue(filename) && (nextID!=previousID || currentID == nextID || currentID == previousID) && previousID!=0){
+        if(fileArray.containsValue(filename) && (nextID != previousID || currentID == nextID) && previousID != 0){
             try {
                 System.out.println(previousID + "," + previousIP);
                 sendFile(previousID + "," + previousIP, filename, true);
