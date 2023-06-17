@@ -80,7 +80,7 @@ public class FailureAgent implements Runnable, Serializable {
                 .build();
         try {
             //System.out.println("Sending request to get owner node of " + filename + " with hash: " + currentNode.getHash(filename));
-            HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             System.out.println("Response: " + response.body());
 
             packet = response.body();
@@ -91,8 +91,9 @@ public class FailureAgent implements Runnable, Serializable {
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
+        currentNode.setOwnerFile(filename, Integer.parseInt(ownerNode),nodeIP);
         System.out.println("transferOwnership completed");
-        //currentNode.setOwnerFile(filename, Integer.parseInt(ownerNode),nodeIP);
+
     }
 
     private void passFailureAgentToNextNode() throws IOException, InterruptedException {
