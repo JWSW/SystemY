@@ -65,7 +65,6 @@ public class FailureAgent implements Runnable, Serializable {
         String packet;
         String[] parts;
         String ownerNode = "";
-        //Integer nodeHash = 0;
         String nodeIP = "";
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(baseURL + "/" + filename + "/getFileLocation"))
@@ -78,9 +77,9 @@ public class FailureAgent implements Runnable, Serializable {
 
             packet = response.body();
             parts = packet.split(",");
-            //nodeHash = Integer.valueOf(parts[0]);
+            ownerNode = parts[0];
             nodeIP = parts[1];
-            ownerNode = packet;
+
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
