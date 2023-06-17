@@ -928,5 +928,9 @@ public class Node implements Observer {
     public Map<String, Integer> getOwnerLocalFiles() {
         return OwnerLocalFiles;
     }
+
+    public Map<Integer, String> getFileArray() {
+        return fileArray;
+    }
 }
 
