@@ -2,6 +2,7 @@ package SystemY.Agents;
 
 import SystemY.Node;
 import SystemY.Services;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -96,32 +97,32 @@ public class FailureAgent implements Runnable, Serializable {
     private void passFailureAgentToNextNode() throws IOException, InterruptedException {
 
 
-        // Determine the identifier or address of the next node
+        // Determine the address of the next node
         String nextNodeIP = currentNode.getNextIP();
-
+        String endpointURL = "http://" + nextNodeIP + ":8081/requestNode/sendFailureAgentToNextNode";
 
         // Send the Failure Agent to the next node
-        String baseURL = "http://" + nextNodeIP + ":8081/requestNode";
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             String jsonFailureAgent = objectMapper.writeValueAsString(this);
             System.out.println("jsonFailureAgent:" +jsonFailureAgent);
             HttpClient httpClient = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(baseURL + "/sendFailureAgentToNextNode"))
+                    .uri(URI.create(endpointURL))
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(jsonFailureAgent))
                     .build();
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.body().isEmpty()) {
-                System.out.println("File is sent succesfully.");
+            if (response.statusCode() == 200) {
+                System.out.println("Failure Agent sent successfully.");
             } else {
-                System.out.println("Response: " + response.body());
+                System.out.println("Failure Agent sending failed. Response: " + response.body());
             }
+        } catch (JsonProcessingException e) {
+            System.out.println("Error serializing FailureAgent to JSON: " + e.getMessage());
         } catch (IOException | InterruptedException e) {
-            System.out.println("Error sending failureAgent: " + e.getMessage());
+            System.out.println("Error sending FailureAgent: " + e.getMessage());
             e.printStackTrace();
-
         }
     }
 
