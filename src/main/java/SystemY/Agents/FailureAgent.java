@@ -60,7 +60,7 @@ public class FailureAgent implements Runnable, Serializable {
 
     private void transferOwnership(String filename) {
         System.out.println("transferOwnership");
-        // Check if the new owner already has a copy of the file and update logs accordingly
+        // Check who the new owner is
         HttpClient client = HttpClient.newHttpClient();
         String packet;
         String[] parts;
@@ -83,7 +83,18 @@ public class FailureAgent implements Runnable, Serializable {
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
-        currentNode.setOwnerFile(filename, Integer.parseInt(ownerNode),nodeIP);
+/*
+        // Check if the file is already present in the ownerMap
+        if (currentNode.getOwnerMap().containsKey(filename)) {
+            System.out.println("The file is already present in the ownerMap.");
+            // Update logs accordingly
+            currentNode.setOwnerFile(filename, Integer.parseInt(ownerNode),nodeIP);
+        } else {
+            currentNode.sendFile(ownerNode, filename,true);
+            currentNode.setOwnerFile(filename, Integer.parseInt(ownerNode),nodeIP);
+
+        }
+*/
         System.out.println("transferOwnership completed");
 
     }
