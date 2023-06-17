@@ -97,16 +97,16 @@ public class FailureAgent implements Runnable, Serializable {
 
 
         // Determine the identifier or address of the next node
-        int nextNodeId = currentNode.getNextID();
-        System.out.println("PassfailureAgentToNextNode: " +nextNodeId);
+        String nextNodeIP = currentNode.getNextIP();
+
 
         // Send the Failure Agent to the next node
-        String baseURL = "http://"+nextNodeId+":8081/requestNode";
+        String baseURL = "http://"+nextNodeIP+":8081/requestNode";
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonFailureAgent = objectMapper.writeValueAsString(this);
         HttpClient httpClient = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(baseURL +"/"+ nextNodeId+"/sendFailureAgentToNode"))
+                .uri(URI.create(baseURL +"/sendFailureAgentToNode"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonFailureAgent))
                 .build();

@@ -59,7 +59,7 @@ public class Controller {
         return services.getAgentFileList();
     }
 
-    @PostMapping("/{nodeID}/sendFailureAgentToNode")
+    @PostMapping("/sendFailureAgentToNode")
     public void sendFailureAgentToNode(@RequestBody String failureAgent) throws IOException {
         // Pass the Failure Agent to the specified node
         services.processFailureAgent(failureAgent);
