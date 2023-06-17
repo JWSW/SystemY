@@ -13,6 +13,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -100,11 +101,17 @@ public class FailureAgent implements Runnable, Serializable {
         // Determine the address of the next node
         String nextNodeIP = currentNode.getNextIP();
         String endpointURL = "http://" + nextNodeIP + ":8081/requestNode/sendFailureAgentToNextNode";
+        // Create a map to hold the parameters
+        Map<String, Integer> failureAgentParams = new HashMap<>();
+        failureAgentParams.put("failingID", failingID);
+        failureAgentParams.put("initiatingNodeID", initiatingNodeID);
+
+        // Convert the map to JSON
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonFailureAgent = objectMapper.writeValueAsString(failureAgentParams);
 
         // Send the Failure Agent to the next node
-        ObjectMapper objectMapper = new ObjectMapper();
         try {
-            String jsonFailureAgent = objectMapper.writeValueAsString(this);
             System.out.println("jsonFailureAgent:" +jsonFailureAgent);
             HttpClient httpClient = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()

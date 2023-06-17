@@ -4,6 +4,7 @@ import SystemY.Agents.FailureAgent;
 import SystemY.Threads.MulticastReceiver;
 import SystemY.interfaces.MulticastObserver;
 import SystemY.Agents.SyncAgent;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
@@ -86,26 +87,15 @@ public class Services implements MulticastObserver {
     public void processFailureAgent(String jsonFailureAgent) throws IOException {
         System.out.println("processFailureAgent");
         ObjectMapper objectMapper = new ObjectMapper();
-        FailureAgent failureAgent = objectMapper.readValue(jsonFailureAgent, FailureAgent.class);
-        System.out.println("failureagent: "+failureAgent); ///test
+        Map<String, Integer> failureAgentParams = objectMapper.readValue(jsonFailureAgent, new TypeReference<>() {});
+        int failingID = failureAgentParams.get("failingID");
+        int initiatingNodeID = failureAgentParams.get("initiatingNodeID");
 
+        // Create a new FailureAgent instance with the extracted parameters
+        FailureAgent failureAgent = new FailureAgent(failingID, node.getCurrentID(),initiatingNodeID, node);
 
-        /*Thread FailureAgent1 = new Thread(failureAgent);
+        Thread FailureAgent1 = new Thread(failureAgent);
         FailureAgent1.start();
-        Thread thread = new Thread(() -> {
-            FailureAgent failureAgent = new FailureAgent(failureAgent.getInitiatedNodeId());
-            // Perform actions with the newFailureAgent
-            newFailureAgent.start(); // Replace with your own method name or logic
-
-            // Access the properties of the newFailureAgent object
-            String property = newFailureAgent.getProperty(); // Replace with your own property name
-
-            // Perform any necessary operations with the newFailureAgent
-            // ...
-        });
-        thread.start();
-
-         */
     }
 
 
