@@ -459,6 +459,7 @@ public class Node implements Observer {
                 .POST(HttpRequest.BodyPublishers.noBody())
                 .build();
         System.out.println("Sending request to remove offline node.");
+        System.out.println("currentID: "+currentID);
         HttpResponse<String> response2 = HttpClient.newHttpClient().send(request2, HttpResponse.BodyHandlers.ofString());
         System.out.println("Response: " + response2.body());
     }
