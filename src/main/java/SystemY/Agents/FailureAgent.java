@@ -18,10 +18,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class FailureAgent implements Runnable, Serializable {
 
-
-    @Autowired
-    private Services services;
-
     private int failingID;
     private int currentID;
     private Node currentNode;
@@ -99,6 +95,7 @@ public class FailureAgent implements Runnable, Serializable {
 
     private void passFailureAgentToNextNode() throws IOException, InterruptedException {
         System.out.println("PassfailureAgentToNextNode");
+
         // Determine the identifier or address of the next node
         int nextNodeId = currentNode.getNextID();
 

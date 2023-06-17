@@ -72,14 +72,10 @@ public class Node implements Observer {
             Nodefailure(position);
             if (position.equals("Previous")) {
                 failureAgent = new FailureAgent(previousID,currentID,currentID,getNode());  //failingID, currentID
-            } else {
-                failureAgent = new FailureAgent(nextID,currentID,currentID,getNode());
             }
             isFirstNode = true;
             Thread FailureAgent1 = new Thread(failureAgent);
             FailureAgent1.start();
-
-
         }
     };
 
