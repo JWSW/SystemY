@@ -27,6 +27,7 @@ import org.json.JSONObject;
 @AllArgsConstructor
 public class Node implements Observer {
 
+    public boolean isFirstNode = false;
     private String nodeName;
     private String ipAddress;
     private int uniPort = 55525;
@@ -70,9 +71,11 @@ public class Node implements Observer {
             System.out.println(position + " node offline.");
             Nodefailure(position);
             if (position.equals("Previous")) {
+                isFirstNode = true;
                 failureAgent = new FailureAgent(previousID,currentID,currentID,getNode());  //failingID, currentID
                 Thread FailureAgent1 = new Thread(failureAgent);
                 FailureAgent1.start();
+
             }
 
         }

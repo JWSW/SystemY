@@ -50,7 +50,7 @@ public class FailureAgent implements Runnable, Serializable {
 
 
         // Terminate the Failure Agent if it passed all nodes in the ring topology
-        if (currentID == initiatingNodeID) {
+        if (currentID == initiatingNodeID && !currentNode.isFirstNode) {
             System.out.println("Failure Agent terminated");
             return;
         }
