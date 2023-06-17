@@ -72,7 +72,7 @@ public class FailureAgent implements Runnable, Serializable {
         String packet;
         String[] parts;
         String ownerNode = "";
-        Integer nodeHash = 0;
+        //Integer nodeHash = 0;
         String nodeIP = "";
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(baseURL + "/" + filename + "/getFileLocation"))
@@ -85,7 +85,7 @@ public class FailureAgent implements Runnable, Serializable {
 
             packet = response.body();
             parts = packet.split(",");
-            nodeHash = Integer.valueOf(parts[0]);
+            //nodeHash = Integer.valueOf(parts[0]);
             nodeIP = parts[1];
             ownerNode = packet;
         } catch (IOException | InterruptedException e) {
@@ -101,6 +101,7 @@ public class FailureAgent implements Runnable, Serializable {
 
         // Determine the address of the next node
         String nextNodeIP = currentNode.getNextIP();
+
         String endpointURL = "http://" + nextNodeIP + ":8081/requestNode/sendFailureAgentToNextNode";
         // Create a map to hold the parameters
         Map<String, Integer> failureAgentParams = new HashMap<>();
@@ -122,7 +123,7 @@ public class FailureAgent implements Runnable, Serializable {
                     .build();
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
-                System.out.println("Failure Agent sent successfully.");
+                System.out.println("Failure Agent sent successfully to node "+currentNode.getNextID());
             } else {
                 System.out.println("Failure Agent sending failed. Response: " + response.body());
             }
