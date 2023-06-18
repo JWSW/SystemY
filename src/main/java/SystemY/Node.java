@@ -353,12 +353,12 @@ public class Node implements Observer {
         }
     }
 
-    public void setFileLocations(String filename, Integer nodeID, ConcurrentHashMap<Integer, String> locationsMap){
+    public void setFileLocations(String filename, Integer nodeID, boolean isShutdown, ConcurrentHashMap<Integer, String> locationsMap){
         if(ownerMap.containsKey(filename)){
             for(Integer id : locationsMap.keySet()) {
                 if(!Objects.equals(nodeID, id)) {
                     ownerMap.get(filename).put(id, locationsMap.get(id));
-                }else{
+                }else if(isShutdown){
                     if(ownerMap.get(filename).containsKey(nodeID)){
                         ownerMap.get(filename).remove(nodeID);
                         System.out.println("Previous nodID is removed from file locations.");
