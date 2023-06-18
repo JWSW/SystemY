@@ -528,6 +528,12 @@ public class Node implements Observer {
         if (nextID != 39999) {
             System.out.println("Sending new next node");
             unicast("Previous," + nextID + "," + nextIP + "," + previousID, previousIP, uniPort); // Send next node parameters to previous node
+        }
+        if (previousID != 0) {
+            System.out.println("Sending new previous node");
+            unicast("Next," + previousID + "," + previousIP + "," + nextID, nextIP, uniPort); // Send previous node parameters to next node
+        }
+        if(nextID!=39999 && previousID!=0){
             notifyLocalFiles();
             for(String filename : ownerMap.keySet()){
                 if(fileArray.containsValue(filename)) {
@@ -537,10 +543,6 @@ public class Node implements Observer {
                     deleteFile(filename,false);
                 }
             }
-        }
-        if (previousID != 0) {
-            System.out.println("Sending new previous node");
-            unicast("Next," + previousID + "," + previousIP + "," + nextID, nextIP, uniPort); // Send previous node parameters to next node
         }
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(baseURL + "/" + currentID + "/removeNodeByHashId"))
