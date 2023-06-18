@@ -531,9 +531,9 @@ public class Node implements Observer {
             notifyLocalFiles();
             for(String filename : ownerMap.keySet()){
                 if(fileArray.containsValue(filename)) {
-                    sendFile(previousID + "," + previousIP, filename, true);
+                    sendFile(previousID + "," + previousIP, filename, true, true);
                 }else{
-                    sendFile(previousID + "," + previousIP, filename, false);
+                    sendFile(previousID + "," + previousIP, filename, false,true);
                     deleteFile(filename,false);
                 }
             }
@@ -848,7 +848,7 @@ public class Node implements Observer {
         if(fileArray.containsValue(filename) && (nextID != previousID || currentID == nextID) && previousID != 0){
             try {
                 System.out.println(previousID + "," + previousIP);
-                sendFile(previousID + "," + previousIP, filename, true);
+                sendFile(previousID + "," + previousIP, filename, true, false);
             }catch (IOException e) {
                 System.err.println("Could not notify file " + filename + ": " + e.getMessage());
             }
