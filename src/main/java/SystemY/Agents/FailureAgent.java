@@ -44,8 +44,12 @@ public class FailureAgent implements Runnable, Serializable {
         // Check if the failing node is the owner of any files
         for (String filename: fileList.keySet()) {
             if (fileList.get(filename) == failingID) {
-                transferOwnership(String.valueOf(fileList.get(filename)));
+                try {
+                    transferOwnership(String.valueOf(fileList.get(filename)));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
+            }
         }
 
 
@@ -58,9 +62,9 @@ public class FailureAgent implements Runnable, Serializable {
 
     }
 
-    private void transferOwnership(String filename) {
+    private void transferOwnership(String filename) throws IOException {
         System.out.println("transferOwnership");
-        // Check if the new owner already has a copy of the file and update logs accordingly
+        // Check who the new owner is
         HttpClient client = HttpClient.newHttpClient();
         String packet;
         String[] parts;
@@ -83,6 +87,13 @@ public class FailureAgent implements Runnable, Serializable {
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
+
+        // Check if the file is already present in the ownerMap and owned by the specified ownerNode
+        if (!currentNode.getOwnerMap().get(filename).containsKey(Integer.parseInt(ownerNode))) {
+            System.out.println("New owner doesn't have a copy of this file already");
+            currentNode.sendFile(ownerNode, filename, true);
+        }
+        // Update logs accordingly
         currentNode.setOwnerFile(filename, Integer.parseInt(ownerNode),nodeIP);
         System.out.println("transferOwnership completed");
 
@@ -130,6 +141,8 @@ public class FailureAgent implements Runnable, Serializable {
 
 
 }
+
+
 
 
 

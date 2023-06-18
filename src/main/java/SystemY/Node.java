@@ -275,7 +275,7 @@ public class Node implements Observer {
 
 
     /*This function sends a file via REST to the owner of the file, after requesting the namingserver who the owner is*/
-    private void sendFile(String nodeParameters, String filename, Boolean isOwnFiles) throws IOException {
+    public void sendFile(String nodeParameters, String filename, Boolean isOwnFiles) throws IOException {
         String[] parts = nodeParameters.split(",");
         String nodeHash = parts[0];
         String nodeIP = parts[1];
