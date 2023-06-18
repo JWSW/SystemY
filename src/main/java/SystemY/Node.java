@@ -257,13 +257,15 @@ public class Node implements Observer {
         }
         if(nodeHash!=currentID) {
             sendFile(ownerNode, filename, isOwnFiles);
-            if (!OwnerLocalFiles.containsKey(filename)) {
-                OwnerLocalFiles.put(filename, nodeHash);
-            } else {
-                OwnerLocalFiles.replace(filename,nodeHash);
-            }
-            if(ownerNode.contains(filename)) {
+            if (ownerNode.contains(filename)) {
                 ownerMap.remove(filename);
+            }
+            if (isOwnFiles) {
+                if (!OwnerLocalFiles.containsKey(filename)) {
+                    OwnerLocalFiles.put(filename, nodeHash);
+                } else {
+                    OwnerLocalFiles.replace(filename, nodeHash);
+                }
 
             }
         }else{
@@ -927,6 +929,10 @@ public class Node implements Observer {
 
     public Map<String, Integer> getOwnerLocalFiles() {
         return OwnerLocalFiles;
+    }
+
+    public Map<Integer, String> getFileArray() {
+        return fileArray;
     }
 }
 
