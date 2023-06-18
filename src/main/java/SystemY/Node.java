@@ -441,7 +441,7 @@ public class Node implements Observer {
         }
     }
 
-    /* Here we remove a file, depending on which directory the file is located, local or replicated.*/
+    /* Here we remove a file, depedning on which directory the file is located, local or replicated.*/
     public void deleteFile(String filename, Boolean isOwnFiles){
         File myObj;
         if(isOwnFiles) {
