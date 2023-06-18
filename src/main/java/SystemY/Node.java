@@ -257,13 +257,15 @@ public class Node implements Observer {
         }
         if(nodeHash!=currentID) {
             sendFile(ownerNode, filename, isOwnFiles,false);
-            if (!OwnerLocalFiles.containsKey(filename)) {
-                OwnerLocalFiles.put(filename, nodeHash);
-            } else {
-                OwnerLocalFiles.replace(filename,nodeHash);
-            }
-            if(ownerNode.contains(filename)) {
+            if (ownerNode.contains(filename)) {
                 ownerMap.remove(filename);
+            }
+            if (isOwnFiles) {
+                if (!OwnerLocalFiles.containsKey(filename)) {
+                    OwnerLocalFiles.put(filename, nodeHash);
+                } else {
+                    OwnerLocalFiles.replace(filename, nodeHash);
+                }
 
             }
         }else{
@@ -332,7 +334,7 @@ public class Node implements Observer {
             String jsonMap = objectMapper.writeValueAsString(ownerMap.get(filename));
             try {
                 HttpRequest request2 = HttpRequest.newBuilder()
-                        .uri(URI.create("http://" + nodeIP + ":8081/requestNode" + "/" + filename + "/" + currentID + "/" + isShutdown +"/sendFileLocations"))
+                        .uri(URI.create("http://" + nodeIP + ":8081/requestNode" + "/" + filename + "/" + currentID + "/sendFileLocations"))
                         .header("Content-Type", "application/json")
                         .POST(HttpRequest.BodyPublishers.ofString(jsonMap))
                         .build();
@@ -351,13 +353,12 @@ public class Node implements Observer {
         }
     }
 
-    public void setFileLocations(String filename, Integer nodeID, boolean isShutdown, ConcurrentHashMap<Integer, String> locationsMap){
+    public void setFileLocations(String filename, Integer nodeID, ConcurrentHashMap<Integer, String> locationsMap){
         if(ownerMap.containsKey(filename)){
-            System.out.println("isShutdown: " + isShutdown);
             for(Integer id : locationsMap.keySet()) {
                 if(!Objects.equals(nodeID, id)) {
                     ownerMap.get(filename).put(id, locationsMap.get(id));
-                }else if(isShutdown){
+                }else{
                     if(ownerMap.get(filename).containsKey(nodeID)){
                         ownerMap.get(filename).remove(nodeID);
                         System.out.println("Previous nodID is removed from file locations.");
@@ -530,9 +531,9 @@ public class Node implements Observer {
             notifyLocalFiles();
             for(String filename : ownerMap.keySet()){
                 if(fileArray.containsValue(filename)) {
-                    sendFile(previousID + "," + previousIP, filename, true,true);
+                    sendFile(previousID + "," + previousIP, filename, true);
                 }else{
-                    sendFile(previousID + "," + previousIP, filename, false,true);
+                    sendFile(previousID + "," + previousIP, filename, false);
                     deleteFile(filename,false);
                 }
             }
@@ -841,17 +842,13 @@ public class Node implements Observer {
 
     }
 
-    /*
-    This method is called whenever there comes in a request to transfer a file. The node then checks if he already has this file stored locally.
-     If so, he sends it to his previous node to be the owner node.
-     Otherwise, if not locally stored, he checks if he wasn't owner already and checks if a node has been added to the logs.
-     */
+
     public void setOwnerFile(String filename, int nodeID, String nodeIP) {
         Map<Integer,String> tempMap = new ConcurrentHashMap<>();
         if(fileArray.containsValue(filename) && (nextID != previousID || currentID == nextID) && previousID != 0){
             try {
                 System.out.println(previousID + "," + previousIP);
-                sendFile(previousID + "," + previousIP, filename, true,false);
+                sendFile(previousID + "," + previousIP, filename, true);
             }catch (IOException e) {
                 System.err.println("Could not notify file " + filename + ": " + e.getMessage());
             }
