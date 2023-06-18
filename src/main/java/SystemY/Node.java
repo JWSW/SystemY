@@ -277,7 +277,7 @@ public class Node implements Observer {
 
 
     /*This function sends a file via REST to the owner of the file, after requesting the namingserver who the owner is*/
-    public void sendFile(String nodeParameters, String filename, Boolean isOwnFiles) throws IOException {
+    private void sendFile(String nodeParameters, String filename, Boolean isOwnFiles) throws IOException {
         String[] parts = nodeParameters.split(",");
         String nodeHash = parts[0];
         String nodeIP = parts[1];
@@ -441,7 +441,7 @@ public class Node implements Observer {
         }
     }
 
-    /* Here we remove a file, depending on which directory the file is located, local or replicated.*/
+    /* Here we remove a file, depedning on which directory the file is located, local or replicated.*/
     public void deleteFile(String filename, Boolean isOwnFiles){
         File myObj;
         if(isOwnFiles) {
