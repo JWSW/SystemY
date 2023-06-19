@@ -334,7 +334,7 @@ public class Node implements Observer {
             String jsonMap = objectMapper.writeValueAsString(ownerMap.get(filename));
             try {
                 HttpRequest request2 = HttpRequest.newBuilder()
-                        .uri(URI.create("http://" + nodeIP + ":8081/requestNode" + "/" + filename + "/" + currentID + "/sendFileLocations"))
+                        .uri(URI.create("http://" + nodeIP + ":8081/requestNode" + "/" + filename + "/" + currentID + "/" + isShutdown + "/sendFileLocations"))
                         .header("Content-Type", "application/json")
                         .POST(HttpRequest.BodyPublishers.ofString(jsonMap))
                         .build();
