@@ -64,7 +64,7 @@ public class Node implements Observer {
     }
 
     /* This is the callback function that is called when one of the countdownTimers is finished and it starts the nodeFailure
-    * procedure to ask for new neighbors creates a new failure agent and */
+     * procedure to ask for new neighbors creates a new failure agent and */
     TimerCallback callback = new TimerCallback() {
         @Override
         public void onTimerFinished(String position) throws JsonProcessingException {
@@ -93,7 +93,7 @@ public class Node implements Observer {
     }
 
     /* This is the constructor. Here we define all the threads and start them. We send a multicast message to let the
-    * network know we are a new node on the network. Then we call a function to search for local files.*/
+     * network know we are a new node on the network. Then we call a function to search for local files.*/
     public Node(String nodeName, String ipAddress) throws Exception { // Constructor
         unicastReceiver = new UnicastReceiver(uniPort);
         unicastHeartbeatPrevious = new UnicastReceiver(heartbeatPortPrevious);
@@ -168,7 +168,7 @@ public class Node implements Observer {
     }
 
     /* This function is used to loop through all the local files or the replicated files, and call the 'notifyNamingServer()'
-    * function for every file.*/
+     * function for every file.*/
     public void notifyFiles(Boolean isOwnFiles) throws IOException {
         if(isOwnFiles) {
             for (Integer fileHash : fileArray.keySet()) {
@@ -209,7 +209,7 @@ public class Node implements Observer {
     }
 
     /* When a new neighbor IP is set, we have to restart the heartbeatSender which sends pings to the neighboring node
-    * to let it know we are still alive, and reset the countdownTimer that detects if this neighboring node fails.*/
+     * to let it know we are still alive, and reset the countdownTimer that detects if this neighboring node fails.*/
     public void setPreviousIP(String previousIP) throws UnknownHostException {
         this.previousIP = previousIP;
         previousHeartbeatSender.stop();
@@ -229,7 +229,7 @@ public class Node implements Observer {
 
 
     /* This function is used to send a request to the naming server to get the owner of a file, and then send the file
-    * to that owner node using the function 'sendFile()'.*/
+     * to that owner node using the function 'sendFile()'.*/
     public void notifyNamingServer(String filename, Boolean isOwnFiles) throws IOException {
         HttpClient client = HttpClient.newHttpClient();
         Map<Integer,String> tempMap = new ConcurrentHashMap<>();
@@ -256,7 +256,7 @@ public class Node implements Observer {
             e.printStackTrace();
         }
         if(nodeHash!=currentID) {
-            sendFile(ownerNode, filename, isOwnFiles);
+            sendFile(ownerNode, filename, isOwnFiles,false);
             if (ownerNode.contains(filename)) {
                 ownerMap.remove(filename);
             }
@@ -277,7 +277,7 @@ public class Node implements Observer {
 
 
     /*This function sends a file via REST to the owner of the file, after requesting the namingserver who the owner is*/
-    public void sendFile(String nodeParameters, String filename, Boolean isOwnFiles) throws IOException {
+    public void sendFile(String nodeParameters, String filename, Boolean isOwnFiles, Boolean isShutdown) throws IOException {
         String[] parts = nodeParameters.split(",");
         String nodeHash = parts[0];
         String nodeIP = parts[1];
@@ -358,7 +358,7 @@ public class Node implements Observer {
             for(Integer id : locationsMap.keySet()) {
                 if(!Objects.equals(nodeID, id)) {
                     ownerMap.get(filename).put(id, locationsMap.get(id));
-                }else{
+                }else if(isShutdown){
                     if(ownerMap.get(filename).containsKey(nodeID)){
                         ownerMap.get(filename).remove(nodeID);
                         System.out.println("Previous nodID is removed from file locations.");
@@ -370,7 +370,7 @@ public class Node implements Observer {
     }
 
     /* This function is used to loop through the node its own files when shutting down and let the owner of a local file know that we are terminating.
-    * Then the owner node can take actions accordingly.*/
+     * Then the owner node can take actions accordingly.*/
     public void notifyLocalFiles(){
         for(Integer fileHash : fileArray.keySet()) {
             String filename = fileArray.get(fileHash);
@@ -426,8 +426,8 @@ public class Node implements Observer {
     }
 
     /* This function is called when a node has let us know it is terminating and he is the original node of a file of which we
-    * are the owner. If the file is located on more nodes than just the original node and this node, we remove the
-    * original node from the locations. If otherwise, we remove the file from the network*/
+     * are the owner. If the file is located on more nodes than just the original node and this node, we remove the
+     * original node from the locations. If otherwise, we remove the file from the network*/
     public void isTerminated(String filename, Integer nodeID){
         if(ownerMap.get(filename).keySet().size()>2) { // If the node is located at more than 2 nodes (other than the node itself and the original node).
             if(ownerMap.get(filename).containsKey(nodeID)) {
@@ -441,7 +441,7 @@ public class Node implements Observer {
         }
     }
 
-    /* Here we remove a file, depedning on which directory the file is located, local or replicated.*/
+    /* Here we remove a file, depending on which directory the file is located, local or replicated.*/
     public void deleteFile(String filename, Boolean isOwnFiles){
         File myObj;
         if(isOwnFiles) {
@@ -528,19 +528,21 @@ public class Node implements Observer {
         if (nextID != 39999) {
             System.out.println("Sending new next node");
             unicast("Previous," + nextID + "," + nextIP + "," + previousID, previousIP, uniPort); // Send next node parameters to previous node
-            notifyLocalFiles();
-            for(String filename : ownerMap.keySet()){
-                if(fileArray.containsValue(filename)) {
-                    sendFile(previousID + "," + previousIP, filename, true);
-                }else{
-                    sendFile(previousID + "," + previousIP, filename, false);
-                    deleteFile(filename,false);
-                }
-            }
         }
         if (previousID != 0) {
             System.out.println("Sending new previous node");
             unicast("Next," + previousID + "," + previousIP + "," + nextID, nextIP, uniPort); // Send previous node parameters to next node
+        }
+        if(nextID!=39999 && previousID!=0){
+            notifyLocalFiles();
+            for(String filename : ownerMap.keySet()){
+                if(fileArray.containsValue(filename)) {
+                    sendFile(previousID + "," + previousIP, filename, true, true);
+                }else{
+                    sendFile(previousID + "," + previousIP, filename, false,true);
+                    deleteFile(filename,false);
+                }
+            }
         }
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(baseURL + "/" + currentID + "/removeNodeByHashId"))
@@ -568,7 +570,7 @@ public class Node implements Observer {
     }
 
     /* This function is called when a multicast message is received with the multicast receiver thread. This function is
-    * called using the observer that is implemented.*/
+     * called using the observer that is implemented.*/
     public synchronized void multicastHandlePacket(String packet) throws IOException {
         String[] parts = packet.split(","); // split the string at the space character
         String hostname = parts[0];
@@ -631,7 +633,7 @@ public class Node implements Observer {
     }
 
     /* This function is called when a UDP unicast is received at one of the unicastReceiver threads. This is called
-    * by the observer that we implemented.*/
+     * by the observer that we implemented.*/
     public synchronized void unicastHandlePacket(String packet) throws IOException {
         String otherNodeID = "";
         String otherNodeIP = "";
@@ -807,7 +809,7 @@ public class Node implements Observer {
     }
 
     /* This function is called when the REST controller has received a POST request that tells us we are the owner of the file.
-    * We handle the file accordingly.*/
+     * We handle the file accordingly.*/
     public void FileEventHandler(String fileName){
         fileArray.put(getHash(fileName),fileName);
         try {
@@ -848,7 +850,7 @@ public class Node implements Observer {
         if(fileArray.containsValue(filename) && (nextID != previousID || currentID == nextID) && previousID != 0){
             try {
                 System.out.println(previousID + "," + previousIP);
-                sendFile(previousID + "," + previousIP, filename, true);
+                sendFile(previousID + "," + previousIP, filename, true, false);
             }catch (IOException e) {
                 System.err.println("Could not notify file " + filename + ": " + e.getMessage());
             }
@@ -875,7 +877,7 @@ public class Node implements Observer {
 
 
     /*This function is used to see if the neighbouring nodes are still alive, with a countdown timer to take action if a
-    * it takes to long for the nodes to give sign of life.*/
+     * it takes to long for the nodes to give sign of life.*/
     public class CountdownTimer {
         private Timer timer;
         private int seconds;
