@@ -436,7 +436,7 @@ public class Node implements Observer {
             }
         }else{
             ownerMap.remove(filename);
-            deleteFile(filename, true);
+            deleteFile(filename, false);
             System.out.println("Removed file " + filename + " from network.");
         }
     }
@@ -534,7 +534,7 @@ public class Node implements Observer {
             unicast("Next," + previousID + "," + previousIP + "," + nextID, nextIP, uniPort); // Send previous node parameters to next node
         }
         if(nextID!=39999 && previousID!=0){
-            notifyLocalFiles();
+//            notifyLocalFiles();
             for(String filename : ownerMap.keySet()){
                 if(fileArray.containsValue(filename)) {
                     sendFile(previousID + "," + previousIP, filename, true, true);
