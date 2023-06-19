@@ -89,10 +89,12 @@ public class FailureAgent implements Runnable, Serializable {
         }
 
         // Check if the file is already present in the ownerMap and owned by the specified ownerNode.
-        if (!currentNode.getOwnerMap().get(filename).containsKey(Integer.parseInt(ownerNode))) {
+        Map<String, Map<Integer,String>> ownerMap = currentNode.getOwnerMap();
+        if (ownerMap.get(filename) != null && !ownerMap.get(filename).containsKey(Integer.parseInt(ownerNode))) {
             System.out.println("New owner doesn't have a copy of this file already");
             currentNode.sendFile(ownerNode, filename, true);
         }
+
         // Update logs accordingly
         currentNode.setOwnerFile(filename, Integer.parseInt(ownerNode),nodeIP);
         System.out.println("transferOwnership completed");
