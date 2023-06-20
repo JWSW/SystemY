@@ -937,7 +937,7 @@ public class Node implements Observer {
 
 
     public void OwnerMapTable() {
-        System.out.format("%-15s %-10s %-15s%n", "Filename", "Node ID", "Node IP");
+        System.out.format("%-20s %-10s %-15s%n", "Filename", "Node ID", "Node IP");
 
         for (Map.Entry<String, Map<Integer, String>> entry : ownerMap.entrySet()) {
             String filename = entry.getKey();
@@ -947,7 +947,7 @@ public class Node implements Observer {
                 int nodeId = nodeEntry.getKey();
                 String nodeIp = nodeEntry.getValue();
 
-                System.out.format("%-15s %-10d %-15s%n", filename, nodeId, nodeIp);
+                System.out.format("%-20s %-10d %-15s%n", filename, nodeId, nodeIp);
             }
         }
     }
