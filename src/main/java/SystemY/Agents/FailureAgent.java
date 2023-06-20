@@ -43,6 +43,7 @@ public class FailureAgent implements Runnable, Serializable {
         //System.out.println("Ownermap: "+currentNode.getOwnerMap());
         System.out.println("OwnerLocalFiles: "+fileList);
         // Check if the failing node is the owner of any files
+        System.out.println("Checking OwnerLocalFiles");
         for (String filename: fileList.keySet()) {
             if (fileList.get(filename) == failingID) {
                 try {
@@ -52,7 +53,7 @@ public class FailureAgent implements Runnable, Serializable {
                 }
             }
         }
-        System.out.println("Ownermap: "+currentNode.getOwnerMap());
+        //System.out.println("Ownermap: "+currentNode.getOwnerMap());
 
 
         // Pass the Failure Agent to the next node in the ring topology
