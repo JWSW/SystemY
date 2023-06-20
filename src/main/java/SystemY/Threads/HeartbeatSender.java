@@ -36,7 +36,7 @@ public class HeartbeatSender extends Thread{
 
             // We will continue sending pings at certain time intervals unless we are interrupted
             while (!Thread.currentThread().isInterrupted()) {
-                System.out.println("Sending ping to " + sendAddress + " or " + sendIP + " with port " + port);
+                System.out.println("Sending ping to " + sendAddress + " with port " + port);
                 socket.send(sendPacket);
                 sleep(10000);
             }
