@@ -363,7 +363,7 @@ public class Node implements Observer {
                 }else if(isShutdown){
                     if(ownerMap.get(filename).containsKey(nodeID)){
                         ownerMap.get(filename).remove(nodeID);
-                        System.out.println("Previous nodID is removed from file locations.");
+                        System.out.println("Previous nodeID is removed from file locations.");
                     }
                 }
             }
