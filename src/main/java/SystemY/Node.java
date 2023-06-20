@@ -367,7 +367,8 @@ public class Node implements Observer {
                     }
                 }
             }
-            System.out.println("Ownermap new locations (if there were more than node that shut down): " + filename + " with " + ownerMap.get(filename));
+            System.out.println("Shutdown is: " + isShutdown);
+            System.out.println("Ownermap new locations: " + filename + " with " + ownerMap.get(filename));
         }
     }
 
