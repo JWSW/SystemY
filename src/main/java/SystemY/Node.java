@@ -435,7 +435,7 @@ public class Node implements Observer {
         if(ownerMap.get(filename).keySet().size()>2) { // If the node is located at more than 2 nodes (other than the node itself and the original node).
             if(ownerMap.get(filename).containsKey(nodeID)) {
                 ownerMap.get(filename).remove(nodeID);
-                System.out.println("Removed original location of " + filename + " from ownerMap.");
+                System.out.println("Removed original location of " + filename + " from ownerMap. (" + nodeID + ")");
             }
         }else{
             ownerMap.remove(filename);
@@ -537,7 +537,7 @@ public class Node implements Observer {
             unicast("Next," + previousID + "," + previousIP + "," + nextID, nextIP, uniPort); // Send previous node parameters to next node
         }
         if(nextID!=39999 && previousID!=0){
-//            notifyLocalFiles();
+            notifyLocalFiles();
             for(String filename : ownerMap.keySet()){
                 if(fileArray.containsValue(filename)) {
                     sendFile(previousID + "," + previousIP, filename, true, true);
