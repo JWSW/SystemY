@@ -409,12 +409,6 @@ public class Node implements Observer {
                     System.out.println("Sending POST to owner node of " + filename + " to notify termination.");
                     HttpResponse<String> response = HttpClient.newHttpClient().send(request2, HttpResponse.BodyHandlers.ofString());
                     System.out.println("Response: " + response.body());
-
-                    packet = response.body();
-                    parts = packet.split(",");
-                    nodeHash = Integer.valueOf(parts[0]);
-                    nodeIP = parts[1];
-                    ownerNode = packet;
                 } catch (IOException | InterruptedException e) {
                     e.printStackTrace();
                 }
