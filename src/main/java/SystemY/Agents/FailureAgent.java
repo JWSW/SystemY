@@ -49,8 +49,6 @@ public class FailureAgent implements Runnable, Serializable {
         });
 
 
-
-
         // Read the file list of the current node
         Map<String, Integer> fileList = currentNode.getOwnerLocalFiles();
         //System.out.println("Ownermap: "+currentNode.getOwnerMap());
@@ -122,7 +120,6 @@ public class FailureAgent implements Runnable, Serializable {
     }
 
     private void passFailureAgentToNextNode() throws IOException, InterruptedException {
-
 
         // Determine the address of the next node
         String nextNodeIP = currentNode.getNextIP();

@@ -52,11 +52,7 @@ public class SyncAgent implements Runnable, Serializable {
                 e.printStackTrace();
             }
 
-            try {
-                syncWithNeighbors();
-            } catch (IOException | InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            syncWithNeighbors();
             for (String fileName : ownerMap.keySet()) {
                 boolean updated = false;
                 // If the agent's list doesn't contain a file that the node owns, add it to the list
@@ -155,24 +151,29 @@ public class SyncAgent implements Runnable, Serializable {
 
 
 
-    private void syncWithNeighbors() throws IOException, InterruptedException {
+    private void syncWithNeighbors() {
         for (String neighbor : currentNode.getNeighbors()) {
             if (!neighbor.isEmpty()) {
-                String baseURL = "http://"+neighbor+":8081/requestNode";
-                TimeUnit.MILLISECONDS.sleep(500);
-                HttpRequest request1 = HttpRequest.newBuilder()
-                        .uri(URI.create(baseURL + "/syncWithNeighbor"))
-                        .GET()
-                        .build();
-                HttpResponse<String> response = HttpClient.newHttpClient().send(request1, HttpResponse.BodyHandlers.ofString());
-                String jsonMap = response.body();
-                //System.out.println("Sync response: " + jsonMap);
+                String baseURL = "http://" + neighbor + ":8081/requestNode";
+                try {
+                    TimeUnit.MILLISECONDS.sleep(500);
+                    HttpRequest request1 = HttpRequest.newBuilder()
+                            .uri(URI.create(baseURL + "/syncWithNeighbor"))
+                            .GET()
+                            .build();
+                    HttpResponse<String> response = HttpClient.newHttpClient().send(request1, HttpResponse.BodyHandlers.ofString());
+                    String jsonMap = response.body();
+                    //System.out.println("Sync response: " + jsonMap);
 
-                // Parse the JSON string and convert it into a Map object
-                ObjectMapper objectMapper = new ObjectMapper();
-                Map<String, Boolean> receivedMap = objectMapper.readValue(jsonMap, new TypeReference<>() {});
-                agentFileList.putAll(receivedMap);
-
+                    // Parse the JSON string and convert it into a Map object
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    Map<String, Boolean> receivedMap = objectMapper.readValue(jsonMap, new TypeReference<>() {});
+                    agentFileList.putAll(receivedMap);
+                } catch (InterruptedException | IOException e) {
+                    // Handle the exceptions
+                    System.out.println("Exception occurred while syncing with neighbor " + neighbor + ": " + e.getMessage());
+                    // Perform additional error handling or logging as needed
+                }
             }
         }
         //System.out.println(agentFileList);
