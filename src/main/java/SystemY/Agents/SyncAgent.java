@@ -75,13 +75,13 @@ public class SyncAgent implements Runnable, Serializable {
                 if (updated) {
                     currentNode.setFileList(agentFileList);
                     System.out.println("Agent File List:");
-                    System.out.format("%-20s %-10s%n", "Filename", "File Lock");
+                    System.out.format("%-25s %-10s%n", "Filename", "File Lock");
 
                     for (Map.Entry<String, Boolean> entry : agentFileList.entrySet()) {
                         String filename = entry.getKey();
                         boolean fileLock = entry.getValue();
 
-                        System.out.format("%-20s %-10s%n", filename, fileLock);
+                        System.out.format("%-25s %-10s%n", filename, fileLock);
                     }
 
                 }

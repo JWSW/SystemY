@@ -56,6 +56,7 @@ public class Node implements Observer {
     private Map<String, Map<Integer,String>> ownerMap = new ConcurrentHashMap<>(); // This map stores the filename with the corresponding locations where the file is found (the node's parameters)
     private boolean filesNotified = false;
     private FailureAgent failureAgent =null;
+    private int failingID;
     private Map<String, Integer> OwnerLocalFiles = new ConcurrentHashMap<>();
 
 
@@ -69,11 +70,11 @@ public class Node implements Observer {
         @Override
         public void onTimerFinished(String position) throws JsonProcessingException {
             System.out.println(position + " node offline.");
-            int previousID2 = previousID;
+            failingID = previousID;
             Nodefailure(position);
             if (position.equals("Previous")) {
                 isFirstNode = true;
-                failureAgent = new FailureAgent(previousID2,currentID,currentID,getNode());  //failingID, currentID
+                failureAgent = new FailureAgent(failingID,currentID,currentID,getNode());  //failingID, currentID
                 Thread FailureAgent1 = new Thread(failureAgent);
                 FailureAgent1.start();
 
@@ -508,6 +509,15 @@ public class Node implements Observer {
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
+        // Remove files owned by failingID from ownerMap
+        for (String filename : ownerMap.keySet()) {
+            Map<Integer, String> fileOwners = ownerMap.get(filename);
+            if (fileOwners.containsValue(String.valueOf(failingID))) {
+                fileOwners.entrySet().removeIf(entry -> entry.getValue().equals(String.valueOf(failingID)));
+            }
+        }
+
+
     }
 
     /* This function is used to send a multicast message to the multicast group*/
@@ -937,7 +947,7 @@ public class Node implements Observer {
 
 
     public void OwnerMapTable() {
-        System.out.format("%-20s %-10s %-15s%n", "Filename", "Node ID", "Node IP");
+        System.out.format("%-25s %-10s %-15s%n", "Filename", "Node ID", "Node IP");
 
         for (Map.Entry<String, Map<Integer, String>> entry : ownerMap.entrySet()) {
             String filename = entry.getKey();
@@ -947,7 +957,7 @@ public class Node implements Observer {
                 int nodeId = nodeEntry.getKey();
                 String nodeIp = nodeEntry.getValue();
 
-                System.out.format("%-20s %-10d %-15s%n", filename, nodeId, nodeIp);
+                System.out.format("%-25s %-10d %-15s%n", filename, nodeId, nodeIp);
             }
         }
     }
