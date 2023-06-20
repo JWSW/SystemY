@@ -69,10 +69,11 @@ public class Node implements Observer {
         @Override
         public void onTimerFinished(String position) throws JsonProcessingException {
             System.out.println(position + " node offline.");
+            int previousID2 = previousID;
             Nodefailure(position);
             if (position.equals("Previous")) {
                 isFirstNode = true;
-                failureAgent = new FailureAgent(previousID,currentID,currentID,getNode());  //failingID, currentID
+                failureAgent = new FailureAgent(previousID2,currentID,currentID,getNode());  //failingID, currentID
                 Thread FailureAgent1 = new Thread(failureAgent);
                 FailureAgent1.start();
 
