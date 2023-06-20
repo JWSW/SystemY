@@ -43,7 +43,7 @@ public class FailureAgent implements Runnable, Serializable {
         //System.out.println("Ownermap: "+currentNode.getOwnerMap());
         System.out.println("OwnerLocalFiles:");
         for (String filename : fileList.keySet()) {
-            System.out.format("  %-25s (Owner: %-10d)%n", filename, fileList.get(filename));
+            System.out.format("  %-25s (Owner: %d)%n", filename, fileList.get(filename));
         }
 
         // Check if the failing node is the owner of any files

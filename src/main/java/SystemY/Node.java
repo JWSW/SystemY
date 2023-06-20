@@ -509,13 +509,13 @@ public class Node implements Observer {
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
-        // Remove files owned by failingID from ownerMap
+       /* // Remove files owned by failingID from ownerMap
         for (String filename : ownerMap.keySet()) {
             Map<Integer, String> fileOwners = ownerMap.get(filename);
             if (fileOwners.containsValue(String.valueOf(failingID))) {
                 fileOwners.entrySet().removeIf(entry -> entry.getValue().equals(String.valueOf(failingID)));
             }
-        }
+        }*/
 
 
     }
