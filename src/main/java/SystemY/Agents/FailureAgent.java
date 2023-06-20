@@ -41,9 +41,13 @@ public class FailureAgent implements Runnable, Serializable {
         // Read the file list of the current node
         Map<String, Integer> fileList = currentNode.getOwnerLocalFiles();
         //System.out.println("Ownermap: "+currentNode.getOwnerMap());
-        System.out.println("OwnerLocalFiles: "+fileList);
+        System.out.println("OwnerLocalFiles:");
+        for (String filename : fileList.keySet()) {
+            System.out.format("  %s (Owner: %d)%n", filename, fileList.get(filename));
+        }
+
         // Check if the failing node is the owner of any files
-        System.out.println("Checking OwnerLocalFiles");
+        System.out.println("Checking OwnerLocalFiles for failing node ID: " + failingID);
         for (String filename: fileList.keySet()) {
             if (fileList.get(filename) == failingID) {
                 try {
@@ -66,7 +70,7 @@ public class FailureAgent implements Runnable, Serializable {
     }
 
     private void transferOwnership(String filename) throws IOException {
-        System.out.println("transferOwnership");
+        System.out.println("transfer Ownership");
         // Check who the new owner is
         HttpClient client = HttpClient.newHttpClient();
         String packet;
@@ -100,7 +104,7 @@ public class FailureAgent implements Runnable, Serializable {
 
         // Update logs accordingly
         currentNode.setOwnerFile(filename, Integer.parseInt(ownerNode),nodeIP);
-        System.out.println("transferOwnership completed");
+        System.out.println("transfer Ownership completed");
 
     }
 

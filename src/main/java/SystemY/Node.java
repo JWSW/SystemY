@@ -144,8 +144,8 @@ public class Node implements Observer {
         String message = nodeName + "," + ipAddress;
         System.out.println("Send multicast message.");
         multicast(message);
-        System.out.println("Ownermap begin: " + ownerMap);
-
+        System.out.println("Ownermap begin: ");
+        OwnerMapTable();
         searchFiles();
     }
 
@@ -872,7 +872,8 @@ public class Node implements Observer {
             }
             ownerMap.put(filename, tempMap);
         }
-        System.out.println("Ownermap: " + ownerMap);
+        System.out.println("Ownermap: ");
+        OwnerMapTable();
     }
 
 
@@ -934,8 +935,21 @@ public class Node implements Observer {
         return OwnerLocalFiles;
     }
 
-    public Map<Integer, String> getFileArray() {
-        return fileArray;
+
+    public void OwnerMapTable() {
+        System.out.format("%-15s %-10s %-15s%n", "Filename", "Node ID", "Node IP");
+
+        for (Map.Entry<String, Map<Integer, String>> entry : ownerMap.entrySet()) {
+            String filename = entry.getKey();
+            Map<Integer, String> nodeInfo = entry.getValue();
+
+            for (Map.Entry<Integer, String> nodeEntry : nodeInfo.entrySet()) {
+                int nodeId = nodeEntry.getKey();
+                String nodeIp = nodeEntry.getValue();
+
+                System.out.format("%-15s %-10d %-15s%n", filename, nodeId, nodeIp);
+            }
+        }
     }
 }
 
