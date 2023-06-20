@@ -40,7 +40,7 @@ public class FailureAgent implements Runnable, Serializable {
     public void run() {
         System.out.println("FailureAgent has started");
         ownerMap = currentNode.getOwnerMap();
-        //Remove files owned by failingID from ownerMap
+        //Remove files with filelocation= failingID from ownerMap
         ownerMap.forEach((filename, fileOwners) -> fileOwners.entrySet().removeIf(entry ->
                 entry.getValue().equals(String.valueOf(failingID))));
 
@@ -106,7 +106,7 @@ public class FailureAgent implements Runnable, Serializable {
         Map<String, Map<Integer,String>> ownerMap = currentNode.getOwnerMap();
         if (ownerMap.get(filename) != null && !ownerMap.get(filename).containsKey(Integer.parseInt(ownerNode))) {
             System.out.println("New owner doesn't have a copy of this file already");
-            //currentNode.sendFile(ownerNode+','+nodeIP,filename, true, false);
+            currentNode.sendFile(ownerNode+','+nodeIP,filename, true, false);
         }
 
         // Update logs accordingly
