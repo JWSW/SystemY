@@ -508,10 +508,6 @@ public class Node implements Observer {
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
-        //Remove files owned by failingID from ownerMap
-        ownerMap.forEach((filename, fileOwners) -> fileOwners.entrySet().removeIf(entry ->
-                entry.getValue().equals(String.valueOf(failingID))));
-
 
     }
 
