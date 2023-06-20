@@ -474,8 +474,7 @@ public class Node implements Observer {
     /* This function is called when one of the neighbors has failed*/
     private void Nodefailure(String position) throws JsonProcessingException {
         HttpClient client = HttpClient.newHttpClient();
-        String json;
-        Integer id;
+        int id;
         if(position.equals("Next")){
             id = nextID;
             countdownTimerNext.stop();
@@ -491,7 +490,7 @@ public class Node implements Observer {
             requestRemoveNode(id);
 
             System.out.println("Sending request to get new neighbour.");
-            HttpResponse<String> response = HttpClient.newHttpClient().send(request1, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = client.send(request1, HttpResponse.BodyHandlers.ofString());
             System.out.println("Response: " + response.body());
 
             String packet = response.body();
@@ -510,14 +509,6 @@ public class Node implements Observer {
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
-       /* // Remove files owned by failingID from ownerMap
-        for (String filename : ownerMap.keySet()) {
-            Map<Integer, String> fileOwners = ownerMap.get(filename);
-            if (fileOwners.containsValue(String.valueOf(failingID))) {
-                fileOwners.entrySet().removeIf(entry -> entry.getValue().equals(String.valueOf(failingID)));
-            }
-        }*/
-
 
     }
 

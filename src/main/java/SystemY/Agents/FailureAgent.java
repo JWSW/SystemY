@@ -25,6 +25,7 @@ public class FailureAgent implements Runnable, Serializable {
     private Node currentNode;
     private String baseURL = "http://172.27.0.5:8080/requestName";
     private int initiatingNodeID;
+    private Map<String, Map<Integer,String>> ownerMap = new ConcurrentHashMap<>();
 
 
 
@@ -38,6 +39,12 @@ public class FailureAgent implements Runnable, Serializable {
     @Override
     public void run() {
         System.out.println("FailureAgent has started");
+        ownerMap = currentNode.getOwnerMap();
+        //Remove files owned by failingID from ownerMap
+        ownerMap.forEach((filename, fileOwners) -> fileOwners.entrySet().removeIf(entry ->
+                entry.getValue().equals(String.valueOf(failingID))));
+
+
         // Read the file list of the current node
         Map<String, Integer> fileList = currentNode.getOwnerLocalFiles();
         //System.out.println("Ownermap: "+currentNode.getOwnerMap());
