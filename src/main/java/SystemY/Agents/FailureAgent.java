@@ -41,8 +41,14 @@ public class FailureAgent implements Runnable, Serializable {
         System.out.println("FailureAgent has started");
         ownerMap = currentNode.getOwnerMap();
         //Remove files with filelocation= failingID from ownerMap
-        ownerMap.forEach((filename, fileOwners) -> fileOwners.entrySet().removeIf(entry ->
-                entry.getValue().equals(String.valueOf(failingID))));
+        ownerMap.forEach((filename, fileOwners) -> {
+            if (fileOwners.containsKey(failingID)) {
+                fileOwners.entrySet().removeIf(entry ->
+                        entry.getKey().equals(failingID));
+            }
+        });
+
+
 
 
         // Read the file list of the current node
