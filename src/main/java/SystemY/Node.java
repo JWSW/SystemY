@@ -363,7 +363,7 @@ public class Node implements Observer {
                 }else if(isShutdown){
                     if(ownerMap.get(filename).containsKey(nodeID)){
                         ownerMap.get(filename).remove(nodeID);
-                        System.out.println("Previous nodID is removed from file locations.");
+                        System.out.println("Previous nodeID is removed from file locations.");
                     }
                 }
             }
@@ -409,12 +409,6 @@ public class Node implements Observer {
                     System.out.println("Sending POST to owner node of " + filename + " to notify termination.");
                     HttpResponse<String> response = HttpClient.newHttpClient().send(request2, HttpResponse.BodyHandlers.ofString());
                     System.out.println("Response: " + response.body());
-
-                    packet = response.body();
-                    parts = packet.split(",");
-                    nodeHash = Integer.valueOf(parts[0]);
-                    nodeIP = parts[1];
-                    ownerNode = packet;
                 } catch (IOException | InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -538,6 +532,7 @@ public class Node implements Observer {
         }
         if(nextID!=39999 && previousID!=0){
             notifyLocalFiles();
+            System.out.println("Local files are notified.");
             for(String filename : ownerMap.keySet()){
                 if(fileArray.containsValue(filename)) {
                     sendFile(previousID + "," + previousIP, filename, true, true);
