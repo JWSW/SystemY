@@ -100,9 +100,10 @@ public class SyncAgent implements Runnable, Serializable {
                         if (isBeingEdited) {
                             fileChecker.lockFile(filename);
                             System.out.println("File " + filename + " is locked");
+                            AgentFileList();
                             if (fileChecker.isLockActive()) {
                                 agentFileList.replace(filename, true);
-                                currentNode.setFileList(agentFileList);
+                                AgentFileList();
                             }
 
                         }
@@ -128,6 +129,7 @@ public class SyncAgent implements Runnable, Serializable {
                     // Unlock the file
                     fileChecker.unlockFile(filename);
                     System.out.println("File " + filename + " is unlocked");
+                    AgentFileList();
                 }
                 // Clear the removeList after processing
                 fileChecker.clearRemoveList();
@@ -181,5 +183,18 @@ public class SyncAgent implements Runnable, Serializable {
 
     public Map<String, Boolean> getAgentFileList() {
         return agentFileList;
+    }
+
+
+    public void AgentFileList() {
+        System.out.println("Agent File List:");
+        System.out.format("%-25s %-10s%n", "Filename", "File Lock");
+
+        for (Map.Entry<String, Boolean> entry : agentFileList.entrySet()) {
+            String filename = entry.getKey();
+            boolean fileLock = entry.getValue();
+
+            System.out.format("%-25s %-10s%n", filename, fileLock);
+        }
     }
 }
